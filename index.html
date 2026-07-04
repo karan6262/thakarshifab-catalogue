@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            line-height:1.6; color:#333; background:#f9f9f9;
+        }
+        .container { max-width:1100px; margin:0 auto; padding:20px; }
+        header { text-align:center; padding:40px 20px;
+                 background:#8B0000; color:#fff; margin-bottom:30px; }
+        header h1 { font-size:2.5rem; margin-bottom:10px; }
+        header p   { font-size:1.2rem; opacity:.9; }
+        .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+                    gap:20px; margin-bottom:30px; }
+        .product-card{
+            background:#fff; border-radius:10px; padding:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1); text-align:center;
+            transition:transform .2s;
+        }
+        .product-card:hover{transform:translateY(-5px);}
+        .product-card img{
+            max-width:100%; height:180px; object-fit:cover;
+            border-radius:8px; margin-bottom:15px;
+        }
+        .product-card h3{margin-bottom:15px;color:#8B0000;}
+        .product-card p{color:#666;margin-bottom:15px;flex-grow:1;}
+        .product-card button{
+            background:#8B0000;color:#fff;border:none;
+            padding:10px 20px;border-radius:5px;cursor:pointer;
+            transition:background .3s;
+        }
+        .product-card button:hover{background:#a50000;}
+        .selected-badge{
+            background:#28a745;color:#fff;font-size:.8rem;
+            padding:2px 6px;border-radius:3px;margin-left:8px;
+        }
+        .selected-items{
+            margin:20px 0;padding:15px;background:#e9f7ef;
+            border-radius:8px;display:none;
+        }
+        .selected-items h3{margin-bottom:10px;color:#28a745;}
+        .selected-items ul{text-align:left;padding-left:20px;}
+        .selected-items li{margin:5px 0;}
+        .contact-form{
+            background:#fff;padding:30px;border-radius:10px;
+            box-shadow:0 2px 15px rgba(0,0,0,.1);
+        }
+        .contact-form h2{margin-bottom:20px;color:#8B0000;text-align:center;}
+        .form-group{margin-bottom:20px;}
+        .form-group label{display:block;margin-bottom:8px;font-weight:bold;}
+        .form-group input,
+        .form-group textarea,
+        .form-group select{
+            width:100%;padding:12px;border:1px solid #ddd;
+            border-radius:5px;font-size:1rem;
+        }
+        .form-group textarea{resize:vertical;min-height:100px;}
+        .submit-btn{
+            background:#8B0000;color:#fff;border:none;
+            padding:14px 30px;font-size:1.1rem;
+            border-radius:5px;cursor:pointer;width:100%;
+            transition:background .3s;
+        }
+        .submit-btn:hover{background:#a50000;}
+        .form-status{
+            margin-top:15px;padding:10px;border-radius:5px;
+            text-align:center;display:none;
+        }
+        .form-status.success{background:#d34ade80;color:#15803d;}
+        .form-status.error{background:#f87171;color:#991b1b;}
+        /* ---------- Auth UI ---------- */
+        .auth-box{
+            background:#fff;padding:20px;border-radius:8px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1);max-width:400px;
+            margin:20px auto;
+        }
+        .auth-box h3{margin-bottom:1rem;text-align:center;color:#8B0000;}
+        .auth-box input{width:100%;padding:.8rem;margin-top:.5rem;
+                       border:1px solid #ccc;border-radius:4px;}
+        .auth-box button{
+            width:100%;margin-top:1rem;padding:.8rem;
+            background:#8B0000;color:#fff;border:none;border-radius:4px;
+            cursor:pointer;
+        }
+        .auth-box button:hover{background:#a50000;}
+        .auth-switch{margin-top:1rem;text-align:center;font-size:.9rem;}
+        .auth-switch a{color:#8B0000;text-decoration:none;}
+        .auth-switch a:hover{text-decoration:underline;}
+        .user-info{text-align:right;font-size:.9rem;margin-bottom:1rem;}
+        .user-info button{
+            background:none;border:none;color:#8B0000;
+            cursor:pointer;font-size:.9rem;
+        }
+        .user-info button:hover{text-decoration:underline;}
+        @media (max-width:768px){
+            .products{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Thakarshi Fab</h1>
+    <p>Textile Wholesale | Ahmedabad</p>
+</header>
+
+<div class="container">
+    <!-- ---------- AUTH STATUS ---------- -->
+    <div id="authStatus" class="user-info"></div>
+
+    <!-- ---------- AUTH FORMS (shown when not signed in) ---------- -->
+    <div id="authForms" class="auth-box" style="display:none;">
+        <h3 id="authTitle">Sign in to continue</h3>
+        <form id="authForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" id="authSubmit">Sign In</button>
+        </form>
+        <p class="auth-switch">
+            Don’t have an account? <a id="toggleLink" href="#">Create one</a>
+        </p>
+        <div id="authMsg" style="margin-top:1rem;min-height:1.2rem;"></div>
+    </div>
+
+    <!-- ---------- PRODUCT SELECTION ---------- -->
+    <section class="products" id="productsSection">
+        <!-- Product cards will be injected by JS -->
+    </section>
+
+    <!-- ---------- SELECTED ITEMS SUMMARY ---------- -->
+    <div class="selected-items" id="selectedItems">
+        <h3>Selected Items for Inquiry</h3>
+        <ul id="selectedList"></ul>
+    </div>
+
+    <!-- ---------- CONTACT / INQUIRY FORM ---------- -->
+    <section class="contact-form" id="contactFormSection" style="display:none;">
+        <h2>Send Inquiry</h2>
+        <form id="inquiryForm">
+            <input type="hidden" id="selectedProducts" name="selectedProducts" value="">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city">
+            </div>
+            <div class="form-group">
+                <label for="message">Additional Message / Requirements</label>
+                <textarea id="message" name="message"></textarea>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Send Inquiry</button>
+            <div class="form-status" id="formStatus"></div>
+        </form>
+    </section>
+</div>
+
+<!-- Firebase SDKs (Optional: add measurementId if you have Google Analytics) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* --------------------------------------------------------------
+   1️⃣  Firebase configuration – REPLACE THE PLACEHOLDERS BELOW
+   -------------------------------------------------------------- */
+const firebaseConfig = {
+    apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
+    authDomain: "thakarshi-product-catalogue.firebaseapp.com",
+    projectId: "thakarshi-product-catalogue",
+    storageBucket: "thakarshi-product-catalogue.appspot.com",
+    messagingSenderId: "149758378550",
+    appId: "1:149758378550:web:2b6def7e29932dddf34e97"
+    // measurementId: "G-YMPTV9G8FN" // optional, if you enabled Analytics
+};
+/* -------------------------------------------------------------- */
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth   = firebase.auth();
+const db     = firebase.firestore();
+
+/* --------------------------------------------------------------
+   2️⃣  UI helpers
+   -------------------------------------------------------------- */
+const authStatusEl   = document.getElementById('authStatus');
+const authFormsEl    = document.getElementById('authForms');
+const authTitleEl    = document.getElementById('authTitle');
+const authFormEl     = document.getElementById('authForm');
+const emailInput     = document.getElementById('email');
+const passwordInput  = document.getElementById('password');
+const authSubmitBtn  = document.getElementById('authSubmit');
+const toggleLink     = document.getElementById('toggleLink');
+const authMsgEl      = document.getElementById('authMsg');
+
+const productsSection   = document.getElementById('productsSection');
+const selectedItemsEl   = document.getElementById('selectedItems');
+const selectedListEl    = document.getElementById('selectedList');
+const selectedProductsInput = document.getElementById('selectedProducts');
+const contactFormSection  = document.getElementById('contactFormSection');
+const inquiryForm      = document.getElementById('inquiryForm');
+const submitBtn        = document.getElementById('submitBtn');
+const formStatusEl     = document.getElementById('formStatus');
+
+let isLoginMode = true; // toggles between Sign‑In / Sign‑Up
+
+/* --------------------------------------------------------------
+   3️⃣  Auth state listener – shows/hides UI based on login
+   -------------------------------------------------------------- */
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // User signed in
+        authStatusEl.innerHTML = `
+            Signed in as <strong>${user.email}</strong>
+            <button id="signOutBtn">Sign out</button>
+        `;
+        authFormsEl.style.display = 'none';
+        // Show inquiry form when signed in
+        contactFormSection.style.display = 'block';
+        // Load products from Firestore (for selection UI)
+        loadProductsFromFirestore();
+        // Wire sign‑out
+        document.getElementById('signOutBtn')
+                .addEventListener('click', () => auth.signOut());
+    } else {
+        // User signed out
+        authStatusEl.innerHTML = '';
+        authFormsEl.style.display = 'block';
+        // Hide inquiry form when signed out
+        contactFormSection.style.display = 'none';
+        selectedItemsEl.style.display = 'none';
+        // Reset form
+        inquiryForm.reset();
+        selectedProductsInput.value = '';
+        selectedListEl.innerHTML = '';
+    }
+});
+
+/* --------------------------------------------------------------
+   4️⃣  Auth form handling (login / signup)
+   -------------------------------------------------------------- */
+authFormEl.addEventListener('submit', e => {
+    e.preventDefault();
+    const email    = emailInput.value.trim();
+    const password = passwordInput.value;
+    authMsgEl.textContent = '';
+    authSubmitBtn.disabled = true;
+
+    if (isLoginMode) {
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(err => {
+                authMsgEl.textContent = err.message;
+                authSubmitBtn.disabled = false;
+            });
+    } else {
+        auth.createUserWithEmailAndPassword(email, password)
+            .catch(err => {
+                authMsgEl.textContent = err.message;
+                authSubmitBtn.disabled = false;
+            });
+    }
+});
+
+toggleLink.addEventListener('click', e => {
+    e.preventDefault();
+    isLoginMode = !isLoginMode;
+    authTitleEl.textContent = isLoginMode ? 'Sign in to continue' : 'Create account';
+    authSubmitBtn.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+    toggleLink.innerHTML = isLoginMode
+        ? 'Don’t have an account? <a href="#">Create one</a>'
+        : 'Already have an account? <a href="#">Sign in</a>';
+    // Re-attach click listener because we replaced innerHTML
+    toggleLink.querySelector('a').addEventListener('click', e => {
+        e.preventDefault();
+        toggleLink.click();
+    });
+    authMsgEl.textContent = '';
+});
+
+/* --------------------------------------------------------------
+   5️⃣  Load products from Firestore (real-time) - accessible to all
+   -------------------------------------------------------------- */
+function loadProductsFromFirestore() {
+    // Clear existing
+    productsSection.innerHTML = '<p>Loading products...</p>';
+
+    const productsRef = db.collection('products').orderBy('createdAt', 'desc');
+    const unsubscribe = productsRef.onSnapshot(snapshot => {
+        productsSection.innerHTML = ''; // clear loading message
+        if (snapshot.empty) {
+            productsSection.innerHTML = '<p>No products available yet.</p>';
+            return;
+        }
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const id = doc.id;
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${data.imageUrl || ''}" alt="${data.name || 'Product'}">
+                <h3>${data.name || 'Unnamed Product'}</h3>
+                <p>${data.description || 'No description available.'}</p>
+                <button type="button" data-id="${id}">Add to Inquiry</button>
+            `;
+            productsSection.appendChild(card);
+        });
+        // Attach click listeners to the newly created buttons
+        document.querySelectorAll('.product-card button').forEach(btn => {
+            btn.addEventListener('click', toggleSelection);
+        });
+    });
+
+    // We could return unsubscribe to detach later, but for simplicity ignore.
+}
+
+/* --------------------------------------------------------------
+   6️⃣  Selection logic (same as before)
+   -------------------------------------------------------------- */
+const selectedItems = new Set(); // stores product IDs (Firestore doc IDs)
+
+function toggleSelection(e) {
+    const id = e.target.dataset.id; // Firestore doc ID
+    if (selectedItems.has(id)) {
+        selectedItems.delete(id);
+        e.target.textContent = 'Add to Inquiry';
+        e.target.style.background = '#8B0000';
+        e.target.style.color = '#fff';
+    } else {
+        selectedItems.add(id);
+        e.target.textContent = 'Added ✓';
+        e.target.style.background = '#28a745';
+        e.target.style.color = '#fff';
+    }
+    updateSelectedUI();
+}
+
+function updateSelectedUI() {
+    selectedList.innerHTML = '';
+    if (selectedItems.size === 0) {
+        selectedItemsEl.style.display = 'none';
+        selectedProductsInput.value = '';
+        return;
+    }
+    selectedItemsEl.style.display = 'block';
+    // We need to fetch product names for the selected IDs.
+    // For simplicity, we'll query Firestore for the selected docs.
+    // But to avoid multiple queries, we could store names in selectedItems as well.
+    // Let's do a simple approach: we'll query each selected doc (usually few).
+    const promises = Array.from(selectedItems).map(id =>
+        db.collection('products').doc(id).get()
+    );
+    Promise.all(promises).then(snapshots => {
+        selectedList.innerHTML = '';
+        snapshots.forEach(snap => {
+            if (snap.exists) {
+                const data = snap.data();
+                const li = document.createElement('li');
+                li.textContent = data.name || 'Unnamed Product';
+                selectedList.appendChild(li);
+            }
+        });
+        // Store as JSON string for submission
+        selectedProductsInput.value = JSON.stringify(
+            Array.from(selectedItems).map(id => {
+                // We'll try to get name from snapshots if available, otherwise just id.
+                const snap = snapshots.find(s => s.id === id);
+                const name = snap && snap.exists ? snap.data().name : '';
+                return { id: id, name: name };
+            })
+        );
+    }).catch(err => {
+        console.error('Error fetching selected product names:', err);
+        // Fallback: just show IDs
+        selectedList.innerHTML = Array.from(selectedItems).map(id => `<li>ID: ${id}</li>`).join('');
+        selectedProductsInput.value = JSON.stringify(
+            Array.from(selectedItems).map(id => ({ id: id, name: '' }))
+        );
+    });
+}
+
+/* --------------------------------------------------------------
+   7️⃣  Form submission – write to Firestore under the UID
+   -------------------------------------------------------------- */
+inquiryForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    formStatusEl.style.display = 'none';
+
+    const user = auth.currentUser;
+    if (!user) {
+        showFormError('You must be signed in to send an inquiry.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Inquiry';
+        return;
+    }
+
+    const formData = {
+        uid:          user.uid,
+        name:         inquiryForm.name.value.trim(),
+        email:        inquiryForm.email.value.trim(),
+        phone:        inquiryForm.phone.value.trim(),
+        city:         inquiryForm.city.value.trim(),
+        message:      inquiryForm.message.value.trim(),
+        selectedProducts: JSON.parse(selectedProductsInput.value) || [],
+        timestamp:    firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    console.log('Submitting form data:', formData);
+
+    // Basic validation
+    if (!formData.name || !formData.email) {
+        showFormError('Please fill in the required fields (Name, Email).');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Inquiry';
+        return;
+    }
+
+    try {
+        const docRef = await db.collection('inquiries').add(formData);
+        console.log('Document written with ID:', docRef.id);
+        showFormSuccess('Inquiry sent successfully! We will contact you soon.');
+        inquiryForm.reset();
+        selectedItems.clear();
+        updateSelectedUI();
+    } catch (err) {
+        console.error('Firestore error:', err);
+        showFormError('Firestore error: ' + err.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Inquiry';
+    }
+});
+
+function showFormError(msg) {
+    formStatusEl.textContent = msg;
+    formStatusEl.className = 'form-status error';
+    formStatusEl.style.display = 'block';
+}
+function showFormSuccess(msg) {
+    formStatusEl.textContent = msg;
+    formStatusEl.className = 'form-status success';
+    formStatusEl.style.display = 'block';
+}
+
+/* --------------------------------------------------------------
+   8️⃣  Initial render (products) – load on page load for everyone
+   -------------------------------------------------------------- */
+// Load products immediately so catalog is visible without login
+loadProductsFromFirestore();
+</script>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakarshi Fab - Admin Panel</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            line-height:1.6; color:#333; background:#f9f9f9;
+        }
+        .container { max-width:1200px; margin:0 auto; padding:20px; }
+        header { text-align:center; padding:40px 20px;
+                 background:#8B0000; color:#fff; margin-bottom:30px; }
+        header h1 { font-size:2.5rem; margin-bottom:10px; }
+        header p   { font-size:1.2rem; opacity:.9; }
+        .section {
+            background:#fff; padding:20px; border-radius:10px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1); margin-bottom:30px;
+        }
+        .section h2 {
+            margin-bottom:20px; color:#8B0000; text-align:center;
+        }
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; margin-bottom:8px; font-weight:bold; }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width:100%; padding:12px; border:1px solid #ddd;
+            border-radius:5px; font-size:1rem;
+        }
+        .form-group textarea { resize:vertical; min-height:100px; }
+        .product-image-preview {
+            margin-top:10px; max-width:200px; max-height:200px;
+            border:1px dashed #ccc; display:flex; align-items:center;
+            justify-content:center; color:#666;
+        }
+        .product-image-preview img { max-width:100%; max-height:100%; display:block; }
+        .submit-btn {
+            background:#8B0000; color:#fff; border:none;
+            padding:14px 30px;font-size:1.1rem;
+            border-radius:5px;cursor:pointer;width:100%;
+            transition:background .3s;
+        }
+        .submit-btn:hover{background:#a50000;}
+        .form-status{
+            margin-top:15px;padding:10px;border-radius:5px;
+            text-align:center;display:none;
+        }
+        .form-status.success{background:#d4edda;color:#155724;}
+        .form-status.error{background:#f8d7da;color:#721c24;}
+        .inquiries-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .inquiries-table th,
+        .inquiries-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .inquiries-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .inquiries-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .inquiry-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .inquiry-status.new { background-color: #fff3cd; color: #856404; }
+        .inquiry-status.read { background-color: #d4edda; color: #155724; }
+        .inquiry-status.replied { background-color: #d1ecf1; color: #0c5460; }
+        .products-grid {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:20px;
+        }
+        .product-card{
+            background:#fff; border-radius:10px; padding:15px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1); text-align:center;
+            transition:transform .2s;
+        }
+        .product-card:hover{transform:translateY(-5px);}
+        .product-card img{
+            max-width:100%; height:180px; object-fit:cover;
+            border-radius:8px; margin-bottom:10px;
+        }
+        .product-card h3{margin-bottom:10px;color:#8B0000;}
+        .product-card p{color:#666;margin-bottom:10px;flex-grow:1;}
+        .product-card .actions{margin-top:15px;}
+        .product-card .actions button{
+            margin:0 5px;padding:6px 12px;border:none;
+            border-radius:4px;cursor:pointer;
+        }
+        .product-card .actions .edit{background:#ffc107;color:#212529;}
+        .product-card .actions .delete{background:#dc3545;color:#fff;}
+        .product-card .actions .edit:hover{background:#e0a800;}
+        .product-card .actions .delete:hover{background:#c82333;}
+        .auth-box{
+            background:#fff;padding:20px;border-radius:8px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1);max-width:400px;
+            margin:20px auto;
+        }
+        .auth-box h3{margin-bottom:1rem;text-align:center;color:#8B0000;}
+        .auth-box input{width:100%;padding:.8rem;margin-top:.5rem;
+                       border:1px solid #ccc;border-radius:4px;}
+        .auth-box button{
+            width:100%;margin-top:1rem;padding:.8rem;
+            background:#8B0000;color:#fff;border:none;border-radius:4px;
+            cursor:pointer;
+        }
+        .auth-box button:hover{background:#a50000;}
+        .auth-switch{margin-top:1rem;text-align:center;font-size:.9rem;}
+        .auth-switch a{color:#8B0000;text-decoration:none;}
+        .auth-switch a:hover{text-decoration:underline;}
+        .user-info{text-align:right;font-size:.9rem;margin-bottom:1rem;}
+        .user-info button{
+            background:none;border:none;color:#8B0000;
+            cursor:pointer;font-size:.9rem;
+        }
+        .user-info button:hover{text-decoration:underline;}
+        @media (max-width:768px){
+            .products-grid{grid-template-columns:1fr;}
+            .inquiries-table th,
+            .inquiries-table td {
+                padding: 8px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Thakarshi Fab</h1>
+    <p>Textile Wholesale | Ahmedabad</p>
+</header>
+
+<div class="container">
+    <!-- Auth Status -->
+    <div id="authStatus" class="user-info"></div>
+
+    <!-- Auth Forms (shown when not signed in) -->
+    <div id="authForms" class="auth-box" style="display:none;">
+        <h3 id="authTitle">Sign in to continue</h3>
+        <form id="authForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" id="authSubmit">Sign In</button>
+        </form>
+        <p class="auth-switch">
+            Don’t have an account? <a id="toggleLink" href="#">Create one</a>
+        </p>
+        <div id="authMsg" style="margin-top:1rem;min-height:1.2rem;"></div>
+    </div>
+
+    <!-- Product Management Section -->
+    <section class="section" id="productSection" style="display:none;">
+        <h2>Product Management</h2>
+
+        <!-- Add Product Form -->
+        <div class="product-form">
+            <h3>Add New Product</h3>
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="prodName">Product Name *</label>
+                    <input type="text" id="prodName" name="prodName" required>
+                </div>
+                <div class="form-group">
+                    <label for="prodDesc">Description *</label>
+                    <textarea id="prodDesc" name="prodDesc" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prodImage">Product Image (JPG/PNG, max 2MB)</label>
+                    <input type="file" id="prodImage" name="prodImage" accept=".jpg,.jpeg,.png">
+                    <small>Max size 2MB</small>
+                    <div id="imagePreview" class="product-image-preview">No file chosen</div>
+                </div>
+                <button type="submit" class="submit-btn" id="submitProductBtn">Add Product</button>
+                <div class="form-status" id="formStatus"></div>
+            </form>
+        </div>
+
+        <!-- Product List -->
+        <div class="product-list">
+            <h3>Existing Products</h3>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <!-- Inquiries Section -->
+    <section class="section" id="inquiriesSection" style="display:none;">
+        <h2>Customer Inquiries</h2>
+        <div id="inquiriesGrid">
+            <p>Loading inquiries...</p>
+        </div>
+    </section>
+</div>
+
+<!-- Firebase SDKs (Auth & Firestore only - no Storage needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* --------------------------------------------------------------
+   1️⃣  Firebase configuration – REPLACE THE PLACEHOLDERS BELOW
+   -------------------------------------------------------------- */
+const firebaseConfig = {
+    apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
+    authDomain: "thakarshi-product-catalogue.firebaseapp.com",
+    projectId: "thakarshi-product-catalogue",
+    storageBucket: "thakarshi-product-catalogue.appspot.com", // Kept for config but not used
+    messagingSenderId: "149758378550",
+    appId: "1:149758378550:web:2b6def7e29932dddf34e97"
+    // measurementId: "G-YMPTV9G8FN" // optional, if you enabled Analytics
+};
+/* -------------------------------------------------------------- */
+
+/* --------------------------------------------------------------
+   2️⃣  Initialize Firebase (Auth & Firestore only)
+   -------------------------------------------------------------- */
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+// Note: The storage instance has been removed since we're no longer using Firebase Storage for image uploads. We're now leveraging Cloudinary for this functionality instead.
+/* -------------------------------------------------------------- */
+
+/* --------------------------------------------------------------
+   3️⃣  Cloudinary Configuration
+   -------------------------------------------------------------- */
+const CLOUDINARY_CLOUD_NAME = 'ubqtf5go'; // Your Cloudinary cloud name
+const CLOUDINARY_UPLOAD_PRESET = 'thakarshi_product_upload'; // Your unsigned upload preset
+// Cloudinary upload endpoint: https://api.cloudinary.com/v1_1/{cloud_name}/image/upload
+/* -------------------------------------------------------------- */
+
+/* --------------------------------------------------------------
+   4️⃣  UI element references
+   -------------------------------------------------------------- */
+const authStatusEl   = document.getElementById('authStatus');
+const authFormsEl    = document.getElementById('authForms');
+const authTitleEl    = document.getElementById('authTitle');
+const authFormEl     = document.getElementById('authForm');
+const emailInput     = document.getElementById('email');
+const passwordInput  = document.getElementById('password');
+const authSubmitBtn  = document.getElementById('authSubmit');
+const toggleLink     = document.getElementById('toggleLink');
+const authMsgEl      = document.getElementById('authMsg');
+
+const productSectionEl = document.getElementById('productSection');
+const productForm    = document.getElementById('productForm');
+const prodNameInput  = document.getElementById('prodName');
+const prodDescInput  = document.getElementById('prodDesc');
+const prodImageInput = document.getElementById('prodImage');
+const imagePreview   = document.getElementById('imagePreview');
+const submitProductBtn = document.getElementById('submitProductBtn');
+const productFormStatusEl = document.getElementById('formStatus');
+
+const productsGrid   = document.getElementById('productsGrid');
+const inquiriesGrid  = document.getElementById('inquiriesGrid');
+
+let isLoginMode = true; // toggles between Sign‑In / Sign‑Up
+let currentUser = null;
+let isAdmin = false;
+/* -------------------------------------------------------------- */
+
+/* --------------------------------------------------------------
+   5️⃣  Auth state listener – shows/hides UI based on login
+   -------------------------------------------------------------- */
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // User signed in
+        currentUser = user;
+        authStatusEl.innerHTML = `
+            Signed in as <strong>${user.email}</strong>
+            <button id="signOutBtn">Sign out</button>
+        `;
+        authFormsEl.style.display = 'none';
+        document.getElementById('signOutBtn')
+                .addEventListener('click', () => auth.signOut());
+
+        // Check if user is admin
+        checkIfAdmin(user.email).then(isAdminFlag => {
+            isAdmin = isAdminFlag;
+            if (isAdmin) {
+                // Show admin sections
+                productSectionEl.style.display = 'block';
+                document.getElementById('inquiriesSection').style.display = 'block';
+                loadProducts(); // load existing products
+                loadInquiries(); // load inquiries(); else {
+                // Not authorized: loading inquiries
+            } else {
+                // Not authorized: show error and sign out after delay
+                authStatusEl.innerHTML += '<p style="color:red;">You are not authorized to access the admin panel.</p>';
+                setTimeout(() => {
+                    auth.signOut();
+                }, 2000);
+            }
+        }).catch(err => {
+            console.error('Error checking admin status:', err);
+            authStatusEl.innerHTML += '<p style="color:red;">Error checking permissions.</p>';
+            setTimeout(() => {
+                auth.signOut();
+            }, 2000);
+        });
+
+    } else {
+        // User signed out
+        currentUser = null;
+        isAdmin = false;
+        authStatusEl.innerHTML = '';
+        authFormsEl.style.display = 'block';
+        productSectionEl.style.display = 'none';
+        document.getElementById('inquiriesSection').style.display = 'none';
+        // Reset auth form
+        authFormEl.reset();
+    }
+});
+
+/* --------------------------------------------------------------
+   6️⃣  Auth form handling (login / signup)
+   -------------------------------------------------------------- */
+authFormEl.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    authMsgEl.textContent = '';
+    authSubmitBtn.disabled = true;
+
+    if (isLoginMode) {
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(err => {
+                authMsgEl.textContent = err.message;
+                authSubmitBtn.disabled = false;
+            });
+    } else {
+        auth.createUserWithEmailAndPassword(email, password)
+            .catch(err => {
+                authMsgEl.textContent = err.message;
+                authSubmitBtn.disabled = false;
+            });
+    }
+});
+
+toggleLink.addEventListener('click', e => {
+    e.preventDefault();
+    isLoginMode = !isLoginMode;
+    authTitleEl.textContent = isLoginMode ? 'Sign in to continue' : 'Create account';
+    authSubmitBtn.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+    toggleLink.innerHTML = isLoginMode
+        ? 'Don’t have an account? <a href="#">Create one</a>'
+        : 'Already have an account? <a href="#">Sign in</a>';
+    // Re-attach click listener because we replaced innerHTML
+    toggleLink.querySelector('a').addEventListener('click', e => {
+        e.preventDefault();
+        toggleLink.click();
+    });
+    authMsgEl.textContent = '';
+});
+
+/* --------------------------------------------------------------
+   7️⃣  Helper: check if user is admin
+   -------------------------------------------------------------- */
+async function checkIfAdmin(email) {
+    if (!email) return false;
+    const docRef = db.collection('admins').doc(email);
+    const docSnap = await docRef.get();
+    return docSnap.exists;
+}
+
+/* --------------------------------------------------------------
+   8️⃣  Product form: image preview
+   -------------------------------------------------------------- */
+prodImageInput.addEventListener('change', () => {
+    const file = prodImageInput.files[0];
+    if (!file) {
+        imagePreview.textContent = 'No file chosen';
+        imagePreview.style.background = 'none';
+        imagePreview.innerHTML = '';
+        return;
+    }
+    // Validate file type and size
+    if (!file.type.match('image/(jpe?g|png)')) {
+        alert('Please upload a JPG or PNG image.');
+        prodImageInput.value = '';
+        imagePreview.textContent = 'Invalid file type';
+        return;
+    }
+    if (file.size > 2 * 1024 * 1024) { // 2MB
+        alert('File size must be under 2 MB.');
+        prodImageInput.value = '';
+        imagePreview.textContent = 'File too large';
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+    };
+    reader.readAsDataURL(file);
+});
+
+/* --------------------------------------------------------------
+   9️⃣  Product form submission – upload image to Cloudinary, save to Firestore
+   -------------------------------------------------------------- */
+productForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    submitProductBtn.disabled = true;
+    submitProductBtn.textContent = 'Adding...';
+    productFormStatusEl.style.display = 'none';
+
+    const name = prodNameInput.value.trim();
+    const desc = prodDescInput.value.trim();
+    const file = prodImageInput.files[0];
+
+    if (!name || !desc) {
+        showFormError('Please fill in all required fields.');
+        return;
+    }
+    if (!file) {
+        showFormError('Please select an image.');
+        return;
+    }
+
+    try {
+        // 1) Upload image to Cloudinary (UNSIGNED - no auth needed)
+        const uploadPreset = CLOUDINARY_UPLOAD_PRESET;
+        const cloudName = CLOUDINARY_CLOUD_NAME;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', uploadPreset);
+
+        const uploadResponse = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
+
+        const uploadResult = await uploadResponse.json();
+        if (!uploadResponse.ok) throw new Error(uploadResult.error?.message || 'Upload failed');
+
+        const imageUrl = uploadResult.secure_url; // This is the URL we'll store
+
+        // 2) Save product document to Firestore
+        await db.collection('products').add({
+            name,
+            description: desc,
+            imageUrl: imageUrl, // ← Now using Cloudinary URL
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 3) Reset UI and show success
+        showFormSuccess('Product added successfully!');
+        productForm.reset();
+        imagePreview.innerHTML = 'No file chosen';
+        loadProducts(); // Refresh product list
+    } catch (err) {
+        console.error('Error adding product:', err);
+        showFormError('Error adding product: ' + err.message);
+    } finally {
+        submitProductBtn.disabled = false;
+        submitProductBtn.textContent = 'Add Product';
+    }
+});
+
+function showFormError(msg) {
+    productFormStatusEl.textContent = msg;
+    productFormStatusEl.className = 'form-status error';
+    productFormStatusEl.style.display = 'block';
+}
+function showFormSuccess(msg) {
+    productFormStatusEl.textContent = msg;
+    productFormStatusEl.className = 'form-status success';
+    productFormStatusEl.style.display = 'block';
+}
+
+/* --------------------------------------------------------------
+   🔟  Load and render products from Firestore (real-time)
+   -------------------------------------------------------------- */
+function loadProducts() {
+    // Clear existing
+    productsGrid.innerHTML = '<p>Loading products...</p>';
+
+    const productsRef = db.collection('products').orderBy('createdAt', 'desc');
+    const unsubscribe = productsRef.onSnapshot(snapshot => {
+        productsGrid.innerHTML = ''; // clear loading message
+        if (snapshot.empty) {
+            productsGrid.innerHTML = '<p>No products yet.</p>';
+            return;
+        }
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const id = doc.id;
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${data.imageUrl}" alt="${data.name}">
+                <h3>${data.name}</h3>
+                <p>${data.description}</p>
+                <div class="actions">
+                    <button class="edit" data-id="${id}">Edit</button>
+                    <button class="delete" data-id="${id}">Delete</button>
+                </div>
+            `;
+            productsGrid.appendChild(card);
+
+            // Attach event listeners for edit/delete (optional for now)
+            // For simplicity, we'll just show alert that functionality is coming.
+            card.querySelector('.edit').addEventListener('click', e => {
+                e.stopPropagation();
+                alert('Edit functionality coming soon.');
+            });
+            card.querySelector('.delete').addEventListener('click', async e => {
+                e.stopPropagation();
+                if (!confirm('Delete this product?')) return;
+                try {
+                    // When using Cloudinary, we don't need to delete from storage explicitly
+                    // as we're not storing anything in Firebase Storage
+                    // The image remains in Cloudinary (you can set up auto-cleanup policies there if needed)
+
+                    // Delete Firestore doc
+                    await db.collection('products').doc(id).delete();
+                } catch (err) {
+                    console.error('Error deleting product:', err);
+                    alert('Could not delete product: ' + err.message);
+                }
+            });
+        });
+    });
+
+    // We could return unsubscribe to detach later, but for simplicity ignore.
+}
+
+/* --------------------------------------------------------------
+   1️⃣1️⃣  Load and render inquiries from Firestore (real-time)
+   -------------------------------------------------------------- */
+function loadInquiries() {
+    inquiriesGrid.innerHTML = '<p>Loading inquiries...</p>';
+
+    const inquiriesRef = db.collection('inquiries').orderBy('timestamp', 'desc');
+    const unsubscribe = inquiriesRef.onSnapshot(snapshot => {
+        if (snapshot.empty) {
+            inquiriesGrid.innerHTML = '<p>No inquiries yet.</p>';
+            return;
+        }
+
+        // Build HTML table
+        let tableHTML = `
+            <table class="inquiries-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>City</th>
+                        <th>Selected Products</th>
+                        <th>Message</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const id = doc.id;
+
+            let dateStr = 'Unknown';
+            if (data.timestamp) {
+                const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+                dateStr = date.toLocaleString();
+            }
+
+            let productsStr = '';
+            if (data.selectedProducts && Array.isArray(data.selectedProducts)) {
+                productsStr = data.selectedProducts.map(p => p.name || p).join(', ');
+            } else {
+                productsStr = 'None';
+            }
+
+            const message = data.message || '';
+            const displayMessage = message.length > 50 ? message.substring(0, 50) + '...' : message;
+
+            tableHTML += `
+                <tr>
+                    <td>${data.name || ''}</td>
+                    <td>${data.email || ''}</td>
+                    <td>${data.phone || ''}</td>
+                    <td>${data.city || ''}</td>
+                    <td>${productsStr}</td>
+                    <td title="${message}">${displayMessage}</td>
+                    <td>${dateStr}</td>
+                    <td><span class="inquiry-status">New</span></td>
+                </tr>
+            `;
+        });
+
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+
+        inquiriesGrid.innerHTML = tableHTML;
+    });
+
+    // We could return unsubscribe to detach later, but for simplicity ignore.
+}
+
+/* --------------------------------------------------------------
+   1️⃣2️⃣  Initial render (products and inquiries) – will run after auth state resolves
+   -------------------------------------------------------------- */
+// loadProducts() and loadInquiries() are called inside auth state listener when admin verified.
+</script>
+</body>
+</html>

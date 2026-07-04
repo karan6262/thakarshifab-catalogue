@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------
+    //  INQUIRIES – any signed‑in user can read/write
+    // -------------------------------------------------
+    match /inquiries/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // -------------------------------------------------
+    //  PRODUCTS – public read, admin write
+    // -------------------------------------------------
+    match /products/{productId} {
+      // Anyone (even unsigned) can read products – needed for the public site
+      allow get, list: if true;
+      // Only users whose e‑mail appears in the admins collection can create/update/delete
+      allow create, update, delete: if request.auth != null
+                                   && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    // -------------------------------------------------
+    //  ADMINS – readable/writable by any signed‑in user
+    //            (you’ll add the first admin manually)
+    // -------------------------------------------------
+    match /admins/{adminId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

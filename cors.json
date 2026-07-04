@@ -1,0 +1,1 @@
+[{"origin": ["https://thakarshi-product-catalogue.web.app"], "method": ["GET", "HEAD", "PUT", "POST", "DELETE"], "responseHeader": ["Content-Type", "Content-Length", "x-goog-meta-*", "Authorization"], "maxAgeSeconds": 3600}]
