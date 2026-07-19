@@ -762,6 +762,7 @@ const submitBtn        = document.getElementById('submitBtn');
 const formStatusEl     = document.getElementById('formStatus');
 
 let isLoginMode = true; // toggles between Sign‑In / Sign‑Up
+let productsUnsubscribe = null; // Firestore unsubscribe function for products
 
 /* --------------------------------------------------------------
    3️⃣  Auth state listener – shows/hides UI based on login
@@ -790,7 +791,7 @@ auth.onAuthStateChanged(user => {
         selectedItemsEl.style.display = 'none';
         // Reset form
         inquiryForm.reset();
-        selectedProductsInput.value = '';
+        selectedProductsInput.value = '[]';
         selectedListEl.innerHTML = '';
     }
 });
@@ -875,7 +876,7 @@ function loadProductsFromFirestore() {
     `;
 
     const productsRef = db.collection('products').orderBy('createdAt', 'desc');
-    const unsubscribe = productsRef.onSnapshot(snapshot => {
+    productsUnsubscribe = productsRef.onSnapshot(snapshot => {
         const productsGrid = document.getElementById('productsGrid');
         productsGrid.innerHTML = ''; // clear loading message
         if (snapshot.empty) {
@@ -994,9 +995,10 @@ function loadProductsFromFirestore() {
                 </div>
                 <div id="productsGrid" class="products">Loading products...</div>
             `;
-            // Re-attached listeners will be handled by the onSnapshot callback above
             // We just need to trigger a refresh by detaching and re-attaching the listener
-            unsubscribe();
+            if (productsUnsubscribe) {
+                productsUnsubscribe();
+            }
             loadProductsFromFirestore(); // Re-call to set up new listener
         });
     }
@@ -1038,7 +1040,7 @@ function updateSelectedUI() {
     selectedList.innerHTML = '';
     if (selectedItems.size === 0) {
         selectedItemsEl.style.display = 'none';
-        selectedProductsInput.value = '';
+        selectedProductsInput.value = '[]';
         return;
     }
     selectedItemsEl.style.display = 'block';
