@@ -479,28 +479,46 @@
 
         .modal-content {
             background-color: var(--white);
-            margin: 15% auto;
-            padding: 2rem;
+            margin: 0 auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 2.5rem;
             border-radius: var(--radius-lg);
             width: 90%;
-            max-width: 500px;
-            position: relative;
+            max-width: 420px;
             box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+            to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .close-btn {
             color: var(--gray-600);
-            float: right;
-            font-size: 1.5rem;
-            font-weight: bold;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.75rem;
+            font-weight: 600;
             cursor: pointer;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-pill);
+            background-color: var(--gray-100);
+            transition: background-color var(--transition), color var(--transition);
         }
 
         .close-btn:hover,
         .close-btn:focus {
-            color: var(--black);
+            color: var(--white);
+            background-color: var(--primary);
             text-decoration: none;
-            cursor: pointer;
         }
 
         .form-group {
