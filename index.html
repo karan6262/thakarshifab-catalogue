@@ -464,21 +464,43 @@
             font-size: 0.875rem;
         }
 
-        /* ---------- Contact Form ---------- */
-        .contact-form {
-            background: var(--white);
-            padding: 2.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            margin-top: 2rem;
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
 
-        .contact-form h2 {
-            margin-bottom: 2rem;
-            color: var(--primary);
-            text-align: center;
-            font-size: 1.75rem;
-            font-weight: 600;
+        .modal-content {
+            background-color: var(--white);
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .close-btn {
+            color: var(--gray-600);
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--black);
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .form-group {
@@ -563,111 +585,6 @@
             background: rgba(248, 215, 218, 0.5);
             color: #721c24;
             border: 1px solid #f5c6cb;
-        }
-
-        /* ---------- Auth UI ---------- */
-        .auth-box {
-            background: var(--white);
-            padding: 2.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            max-width: 420px;
-            margin: 2rem auto;
-        }
-
-        .auth-box h3 {
-            margin-bottom: 1.75rem;
-            text-align: center;
-            color: var(--primary);
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .auth-box input {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            margin-top: 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            transition: border-color var(--transition), box-shadow var(--transition);
-        }
-
-        .auth-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-        }
-
-        .auth-box button {
-            width: 100%;
-            margin-top: 1.75rem;
-            padding: 1rem;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            transition: background var(--transition);
-        }
-
-        .auth-box button:hover {
-            background: var(--primary-light);
-        }
-
-        .auth-switch {
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.95rem;
-            color: var(--gray-600);
-        }
-
-        .auth-switch a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .auth-switch a:hover {
-            text-decoration: underline;
-        }
-
-        .user-info {
-            text-align: right;
-            font-size: 0.95rem;
-            margin-bottom: 1.75rem;
-            color: var(--gray-600);
-        }
-
-        .user-info button {
-            background: none;
-            border: none;
-            color: var(--primary);
-            cursor: pointer;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            transition: background 0.2s;
-        }
-
-        .user-info button:hover {
-            background: rgba(139, 0, 0, 0.1);
-            text-decoration: underline;
-        }
-
-        /* Loading States */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-600);
-            font-style: italic;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-500);
         }
 
         /* Newsletter Section */
@@ -777,32 +694,6 @@
             .product-card img {
                 height: 200px;
             }
-
-            .contact-form {
-                padding: 2rem;
-            }
-
-            .auth-box {
-                margin: 1.5rem auto;
-                padding: 2rem;
-            }
-
-            .newsletter {
-                padding: 3rem 1rem;
-            }
-
-            .newsletter h2 {
-                font-size: 1.75rem;
-            }
-
-            .newsletter-form {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .newsletter-form input {
-                min-width: 100%;
-            }
         }
 
         @media (max-width: 480px) {
@@ -832,13 +723,14 @@
 <header>
     <h1>Thakarshi Fab</h>
     <p>Textile Wholesale | Ahmedabad</p>
+    <button id="openSignInModal" class="btn-primary">Sign In</button>
 </header>
 
 <div class="container">
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Discover Premium Fabrics</h1>
+            <h1>Discover Premium Fabrics</h>
             <p>Explore our exquisite collection of textiles crafted for quality and style.</p>
             <a href="#productsSection" class="btn-primary">Shop Now</a>
         </div>
@@ -846,20 +738,6 @@
 
     <!-- ---------- AUTH STATUS ---------- -->
     <div id="authStatus" class="user-info"></div>
-
-    <!-- ---------- AUTH FORMS (shown when not signed in) ---------- -->
-    <div id="authForms" class="auth-box" style="display:none;">
-        <h3 id="authTitle">Sign in to continue</h3>
-        <form id="authForm">
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit" id="authSubmit">Sign In</button>
-        </form>
-        <p class="auth-switch">
-            Don’t have an account? <a id="toggleLink" href="#">Create one</a>
-        </p>
-        <div id="authMsg" style="margin-top:1rem;min-height:1.2rem;"></div>
-    </div>
 
     <!-- ---------- PRODUCT SELECTION ---------- -->
     <section id="productsSection">
@@ -900,36 +778,7 @@
         <h3>Selected Items for Inquiry</h3>
         <ul id="selectedList"></ul>
     </div>
-
-    <!-- ---------- CONTACT / INQUIRY FORM ---------- -->
-    <section class="contact-form" id="contactFormSection" style="display:none;">
-        <h2>Send Inquiry</h2>
-        <form id="inquiryForm">
-            <input type="hidden" id="selectedProducts" name="selectedProducts" value="">
-            <div class="form-group">
-                <label for="name">Full Name *</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address *</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone">
-            </div>
-            <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" id="city" name="city">
-            </div>
-            <div class="form-group">
-                <label for="message">Additional Message / Requirements</label>
-                <textarea id="message" name="message"></textarea>
-            </div>
-            <button type="submit" class="submit-btn" id="submitBtn">Send Inquiry</button>
-            <div class="form-status" id="formStatus"></div>
-        </form>
-    </section>
+    <button id="openCartModal" class="btn-primary" style="display:none;">View Cart & Send Inquiry</button>
 
     <!-- Newsletter Section -->
     <section class="newsletter">
@@ -937,9 +786,59 @@
         <p>Subscribe to our newsletter for latest arrivals, exclusive offers, and textile trends.</p>
         <form class="newsletter-form" id="newsletterForm">
             <input type="email" id="newsletterEmail" placeholder="Enter your email" required>
-            <button type="submit">Subscribe</button>
+            <button type="subscribe">Subscribe</button>
         </form>
     </section>
+</div>
+
+<!-- Sign In Modal -->
+<div id="signInModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeSignInModal">&times;</span>
+        <h2>Sign In</h2>
+        <form id="modalAuthForm">
+            <input type="email" id="modalEmail" placeholder="Email" required>
+            <input type="password" id="modalPassword" placeholder="Password" required>
+            <button type="submit" class="submit-btn" id="modalAuthSubmit">Sign In</button>
+        </form>
+        <p class="auth-switch" id="modalAuthSwitch">
+            Don’t have an account? <a id="modalToggleLink" href="#">Create one</a>
+        </p>
+        <div id="modalAuthMsg" style="margin-top:1rem;min-height:1.2rem;"></div>
+    </div>
+</div>
+
+<!-- Cart / Inquiry Modal -->
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeCartModal">&times;</span>
+        <h2>Send Inquiry</h2>
+        <form id="modalInquiryForm">
+            <input type="hidden" id="modalSelectedProducts" name="selectedProducts" value="">
+            <div class="form-group">
+                <label for="modalName">Full Name *</label>
+                <input type="text" id="modalName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="modalEmail">Email Address *</label>
+                <input type="email" id="modalEmail2" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="modalPhone">Phone Number</label>
+                <input type="tel" id="modalPhone" name="phone">
+            </div>
+            <div class="form-group">
+                <label for="modalCity">City</label>
+                <input type="text" id="modalCity" name="city">
+            </div>
+            <div class="form-group">
+                <label for="modalMessage">Additional Message / Requirements</label>
+                <textarea id="modalMessage" name="message"></textarea>
+            </div>
+            <button type="submit" class="submit-btn" id="modalSubmitBtn">Send Inquiry</button>
+            <div class="form-status" id="modalFormStatus"></div>
+        </form>
+    </div>
 </div>
 
 <!-- Firebase SDKs (Optional: add measurementId if you have Google Analytics) -->
@@ -971,28 +870,39 @@ const db     = firebase.firestore();
    2️⃣  UI helpers
    -------------------------------------------------------------- */
 const authStatusEl   = document.getElementById('authStatus');
-const authFormsEl    = document.getElementById('authForms');
-const authTitleEl    = document.getElementById('authTitle');
-const authFormEl     = document.getElementById('authForm');
-const emailInput     = document.getElementById('email');
-const passwordInput  = document.getElementById('password');
-const authSubmitBtn  = document.getElementById('authSubmit');
-const toggleLink     = document.getElementById('toggleLink');
-const authMsgEl      = document.getElementById('authMsg');
-
 const productsSection   = document.getElementById('productsSection');
 const selectedItemsEl   = document.getElementById('selectedItems');
 const selectedListEl    = document.getElementById('selectedList');
 const selectedProductsInput = document.getElementById('selectedProducts');
-const contactFormSection  = document.getElementById('contactFormSection');
-const inquiryForm      = document.getElementById('inquiryForm');
-const submitBtn        = document.getElementById('submitBtn');
-const formStatusEl     = document.getElementById('formStatus');
 const newsletterForm   = document.getElementById('newsletterForm');
 const newsletterEmail  = document.getElementById('newsletterEmail');
 
+// Modals
+const signInModal = document.getElementById('signInModal');
+const cartModal = document.getElementById('cartModal');
+const openSignInModalBtn = document.getElementById('openSignInModal');
+const openCartModalBtn = document.getElementById('openCartModal');
+const closeSignInModal = document.getElementById('closeSignInModal');
+const closeCartModal = document.getElementById('closeCartModal');
+const modalAuthForm = document.getElementById('modalAuthForm');
+const modalAuthSubmit = document.getElementById('modalAuthSubmit');
+const modalToggleLink = document.getElementById('modalToggleLink');
+const modalEmail = document.getElementById('modalEmail');
+const modalPassword = document.getElementById('modalPassword');
+const modalAuthMsg = document.getElementById('modalAuthMsg');
+const modalInquiryForm = document.getElementById('modalInquiryForm');
+const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+const modalFormStatus = document.getElementById('modalFormStatus');
+const modalName = document.getElementById('modalName');
+const modalEmail2 = document.getElementById('modalEmail2');
+const modalPhone = document.getElementById('modalPhone');
+const modalCity = document.getElementById('modalCity');
+const modalMessage = document.getElementById('modalMessage');
+const modalSelectedProducts = document.getElementById('modalSelectedProducts');
+
 let isLoginMode = true; // toggles between Sign‑In / Sign‑Up
 let productsUnsubscribe = null; // Firestore unsubscribe function for products
+const selectedItems = new Set(); // stores product IDs (Firestore doc IDs)
 
 /* --------------------------------------------------------------
    3️⃣  Auth state listener – shows/hides UI based on login
@@ -1004,73 +914,97 @@ auth.onAuthStateChanged(user => {
             Signed in as <strong>${user.email}</strong>
             <button id="signOutBtn">Sign out</button>
         `;
-        authFormsEl.style.display = 'none';
-        // Show inquiry form when signed in
-        contactFormSection.style.display = 'block';
+        // Show cart button
+        openCartModalBtn.style.display = 'inline-block';
         // Load products from Firestore (for selection UI)
         loadProductsFromFirestore();
+        // Close sign-in modal if open
+        signInModal.style.display = 'none';
         // Wire sign‑out
         document.getElementById('signOutBtn')
                 .addEventListener('click', () => auth.signOut());
     } else {
         // User signed out
         authStatusEl.innerHTML = '';
-        authFormsEl.style.display = 'block';
-        // Hide inquiry form when signed out
-        contactFormSection.style.display = 'none';
-        selectedItemsEl.style.display = 'none';
-        // Reset form
-        inquiryForm.reset();
-        selectedProductsInput.value = '[]';
-        selectedListEl.innerHTML = '';
+        // Hide cart button
+        openCartModalBtn.style.display = 'none';
+        // Clear selection
+        selectedItems.clear();
+        updateSelectedUI();
     }
 });
 
 /* --------------------------------------------------------------
-   4️⃣  Auth form handling (login / signup)
+   4️⃣  Auth form handling (modal)
    -------------------------------------------------------------- */
-authFormEl.addEventListener('submit', e => {
+modalAuthForm.addEventListener('submit', e => {
     e.preventDefault();
-    const email    = emailInput.value.trim();
-    const password = passwordInput.value;
-    authMsgEl.textContent = '';
-    authSubmitBtn.disabled = true;
+    const email    = modalEmail.value.trim();
+    const password = modalPassword.value.trim();
+    modalAuthMsg.textContent = '';
+    modalAuthSubmit.disabled = true;
 
     if (isLoginMode) {
         auth.signInWithEmailAndPassword(email, password)
             .catch(err => {
-                authMsgEl.textContent = err.message;
-                authSubmitBtn.disabled = false;
+                modalAuthMsg.textContent = err.message;
+                modalAuthSubmit.disabled = false;
             });
     } else {
         auth.createUserWithEmailAndPassword(email, password)
             .catch(err => {
-                authMsgEl.textContent = err.message;
-                authSubmitBtn.disabled = false;
+                modalAuthMsg.textContent = err.message;
+                modalAuthSubmit.disabled = false;
             });
     }
 });
 
-toggleLink.addEventListener('click', e => {
+modalToggleLink.addEventListener('click', e => {
     e.preventDefault();
     isLoginMode = !isLoginMode;
-    authTitleEl.textContent = isLoginMode ? 'Sign in to continue' : 'Create account';
-    authSubmitBtn.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
-    toggleLink.innerHTML = isLoginMode
+    // Update modalAuthForm submit button text and toggle link
+    modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+    modalToggleLink.innerHTML = isLoginMode
         ? 'Don’t have an account? <a href="#">Create one</a>'
         : 'Already have an account? <a href="#">Sign in</a>';
     // Re-attach click listener because we replaced innerHTML
-    toggleLink.querySelector('a').addEventListener('click', e => {
+    modalToggleLink.querySelector('a').addEventListener('click', e => {
         e.preventDefault();
-        toggleLink.click();
+        modalToggleLink.click();
     });
-    authMsgEl.textContent = '';
+    modalAuthMsg.textContent = '';
 });
 
 /* --------------------------------------------------------------
-   5️⃣  Load products from Firestore (real-time) - accessible to all
+   5️⃣  Modal open/close handlers
    -------------------------------------------------------------- */
-// Load products from Firestore (real-time) - accessible to all
+openSignInModalBtn.onclick = () => {
+    signInModal.style.display = 'block';
+};
+openCartModalBtn.onclick = () => {
+    // Sync selected products to modal hidden input
+    modalSelectedProducts.value = selectedProductsInput.value;
+    cartModal.style.display = 'block';
+};
+closeSignInModal.onclick = () => {
+    signInModal.style.display = 'none';
+};
+closeCartModal.onclick = () => {
+    cartModal.style.display = 'none';
+};
+// Close when clicking outside modal content
+window.onclick = e => {
+    if (e.target === signInModal) {
+        signInModal.style.display = 'none';
+    }
+    if (e.target === cartModal) {
+        cartModal.style.display = 'none';
+    }
+};
+
+/* --------------------------------------------------------------
+   6️⃣  Load products from Firestore (real-time) - accessible to all
+   -------------------------------------------------------------- */
 function loadProductsFromFirestore() {
     // Clear existing and add filters UI
     productsSection.innerHTML = `
@@ -1257,10 +1191,8 @@ function loadProductsFromFirestore() {
 }
 
 /* --------------------------------------------------------------
-   6️⃣  Selection logic (same as before)
+   7️⃣  Selection logic (same as before)
    -------------------------------------------------------------- */
-const selectedItems = new Set(); // stores product IDs (Firestore doc IDs)
-
 function toggleSelection(e) {
     const id = e.target.dataset.id; // Firestore doc ID
     if (selectedItems.has(id)) {
@@ -1299,13 +1231,11 @@ function updateSelectedUI() {
     if (selectedItems.size === 0) {
         selectedItemsEl.style.display = 'none';
         selectedProductsInput.value = '[]';
+        // Hide cart button if no items and user signed in? we keep based on auth state
         return;
     }
     selectedItemsEl.style.display = 'block';
     // We need to fetch product names for the selected IDs.
-    // For simplicity, we'll query Firestore for the selected docs.
-    // But to avoid multiple queries, we could store names in selectedItems as well.
-    // Let's do a simple approach: we'll query each selected doc (usually few).
     const promises = Array.from(selectedItems).map(id =>
         db.collection('products').doc(id).get()
     );
@@ -1328,6 +1258,10 @@ function updateSelectedUI() {
                 return { id: id, name: name };
             })
         );
+        // Show cart button if user signed in
+        if (auth.currentUser) {
+            openCartModalBtn.style.display = 'inline-block';
+        }
     }).catch(err => {
         console.error('Error fetching selected product names:', err);
         // Fallback: just show IDs
@@ -1335,76 +1269,79 @@ function updateSelectedUI() {
         selectedProductsInput.value = JSON.stringify(
             Array.from(selectedItems).map(id => ({ id: id, name: '' }))
         );
+        if (auth.currentUser) {
+            openCartModalBtn.style.display = 'inline-block';
+        }
     });
 }
 
 /* --------------------------------------------------------------
-   7️⃣  Form submission – write to Firestore under the UID
+   8️⃣  Modal Inquiry Form submission – write to Firestore under the UID
    -------------------------------------------------------------- */
-inquiryForm.addEventListener('submit', async e => {
+modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
-    formStatusEl.style.display = 'none';
+    modalSubmitBtn.disabled = true;
+    modalSubmitBtn.textContent = 'Sending…';
+    modalFormStatus.style.display = 'none';
 
     const user = auth.currentUser;
     if (!user) {
-        showFormError('You must be signed in to send an inquiry.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Inquiry';
+        showModalFormError('You must be signed in to send an inquiry.');
+        modalSubmitBtn.disabled = false;
+        modalSubmitBtn.textContent = 'Send Inquiry';
         return;
     }
 
     const formData = {
         uid:          user.uid,
-        name:         inquiryForm.name.value.trim(),
-        email:        inquiryForm.email.value.trim(),
-        phone:        inquiryForm.phone.value.trim(),
-        city:         inquiryForm.city.value.trim(),
-        message:      inquiryForm.message.value.trim(),
-        selectedProducts: JSON.parse(selectedProductsInput.value) || [],
+        name:         modalName.value.trim(),
+        email:        modalEmail2.value.trim(),
+        phone:        modalPhone.value.trim(),
+        city:         modalCity.value.trim(),
+        message:      modalMessage.value.trim(),
+        selectedProducts: JSON.parse(modalSelectedProducts.value) || [],
         timestamp:    firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    console.log('Submitting form data:', formData);
-
     // Basic validation
     if (!formData.name || !formData.email) {
-        showFormError('Please fill in the required fields (Name, Email).');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Inquiry';
+        showModalFormError('Please fill in the required fields (Name, Email).');
+        modalSubmitBtn.disabled = false;
+        modalSubmitBtn.textContent = 'Send Inquiry';
         return;
     }
 
     try {
         const docRef = await db.collection('inquiries').add(formData);
         console.log('Document written with ID:', docRef.id);
-        showFormSuccess('Inquiry sent successfully! We will contact you soon.');
-        inquiryForm.reset();
+        showModalFormSuccess('Inquiry sent successfully! We will contact you soon.');
+        modalInquiryForm.reset();
         selectedItems.clear();
         updateSelectedUI();
+        // Close modal after success
+        cartModal.style.display = 'none';
     } catch (err) {
         console.error('Firestore error:', err);
-        showFormError('Firestore error: ' + err.message);
+        showModalFormError('Firestore error: ' + err.message);
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Inquiry';
+        modalSubmitBtn.disabled = false;
+        modalSubmitBtn.textContent = 'Send Inquiry';
     }
 });
 
-function showFormError(msg) {
-    formStatusEl.textContent = msg;
-    formStatusEl.className = 'form-status error';
-    formStatusEl.style.display = 'block';
+function showModalFormError(msg) {
+    modalFormStatus.textContent = msg;
+    modalFormStatus.className = 'form-status error';
+    modalFormStatus.style.display = 'block';
 }
-function showFormSuccess(msg) {
-    formStatusEl.textContent = msg;
-    formStatusEl.className = 'form-status success';
-    formStatusEl.style.display = 'block';
+function showModalFormSuccess(msg) {
+    modalFormStatus.textContent = msg;
+    modalFormStatus.className = 'form-status success';
+    modalFormStatus.style.display = 'block';
 }
 
 /* --------------------------------------------------------------
-   8️⃣  Newsletter subscription (simple mock)
+   9️⃣  Newsletter subscription (simple mock)
    -------------------------------------------------------------- */
 newsletterForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -1419,7 +1356,7 @@ newsletterForm.addEventListener('submit', e => {
 });
 
 /* --------------------------------------------------------------
-   9️⃣  Initial render (products) – load on page load for everyone
+   🔟  Initial render (products) – load on page load for everyone
    -------------------------------------------------------------- */
 // Load products immediately so catalog is visible without login
 loadProductsFromFirestore();
