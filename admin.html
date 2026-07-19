@@ -86,6 +86,7 @@
             padding: 0 1.5rem;
         }
 
+        /* Header */
         header {
             background: var(--primary);
             color: var(--white);
@@ -176,6 +177,8 @@
             justify-content: center;
             color: var(--gray-500);
             transition: border-color var(--transition), background-color var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
         .product-image-preview:hover {
@@ -188,6 +191,25 @@
             max-height: 100%;
             border-radius: var(--radius);
             display: block;
+        }
+
+        .product-image-preview::after {
+            content: attr(data-placeholder);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: var(--white);
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .product-image-preview:hover::after {
+            opacity: 1;
         }
 
         .submit-btn {
@@ -302,6 +324,7 @@
             height: 100%;
             transition: transform var(--transition), box-shadow var(--transition);
             border: 1px solid var(--gray-200);
+            position: relative;
         }
 
         .product-card:hover {
@@ -337,6 +360,7 @@
             border-top: 1px solid var(--gray-200);
             display: flex;
             gap: 0.75rem;
+            justify-content: flex-end;
         }
 
         .product-card .actions button {
@@ -395,6 +419,7 @@
             font-weight: 500;
         }
 
+        /* Auth styles */
         .auth-box {
             background: var(--white);
             padding: 2.5rem;
@@ -560,9 +585,12 @@
                     <label for="prodImage">Product Image (JPG/PNG, max 2MB)</label>
                     <input type="file" id="prodImage" name="prodImage" accept=".jpg,.jpeg,.png">
                     <small>Max size 2MB</small>
-                    <div id="imagePreview" class="product-image-preview">No file chosen</div>
+                    <div id="imagePreview" class="product-image-preview" data-placeholder="No file chosen">No file chosen</div>
                 </div>
-                <button type="submit" class="submit-btn" id="submitProductBtn">Add Product</button>
+                <div class="form-group d-flex justify-content-between">
+                    <button type="submit" class="submit-btn" id="submitProductBtn">Add Product</button>
+                    <button type="reset" class="submit-btn" id="resetProductBtn" style="background:var(--gray-500);color:var(--white);margin-left:1rem;">Reset</button>
+                </div>
                 <div class="form-status" id="formStatus"></div>
             </form>
         </div>
@@ -610,7 +638,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 // Note: The storage instance has been removed since we're no longer using Firebase Storage for image uploads. We're now leveraging Cloudinary for this functionality instead.
-/* -------------------------------------------------------------- */
 
 /* --------------------------------------------------------------
    3️⃣  Cloudinary Configuration
@@ -618,7 +645,6 @@ const db = firebase.firestore();
 const CLOUDINARY_CLOUD_NAME = 'ubqtf5go'; // Your Cloudinary cloud name
 const CLOUDINARY_UPLOAD_PRESET = 'thakarshi_product_upload'; // Your unsigned upload preset
 // Cloudinary upload endpoint: https://api.cloudinary.com/v1_1/{cloud_name}/image/upload
-/* -------------------------------------------------------------- */
 
 /* --------------------------------------------------------------
    4️⃣  UI element references
@@ -642,6 +668,7 @@ const prodPriceInput = document.getElementById('prodPrice');
 const prodImageInput = document.getElementById('prodImage');
 const imagePreview   = document.getElementById('imagePreview');
 const submitProductBtn = document.getElementById('submitProductBtn');
+const resetProductBtn = document.getElementById('resetProductBtn');
 const productFormStatusEl = document.getElementById('formStatus');
 
 const productsGrid   = document.getElementById('productsGrid');
@@ -650,7 +677,6 @@ const inquiriesGrid  = document.getElementById('inquiriesGrid');
 let isLoginMode = true; // toggles between Sign‑In / Sign‑Up
 let currentUser = null;
 let isAdmin = false;
-/* -------------------------------------------------------------- */
 
 /* --------------------------------------------------------------
    5️⃣  Auth state listener – shows/hides UI based on login
@@ -675,8 +701,7 @@ auth.onAuthStateChanged(user => {
                 productSectionEl.style.display = 'block';
                 document.getElementById('inquiriesSection').style.display = 'block';
                 loadProducts(); // load existing products
-                loadInquiries(); // load inquiries(); else {
-                // Not authorized: loading inquiries
+                loadInquiries(); // load inquiries
             } else {
                 // Not authorized: show error and sign out after delay
                 authStatusEl.innerHTML += '<p style="color:red;">You are not authorized to access the admin panel.</p>';
@@ -765,6 +790,7 @@ prodImageInput.addEventListener('change', () => {
         imagePreview.textContent = 'No file chosen';
         imagePreview.style.background = 'none';
         imagePreview.innerHTML = '';
+        imagePreview.dataset.placeholder = 'No file chosen';
         return;
     }
     // Validate file type and size
@@ -772,17 +798,22 @@ prodImageInput.addEventListener('change', () => {
         alert('Please upload a JPG or PNG image.');
         prodImageInput.value = '';
         imagePreview.textContent = 'Invalid file type';
+        imagePreview.innerHTML = '';
+        imagePreview.dataset.placeholder = 'Invalid file type';
         return;
     }
     if (file.size > 2 * 1024 * 1024) { // 2MB
         alert('File size must be under 2 MB.');
         prodImageInput.value = '';
         imagePreview.textContent = 'File too large';
+        imagePreview.innerHTML = '';
+        imagePreview.dataset.placeholder = 'File too large';
         return;
     }
     const reader = new FileReader();
     reader.onload = e => {
         imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        imagePreview.dataset.placeholder = ''; // Clear placeholder when image loaded
     };
     reader.readAsDataURL(file);
 });
@@ -795,6 +826,7 @@ productForm.addEventListener('submit', async e => {
     submitProductBtn.disabled = true;
     submitProductBtn.textContent = 'Adding...';
     productFormStatusEl.style.display = 'none';
+    resetProductBtn.disabled = true;
 
     const name = prodNameInput.value.trim();
     const desc = prodDescInput.value.trim();
@@ -855,6 +887,7 @@ productForm.addEventListener('submit', async e => {
         showFormSuccess('Product added successfully!');
         productForm.reset();
         imagePreview.innerHTML = 'No file chosen';
+        imagePreview.dataset.placeholder = 'No file chosen';
         loadProducts(); // Refresh product list
     } catch (err) {
         console.error('Error adding product:', err);
@@ -862,6 +895,7 @@ productForm.addEventListener('submit', async e => {
     } finally {
         submitProductBtn.disabled = false;
         submitProductBtn.textContent = 'Add Product';
+        resetProductBtn.disabled = false;
     }
 });
 
@@ -895,8 +929,11 @@ function loadProducts() {
             const id = doc.id;
             const card = document.createElement('div');
             card.className = 'product-card';
+            const isNew = data.createdAt &&
+                         (Date.now() - data.createdAt.toDate?.() || Date.now() - data.createdAt._seconds*1000) < 7*24*60*60*1000;
             card.innerHTML = `
                 <img src="${data.imageUrl}" alt="${data.name}">
+                ${isNew ? '<div class="product-badge new">New</div>' : ''}
                 <h3>${data.name}</h3>
                 <div class="product-tags">
                     <span class="category-tag">${data.category || 'Other'}</span>
@@ -911,7 +948,6 @@ function loadProducts() {
             productsGrid.appendChild(card);
 
             // Attach event listeners for edit/delete (optional for now)
-            // For simplicity, we'll just show alert that functionality is coming.
             card.querySelector('.edit').addEventListener('click', e => {
                 e.stopPropagation();
                 alert('Edit functionality coming soon.');
