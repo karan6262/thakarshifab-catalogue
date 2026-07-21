@@ -158,7 +158,7 @@
                             <th>Date</th>
                             <th>Customer Details</th>
                             <th>Message / Requirements</th>
-                            <th>Selected Product IDs</th>
+                            <th>Selected Fabrics</th>
                         </tr>
                     </thead>
                     <tbody id="inquiriesTableBody">
@@ -176,8 +176,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-const CLOUD_NAME = "ubqtf5go";       // <-- PUT CLOUDINARY INFO HERE
-const UPLOAD_PRESET = "thakarshi_product_upload"; // <-- PUT CLOUDINARY INFO HERE
+const CLOUD_NAME = "ubqtf5go";       
+const UPLOAD_PRESET = "thakarshi_product_upload"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -193,13 +193,10 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Dynamic Admin Check using Firestore
 auth.onAuthStateChanged(async user => {
     if (user) {
         try {
-            // Check if the user's email exists as a document in the 'admins' collection
             const adminDoc = await db.collection('admins').doc(user.email).get();
-            
             if (adminDoc.exists) {
                 document.getElementById('adminContent').style.display = 'block';
                 fetchAdminProducts();
@@ -210,7 +207,6 @@ auth.onAuthStateChanged(async user => {
             }
         } catch (error) {
             console.error("Permission verification failed:", error);
-            alert("Error verifying permissions. Redirecting to the store.");
             window.location.href = "index.html";
         }
     } else {
@@ -244,7 +240,7 @@ function fetchAdminProducts() {
             tbody.innerHTML += `
                 <tr>
                     <td><img src="${imgUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
-                    <td><strong>${p.name}</strong><br><small style="color:gray;">ID: ${id}</small></td>
+                    <td><strong>${p.name}</strong></td>
                     <td style="text-transform: capitalize;">${p.category}</td>
                     <td>₹${p.price}</td>
                     <td>
@@ -267,7 +263,14 @@ async function deleteProduct(id) {
     }
 }
 
-function fetchAdminInquiries() {
+async function fetchAdminInquiries() {
+    // Fetch products first so we can map IDs to names
+    const prodSnapshot = await db.collection('products').get();
+    const productMap = {};
+    prodSnapshot.forEach(doc => {
+        productMap[doc.id] = doc.data().name;
+    });
+
     db.collection('inquiries').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
         const tbody = document.getElementById('inquiriesTableBody');
         tbody.innerHTML = '';
@@ -284,7 +287,7 @@ function fetchAdminInquiries() {
             let productsHtml = 'None';
             if (inq.selectedProducts && inq.selectedProducts.length > 0) {
                 productsHtml = `<ul style="margin:0; padding-left:15px; font-size:0.85rem;">` + 
-                               inq.selectedProducts.map(id => `<li>${id}</li>`).join('') + 
+                               inq.selectedProducts.map(id => `<li>${productMap[id] || 'Unknown Fabric'}</li>`).join('') + 
                                `</ul>`;
             }
 
