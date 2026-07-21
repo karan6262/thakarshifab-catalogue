@@ -1,0 +1,418 @@
+/* style.css */
+
+:root {
+    --primary: #8B0000;
+    --primary-light: #a50000;
+    --primary-dark: #660000;
+    --secondary: #28a745;
+    --secondary-light: #34ce57;
+    --accent: #1e88e5;
+    --light: #f8f9fa;
+    --white: #ffffff;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-900: #212529;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --radius-pill: 50px;
+    --transition: 0.25s;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+    --shadow-md: 0 3px 6px rgba(0,0,0,0.16);
+    --shadow-lg: 0 10px 20px rgba(0,0,0,0.19);
+}
+
+/* --- General Reset & Fonts --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+    background-color: var(--gray-100);
+    color: var(--gray-900);
+    line-height: 1.6;
+}
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* --- Sticky Header UI --- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #eaeaea;
+    padding: 15px 0;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+}
+
+.logo p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.inquiry-btn {
+    background-color: #1a1a1a;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.inquiry-btn:hover {
+    background-color: #444;
+}
+
+/* --- Immersive Hero Section UI --- */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 6rem 1.5rem;
+    margin: 2rem 0;
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.btn-primary {
+    background-color: #d4af37;
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* --- Category Pills (Step 2) --- */
+.catalog-section {
+    margin: 40px 0;
+}
+
+.category-filters {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}
+
+.category-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-pill {
+    padding: 10px 24px;
+    background-color: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.filter-pill:hover {
+    background-color: var(--gray-200);
+}
+
+.filter-pill.active {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-color: #1a1a1a;
+}
+
+/* --- Product Grid & Cards (Step 2) --- */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Media Transition Logic */
+.product-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.product-media img,
+.product-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.media-static {
+    z-index: 2;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.media-transition {
+    z-index: 1;
+}
+
+.product-card:hover .media-static {
+    opacity: 0;
+}
+
+/* Product Typography & Buttons */
+.product-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-category {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.product-title {
+    font-size: 1.1rem;
+    margin: 8px 0;
+    color: var(--gray-900);
+}
+
+.product-price {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.product-actions {
+    margin-top: auto;
+}
+
+.btn-add-inquiry {
+    width: 100%;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add-inquiry:hover {
+    background-color: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+}
+
+/* --- Selected Items --- */
+.selected-items {
+    margin: 2rem 0;
+    padding: 1.75rem;
+    background: rgba(40, 167, 69, 0.05);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--secondary);
+    display: none;
+}
+
+.selected-items h3 {
+    margin-bottom: 1.5rem;
+    color: var(--secondary);
+    font-size: 1.25rem;
+}
+
+.selected-items ul {
+    list-style: none;
+}
+
+.selected-items li {
+    padding: 1rem;
+    margin: 0.75rem 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Modals & Forms --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 5% auto;
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 420px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: var(--gray-600);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- Newsletter --- */
+.newsletter {
+    background: var(--primary);
+    color: var(--white);
+    text-align: center;
+    padding: 4rem 1.5rem;
+    margin-top: 3rem;
+    border-radius: var(--radius-lg);
+}
+
+.newsletter-form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.newsletter-form input {
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: none;
+    min-width: 250px;
+}
+
+.newsletter-form button {
+    padding: 1rem 2rem;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
