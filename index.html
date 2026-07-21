@@ -29,7 +29,7 @@
         </div>
     </section>
 
-    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px;"></div>
+    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;"></div>
 
     <section id="productsSection" class="catalog-section">
         <!-- JS will inject filters, search, skeletons, and products here -->
@@ -125,6 +125,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+// REPLACE WITH YOUR ACTUAL ADMIN EMAIL
+const ADMIN_EMAIL = "shahkaran6262@gmail.com"; 
+
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -169,9 +172,21 @@ const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
+/* --- Auth State Listener with Admin Check --- */
 auth.onAuthStateChanged(user => {
     if (user) {
-        authStatusEl.innerHTML = `Signed in as <strong>${user.email}</strong> <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px;">Sign out</button>`;
+        // Create an Admin button that only generates if the emails match
+        let adminButtonHtml = '';
+        if (user.email === ADMIN_EMAIL) {
+            adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
+        }
+
+        authStatusEl.innerHTML = `
+            <span>Signed in as <strong>${user.email}</strong></span>
+            ${adminButtonHtml}
+            <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem;">Sign out</button>
+        `;
+        
         openCartModalBtn.style.display = 'inline-block';
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
@@ -287,7 +302,7 @@ function renderProducts() {
         const card = document.createElement('article');
         card.className = 'product-card';
         
-        // Setup image gallery HTML (handles new array structure and backwards compatibility)
+        // Setup image gallery HTML for multiple images support
         let imagesHtml = '';
         if (product.imageUrls && product.imageUrls.length > 0) {
             imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}">`).join('');
