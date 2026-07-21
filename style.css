@@ -194,17 +194,20 @@ body, html {
     overflow: hidden;
 }
 
-/* NEW: Image Gallery Horizontal Scroll Settings */
+/* --- UPDATED MULTI-IMAGE GALLERY CSS --- */
 .product-gallery {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     width: 100%;
     height: 100%;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
 }
-.product-gallery::-webkit-scrollbar { display: none; }
+/* Sleek custom scrollbar for Chrome/Safari */
+.product-gallery::-webkit-scrollbar { height: 6px; }
+.product-gallery::-webkit-scrollbar-track { background: transparent; }
+.product-gallery::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 10px; }
 
 .product-gallery img {
     flex: 0 0 100%;
@@ -214,18 +217,45 @@ body, html {
     scroll-snap-align: center;
 }
 
-.product-media video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* Gallery Navigation Arrows */
+.gallery-btn {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #333;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s, background 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+.product-card:hover .gallery-btn { opacity: 1; }
+.gallery-btn:hover { background: #fff; }
+.gallery-btn.prev-btn { left: 8px; }
+.gallery-btn.next-btn { right: 8px; }
 
-.media-static { z-index: 2; transition: opacity 0.6s ease-in-out; }
-.media-transition { z-index: 1; }
-.product-card:hover .media-static { opacity: 0; pointer-events: none; }
+.gallery-indicator {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    pointer-events: none;
+}
+/* --------------------------------------- */
 
 .product-info {
     padding: 20px;
@@ -342,7 +372,7 @@ body, html {
 
 .modal-content {
     background-color: var(--white);
-    margin: 5% auto;
+    margin: 5vh auto;
     padding: 2.5rem;
     border-radius: var(--radius-lg);
     width: 90%;
