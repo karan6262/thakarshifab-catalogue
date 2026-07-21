@@ -4,846 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
-    <style>
-        /* style.css */
-
-/* --- General Reset & Fonts --- */
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', 'Segoe UI', sans-serif; /* Modern, clean font */
-    color: #333;
-}
-
-/* --- Sticky Header UI --- */
-.site-header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-    backdrop-filter: blur(10px); /* Blurs the content behind the header */
-    border-bottom: 1px solid #eaeaea;
-    padding: 15px 0;
-}
-
-.header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #1a1a1a;
-}
-
-.logo p {
-    margin: 0;
-    font-size: 0.8rem;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.inquiry-btn {
-    background-color: #1a1a1a;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.inquiry-btn:hover {
-    background-color: #444;
-}
-
-/* --- Immersive Hero Section UI --- */
-.hero-section {
-    background-color: #f8f9fa; /* Light gray fallback */
-    /* To add a background image later, use: */
-    /* background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('your-hero-image.jpg'); */
-    /* background-size: cover; */
-    /* background-position: center; */
-    padding: 100px 20px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 40vh;
-}
-
-.hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    color: #1a1a1a;
-}
-
-.hero-content p {
-    font-size: 1.2rem;
-    color: #555;
-    margin-bottom: 30px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.btn-primary {
-    background-color: #d4af37; /* A rich gold color for contrast */
-    color: #fff;
-    text-decoration: none;
-    padding: 15px 30px;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: inline-block;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-}
-        :root {
-            --primary: #8B0000;
-            --primary-light: #a50000;
-            --primary-dark: #660000;
-            --secondary: #28a745;
-            --secondary-light: #34ce57;
-            --accent: #1e88e5;
-            --light: #f8f9fa;
-            --lighter: #f1f3f5;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
-            --gray-400: #ced4da;
-            --gray-500: #adb5bd;
-            --gray-600: #6c757d;
-            --gray-700: #495057;
-            --gray-800: #343a40;
-            --gray-900: #212529;
-            --success: #28a745;
-            --info: #17a2b8;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --white: #ffffff;
-            --black: #000000;
-
-            --radius-sm: 4px;
-            --radius: 8px;
-            --radius-lg: 12px;
-            --radius-pill: 50px;
-
-            --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-            --transition-fast: 0.15s;
-            --transition: 0.25s;
-            --transition-slow: 0.35s;
-
-            --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            --shadow-md: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-            --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.22);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-            font-family: var(--font-sans);
-            background-color: var(--gray-100);
-            color: var(--gray-900);
-            line-height: 1.6;
-        }
-
-        body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        body::-webkit-scrollbar-track {
-            background: var(--gray-100);
-        }
-
-        body::-webkit-scrollbar-thumb {
-            background-color: var(--gray-300);
-            border-radius: 4px;
-        }
-
-        body::-webkit-scrollbar-thumb:hover {
-            background-color: var(--gray-400);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: var(--white);
-            text-align: center;
-            padding: 6rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: var(--radius-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://images.unsplash.com/photo-1583752831236-350f93f2b922?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-            opacity: 0.15;
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .btn-primary {
-            background: var(--secondary);
-            color: var(--white);
-            border: none;
-            padding: 1rem 2.25rem;
-            font-size: 1.1rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-            display: inline-block;
-            text-decoration: none;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary-light);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        header {
-            background: var(--primary);
-            color: var(--white);
-            text-align: center;
-            padding: 3rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        header p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* ---------- Catalog Styles ---------- */
-        .filters-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-            padding: 1.75rem;
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 220px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-group label {
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--gray-700);
-            font-size: 0.95rem;
-        }
-
-        .filter-group select,
-        .filter-group input {
-            padding: 0.875rem 1.125rem;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            background: var(--white);
-            color: var(--gray-900);
-            transition: border-color var(--transition), box-shadow var(--transition);
-        }
-
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-        }
-
-        .filter-group button {
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 0.875rem 1.75rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: background var(--transition), transform var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-group button:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-
-        .filter-group button:active {
-            transform: translateY(0);
-        }
-
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .product-card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            transition: transform var(--transition), box-shadow var(--transition);
-            border: 1px solid var(--gray-200);
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--gray-300);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border: none;
-            display: block;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: var(--danger);
-            color: var(--white);
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-pill);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            z-index: 2;
-        }
-
-        .product-badge.new {
-            background: var(--secondary);
-        }
-
-        .product-info {
-            padding: 1.875rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card h3 {
-            margin: 0 0 1.25rem 0;
-            color: var(--primary);
-            font-size: 1.375rem;
-            font-weight: 600;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .product-tags {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.25rem;
-            flex-wrap: wrap;
-        }
-
-        .category-tag,
-        .price-tag {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-pill);
-            font-size: 0.875rem;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        .category-tag {
-            background-color: rgba(30, 136, 229, 0.1);
-            color: var(--accent);
-        }
-
-        .price-tag {
-            background-color: rgba(255, 152, 0, 0.1);
-            color: #ff9800;
-        }
-
-        .product-card p {
-            color: var(--gray-700);
-            line-height: 1.7;
-            margin-bottom: 1.75rem;
-            flex-grow: 1;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .product-actions {
-            margin-top: auto;
-            padding: 1.25rem;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-        }
-
-        .product-actions button {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: background var(--transition), transform var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.25rem;
-        }
-
-        .product-actions .add-btn {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .product-actions .add-btn:hover {
-            background: var(--primary-light);
-        }
-
-        .product-actions .quick-btn {
-            background: var(--accent);
-            color: var(--white);
-        }
-
-        .product-actions .quick-btn:hover {
-            background: #1e88e5;
-        }
-
-        .product-actions button:active {
-            transform: translateY(0);
-        }
-
-        /* ---------- Selected Items ---------- */
-        .selected-items {
-            margin: 2rem 0;
-            padding: 1.75rem;
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: var(--radius-lg);
-            border-left: 4px solid var(--secondary);
-            display: none;
-        }
-
-        .selected-items h3 {
-            margin-bottom: 1.5rem;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .selected-items h3::before {
-            content: "📋";
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        .selected-items ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .selected-items li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            margin: 0.75rem 0;
-            background: var(--white);
-            border-radius: var(--radius);
-            border-left: 3px solid var(--secondary);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .selected-items li span:first-child {
-            font-weight: 500;
-            color: var(--gray-900);
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .selected-items li span:nth-child(2) {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-
-        .modal-content {
-            background-color: var(--white);
-            margin: 0 auto;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 2.5rem;
-            border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 420px;
-            box-shadow: var(--shadow-lg);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
-            to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .close-btn {
-            color: var(--gray-600);
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            font-size: 1.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-pill);
-            background-color: var(--gray-100);
-            transition: background-color var(--transition), color var(--transition);
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: var(--white);
-            background-color: var(--primary);
-            text-decoration: none;
-        }
-
-        .form-group {
-            margin-bottom: 1.75rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            font-size: 0.95rem;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            background: var(--white);
-            color: var(--gray-900);
-            transition: border-color var(--transition), box-shadow var(--transition);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 150px;
-        }
-
-        .submit-btn {
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 1.125rem 2.5rem;
-            font-size: 1.1rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-            display: block;
-            margin: 0 auto;
-        }
-
-        .submit-btn:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .form-status {
-            margin-top: 1.75rem;
-            padding: 1.25rem;
-            border-radius: var(--radius);
-            text-align: center;
-            display: none;
-            font-weight: 500;
-        }
-
-        .form-status.success {
-            background: rgba(212, 237, 218, 0.5);
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .form-status.error {
-            background: rgba(248, 215, 218, 0.5);
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* Newsletter Section */
-        .newsletter {
-            background: var(--primary);
-            color: var(--white);
-            text-align: center;
-            padding: 4rem 1.5rem;
-            margin-top: 3rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
-
-        .newsletter h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-        }
-
-        .newsletter p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .newsletter-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .newsletter-form input {
-            flex: 1;
-            min-width: 250px;
-            padding: 1rem 1.25rem;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-        }
-
-        .newsletter-form button {
-            background: var(--secondary);
-            color: var(--white);
-            border: none;
-            padding: 1rem 1.75rem;
-            font-size: 1rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 600;
-            transition: background var(--transition), transform var(--transition);
-        }
-
-        .newsletter-form button:hover {
-            background: var(--secondary-light);
-            transform: translateY(-2px);
-        }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            header {
-                padding: 2.5rem 1rem;
-            }
-
-            header h1 {
-                font-size: 2.25rem;
-            }
-
-            header p {
-                font-size: 1.1rem;
-            }
-
-            .hero {
-                padding: 5rem 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2.4rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .filters-bar {
-                flex-direction: column;
-                gap: 1.25rem;
-                padding: 1.5rem;
-            }
-
-            .filter-group {
-                min-width: 100%;
-            }
-
-            .products {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .product-card img {
-                height: 200px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 2rem;
-            }
-
-            header p {
-                font-size: 1rem;
-            }
-
-            .hero {
-                padding: 4rem 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .product-card {
-                margin: 0 0.75rem;
-            }
-        }
-    </style>
+    <!-- Link to the new external CSS file -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- index.html -->
 
 <!-- Sticky Header -->
 <header class="site-header">
@@ -853,27 +17,16 @@ body, html {
             <p>Textile Wholesale | Ahmedabad</p>
         </div>
         <nav class="header-nav">
-            <!-- Add a button to open your Inquiry Cart later -->
-            <button class="inquiry-btn">Inquiry Cart <span>(0)</span></button>
+            <button class="inquiry-btn" id="openCartModal" style="display:none;">Inquiry Cart <span>(0)</span></button>
         </nav>
     </div>
 </header>
 
-<!-- Immersive Hero Section -->
-<section class="hero-section">
-    <div class="hero-content">
-        <h1>Discover Premium Fabrics</h1>
-        <p>Explore our exquisite collection of textiles crafted for quality and style.</p>
-        <a href="#productsSection" class="btn-primary">Shop Now</a>
-    </div>
-    <!-- Optional: If you have a video of Raymond fabrics or similar flowing textiles, you could use a <video> tag here as a background -->
-</section>
-
 <div class="container">
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Immersive Hero Section -->
+    <section class="hero-section">
         <div class="hero-content">
-            <h1>Discover Premium Fabrics</h>
+            <h1>Discover Premium Fabrics</h1>
             <p>Explore our exquisite collection of textiles crafted for quality and style.</p>
             <a href="#productsSection" class="btn-primary">Shop Now</a>
         </div>
@@ -883,37 +36,8 @@ body, html {
     <div id="authStatus" class="user-info"></div>
 
     <!-- ---------- PRODUCT SELECTION ---------- -->
-    <section id="productsSection">
-        <div class="filters-bar">
-            <div class="filter-group">
-                <label for="categoryFilter">Category:</label>
-                <select id="categoryFilter">
-                    <option value="all">All Categories</option>
-                    <option value="cotton">Cotton</option>
-                    <option value="silk">Silk</option>
-                    <option value="wool">Wool</option>
-                    <option value="linen">Linen</option>
-                    <option value="polyester">Polyester</option>
-                    <option value="blend">Blend</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="sortBy">Sort by:</label>
-                <select id="sortBy">
-                    <option value="default">Default (Newest)</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="name">Name: A-Z</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <input type="text" id="searchInput" placeholder="Search products...">
-                <button id="searchBtn">Search</button>
-            </div>
-        </div>
-        <!-- Product cards will be injected by JS -->
-        <div id="productsGrid" class="products">Loading products...</div>
+    <section id="productsSection" class="catalog-section">
+        <!-- Products and Filters will be injected here by JS -->
     </section>
 
     <!-- ---------- SELECTED ITEMS SUMMARY ---------- -->
@@ -921,7 +45,6 @@ body, html {
         <h3>Selected Items for Inquiry</h3>
         <ul id="selectedList"></ul>
     </div>
-    <button id="openCartModal" class="btn-primary" style="display:none;">View Cart & Send Inquiry</button>
 
     <!-- Newsletter Section -->
     <section class="newsletter">
@@ -929,7 +52,7 @@ body, html {
         <p>Subscribe to our newsletter for latest arrivals, exclusive offers, and textile trends.</p>
         <form class="newsletter-form" id="newsletterForm">
             <input type="email" id="newsletterEmail" placeholder="Enter your email" required>
-            <button type="subscribe">Subscribe</button>
+            <button type="submit">Subscribe</button>
         </form>
     </section>
 </div>
@@ -984,15 +107,13 @@ body, html {
     </div>
 </div>
 
-<!-- Firebase SDKs (Optional: add measurementId if you have Google Analytics) -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* --------------------------------------------------------------
-   1️⃣  Firebase configuration – REPLACE THE PLACEHOLDERS BELOW
-   -------------------------------------------------------------- */
+/* 1️⃣ Firebase configuration */
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -1000,30 +121,23 @@ const firebaseConfig = {
     storageBucket: "thakarshi-product-catalogue.appspot.com",
     messagingSenderId: "149758378550",
     appId: "1:149758378550:web:2b6def7e29932dddf34e97"
-    // measurementId: "G-YMPTV9G8FN" // optional, if you enabled Analytics
 };
-/* -------------------------------------------------------------- */
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-const auth   = firebase.auth();
-const db     = firebase.firestore();
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-/* --------------------------------------------------------------
-   2️⃣  UI helpers
-   -------------------------------------------------------------- */
-const authStatusEl   = document.getElementById('authStatus');
-const productsSection   = document.getElementById('productsSection');
-const selectedItemsEl   = document.getElementById('selectedItems');
-const selectedListEl    = document.getElementById('selectedList');
-const selectedProductsInput = document.getElementById('selectedProducts');
-const newsletterForm   = document.getElementById('newsletterForm');
-const newsletterEmail  = document.getElementById('newsletterEmail');
+/* 2️⃣ UI helpers */
+const authStatusEl = document.getElementById('authStatus');
+const productsSection = document.getElementById('productsSection');
+const selectedItemsEl = document.getElementById('selectedItems');
+const selectedList = document.getElementById('selectedList');
+const newsletterForm = document.getElementById('newsletterForm');
+const newsletterEmail = document.getElementById('newsletterEmail');
 
 // Modals
 const signInModal = document.getElementById('signInModal');
 const cartModal = document.getElementById('cartModal');
-const openSignInModalBtn = document.getElementById('openSignInModal');
 const openCartModalBtn = document.getElementById('openCartModal');
 const closeSignInModal = document.getElementById('closeSignInModal');
 const closeCartModal = document.getElementById('closeCartModal');
@@ -1043,46 +157,34 @@ const modalCity = document.getElementById('modalCity');
 const modalMessage = document.getElementById('modalMessage');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
-let isLoginMode = true; // toggles between Sign‑In / Sign‑Up
-let productsUnsubscribe = null; // Firestore unsubscribe function for products
-const selectedItems = new Set(); // stores product IDs (Firestore doc IDs)
+let isLoginMode = true; 
+let productsUnsubscribe = null; 
+const selectedItems = new Set(); 
 
-/* --------------------------------------------------------------
-   3️⃣  Auth state listener – shows/hides UI based on login
-   -------------------------------------------------------------- */
+/* 3️⃣ Auth state listener */
 auth.onAuthStateChanged(user => {
     if (user) {
-        // User signed in
         authStatusEl.innerHTML = `
             Signed in as <strong>${user.email}</strong>
-            <button id="signOutBtn">Sign out</button>
+            <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem;">Sign out</button>
         `;
-        // Show cart button
         openCartModalBtn.style.display = 'inline-block';
-        // Load products from Firestore (for selection UI)
         loadProductsFromFirestore();
-        // Close sign-in modal if open
         signInModal.style.display = 'none';
-        // Wire sign‑out
-        document.getElementById('signOutBtn')
-                .addEventListener('click', () => auth.signOut());
+        document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
-        // User signed out
         authStatusEl.innerHTML = '';
-        // Hide cart button
         openCartModalBtn.style.display = 'none';
-        // Clear selection
         selectedItems.clear();
         updateSelectedUI();
+        loadProductsFromFirestore(); // Still load for logged out users
     }
 });
 
-/* --------------------------------------------------------------
-   4️⃣  Auth form handling (modal)
-   -------------------------------------------------------------- */
+/* 4️⃣ Auth form handling */
 modalAuthForm.addEventListener('submit', e => {
     e.preventDefault();
-    const email    = modalEmail.value.trim();
+    const email = modalEmail.value.trim();
     const password = modalPassword.value.trim();
     modalAuthMsg.textContent = '';
     modalAuthSubmit.disabled = true;
@@ -1105,12 +207,10 @@ modalAuthForm.addEventListener('submit', e => {
 modalToggleLink.addEventListener('click', e => {
     e.preventDefault();
     isLoginMode = !isLoginMode;
-    // Update modalAuthForm submit button text and toggle link
     modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
     modalToggleLink.innerHTML = isLoginMode
         ? 'Don’t have an account? <a href="#">Create one</a>'
         : 'Already have an account? <a href="#">Sign in</a>';
-    // Re-attach click listener because we replaced innerHTML
     modalToggleLink.querySelector('a').addEventListener('click', e => {
         e.preventDefault();
         modalToggleLink.click();
@@ -1118,309 +218,148 @@ modalToggleLink.addEventListener('click', e => {
     modalAuthMsg.textContent = '';
 });
 
-/* --------------------------------------------------------------
-   5️⃣  Modal open/close handlers
-   -------------------------------------------------------------- */
-openSignInModalBtn.onclick = () => {
-    signInModal.style.display = 'block';
-};
+/* 5️⃣ Modal open/close handlers */
 openCartModalBtn.onclick = () => {
-    // Sync selected products to modal hidden input
-    modalSelectedProducts.value = selectedProductsInput.value;
+    modalSelectedProducts.value = JSON.stringify(Array.from(selectedItems));
     cartModal.style.display = 'block';
 };
-closeSignInModal.onclick = () => {
-    signInModal.style.display = 'none';
-};
-closeCartModal.onclick = () => {
-    cartModal.style.display = 'none';
-};
-// Close when clicking outside modal content
+closeSignInModal.onclick = () => { signInModal.style.display = 'none'; };
+closeCartModal.onclick = () => { cartModal.style.display = 'none'; };
 window.onclick = e => {
-    if (e.target === signInModal) {
-        signInModal.style.display = 'none';
-    }
-    if (e.target === cartModal) {
-        cartModal.style.display = 'none';
-    }
+    if (e.target === signInModal) signInModal.style.display = 'none';
+    if (e.target === cartModal) cartModal.style.display = 'none';
 };
 
-/* --------------------------------------------------------------
-   6️⃣  Load products from Firestore (real-time) - accessible to all
-   -------------------------------------------------------------- */
+/* 6️⃣ Load products from Firestore with NEW STEP 2 UI */
 function loadProductsFromFirestore() {
-    // Clear existing and add filters UI
     productsSection.innerHTML = `
-        <div class="filters-bar">
-            <div class="filter-group">
-                <label for="categoryFilter">Category:</label>
-                <select id="categoryFilter">
-                    <option value="all">All Categories</option>
-                    <option value="cotton">Cotton</option>
-                    <option value="silk">Silk</option>
-                    <option value="wool">Wool</option>
-                    <option value="linen">Linen</option>
-                    <option value="polyester">Polyester</option>
-                    <option value="blend">Blend</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="sortBy">Sort by:</label>
-                <select id="sortBy">
-                    <option value="default">Default (Newest)</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="name">Name: A-Z</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <input type="text" id="searchInput" placeholder="Search products...">
-                <button id="searchBtn">Search</button>
-            </div>
+        <!-- Modern Category Pills -->
+        <div class="category-filters">
+            <button class="filter-pill active" data-filter="all">All Fabrics</button>
+            <button class="filter-pill" data-filter="cotton">Cotton</button>
+            <button class="filter-pill" data-filter="silk">Silk</button>
+            <button class="filter-pill" data-filter="linen">Linen</button>
+            <button class="filter-pill" data-filter="blend">Blends</button>
         </div>
-        <div id="productsGrid" class="products">Loading products...</div>
+        
+        <!-- Search and Sort container -->
+        <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
+            <select id="sortBy" style="padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
+                <option value="default">Default (Newest)</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name: A-Z</option>
+            </select>
+        </div>
+
+        <!-- Modern Product Grid -->
+        <div id="productsGrid" class="product-grid">Loading products...</div>
     `;
 
     const productsRef = db.collection('products').orderBy('createdAt', 'desc');
     productsUnsubscribe = productsRef.onSnapshot(snapshot => {
         const productsGrid = document.getElementById('productsGrid');
-        productsGrid.innerHTML = ''; // clear loading message
+        productsGrid.innerHTML = ''; 
+
         if (snapshot.empty) {
             productsGrid.innerHTML = '<p class="no-results">No products available yet.</p>';
             return;
         }
 
-        // Convert Firestore snapshot to array of products
         const products = [];
         snapshot.forEach(doc => {
-            const data = doc.data();
-            const id = doc.id;
-            products.push({ id, ...data });
+            products.push({ id: doc.id, ...doc.data() });
         });
 
-        // Apply filters
-        let filteredProducts = [...products]; // Create a copy
-
-        // Text search
-        const searchInput = document.getElementById('searchInput');
-        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        if (searchTerm) {
-            filteredProducts = filteredProducts.filter(product =>
-                (product.name?.toLowerCase().includes(searchTerm)) ||
-                (product.description?.toLowerCase().includes(searchTerm)) ||
-                (product.category?.toLowerCase().includes(searchTerm))
-            );
-        }
-
-        // Category filter
-        const categoryFilter = document.getElementById('categoryFilter');
-        const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
-        if (selectedCategory !== 'all') {
-            filteredProducts = filteredProducts.filter(product =>
-                product.category === selectedCategory
-            );
-        }
-
-        // Sort
-        const sortBy = document.getElementById('sortBy');
-        const sortValue = sortBy ? sortBy.value : 'default';
-        if (sortValue === 'price-low') {
-            filteredProducts.sort((a, b) => (a.price || 0) - (b.price || 0));
-        } else if (sortValue === 'price-high') {
-            filteredProducts.sort((a, b) => (b.price || 0) - (a.price || 0));
-        } else if (sortValue === 'name') {
-            filteredProducts.sort((a, b) =>
-                (a.name || '').localeCompare(b.name || '')
-            );
-        }
-        // 'default' keeps the Firestore order (newest first)
-
-        // Display filtered products
+        let filteredProducts = [...products]; 
+        
+        // Render step
         if (filteredProducts.length === 0) {
             productsGrid.innerHTML = '<p class="no-results">No products match your filters.</p>';
             return;
         }
 
         filteredProducts.forEach(product => {
-            const card = document.createElement('div');
+            const card = document.createElement('article');
             card.className = 'product-card';
-            // Determine if product is new (within last 7 days) - placeholder logic
-            const isNew = product.createdAt &&
-                         (Date.now() - product.createdAt.toDate?.() || Date.now() - product.createdAt._seconds*1000) < 7*24*60*60*1000;
+            
+            // Dynamic generation using Step 2 UI (including transition video layer)
             card.innerHTML = `
-                <img src="${product.imageUrl || ''}" alt="${product.name || 'Product'}">
-                ${isNew ? '<div class="product-badge new">New</div>' : ''}
-                <h3>${product.name || 'Unnamed Product'}</h3>
-                <div class="product-tags">
-                    <span class="category-tag">${product.category || 'Other'}</span>
-                    <span class="price-tag">₹${product.price ? parseFloat(product.price).toLocaleString() : 'Price on request'}</span>
+                <div class="product-media">
+                    <img src="${product.imageUrl || 'default.jpg'}" alt="${product.name}" class="media-static">
+                    <!-- Replace 'raymond-transition-placeholder.mp4' with your actual transition video URL in Firebase Storage -->
+                    <video src="raymond-transition-placeholder.mp4" autoplay loop muted playsinline class="media-transition"></video>
                 </div>
-                <p>${product.description || 'No description available.'}</p>
-                <div class="product-actions">
-                    <button type="button" class="quick-btn" data-id="${product.id}">Quick View</button>
-                    <button type="button" class="add-btn" data-id="${product.id}">Add to Inquiry</button>
+                
+                <div class="product-info">
+                    <span class="product-category">${product.category || 'Other'}</span>
+                    <h3 class="product-title">${product.name || 'Unnamed Product'}</h3>
+                    <p class="product-price">₹${product.price ? parseFloat(product.price).toLocaleString() : 'Request Price'}</p>
+                    
+                    <div class="product-actions">
+                        <button type="button" class="btn-add-inquiry" data-id="${product.id}">
+                            ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
+                        </button>
+                    </div>
                 </div>
             `;
             productsGrid.appendChild(card);
         });
 
-        // Attach click listeners to the newly created buttons
-        document.querySelectorAll('#productsGrid .product-card button').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (e.target.classList.contains('quick-btn')) {
-                    quickView(e.target.dataset.id);
-                } else if (e.target.classList.contains('add-btn')) {
-                    toggleSelection(e);
-                }
-            });
+        // Re-attach listeners for dynamically created add buttons
+        document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
+            btn.addEventListener('click', toggleSelection);
         });
     });
-
-    // Add event listeners for filters
-    const searchBtn = document.getElementById('searchBtn');
-    if (searchBtn) {
-        searchBtn.addEventListener('click', () => {
-            // Re-run the query to apply filters
-            productsSection.innerHTML = `
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label for="categoryFilter">Category:</label>
-                        <select id="categoryFilter">
-                            <option value="all">All Categories</option>
-                            <option value="cotton">Cotton</option>
-                            <option value="silk">Silk</option>
-                            <option value="wool">Wool</option>
-                            <option value="linen">Linen</option>
-                            <option value="polyester">Polyester</option>
-                            <option value="blend">Blend</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="sortBy">Sort by:</label>
-                        <select id="sortBy">
-                            <option value="default">Default (Newest)</option>
-                            <option value="price-low">Price: Low to High</option>
-                            <option value="price-high">Price: High to Low</option>
-                            <option value="name">Name: A-Z</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <input type="text" id="searchInput" placeholder="Search products...">
-                        <button id="searchBtn">Search</button>
-                    </div>
-                </div>
-                <div id="productsGrid" class="products">Loading products...</div>
-            `;
-            // We just need to trigger a refresh by detaching and re-attaching the listener
-            if (productsUnsubscribe) {
-                productsUnsubscribe();
-            }
-            loadProductsFromFirestore(); // Re-call to set up new listener
-        });
-    }
-
-    // Enter key to search
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                document.getElementById('searchBtn')?.click();
-            }
-        });
-    }
 }
 
-/* --------------------------------------------------------------
-   7️⃣  Selection logic (same as before)
-   -------------------------------------------------------------- */
+/* 7️⃣ Selection logic */
 function toggleSelection(e) {
-    const id = e.target.dataset.id; // Firestore doc ID
+    if(!auth.currentUser) {
+        signInModal.style.display = 'block';
+        return;
+    }
+    const id = e.target.dataset.id; 
     if (selectedItems.has(id)) {
         selectedItems.delete(id);
         e.target.textContent = 'Add to Inquiry';
-        e.target.style.background = '#8B0000';
-        e.target.style.color = '#fff';
+        e.target.style.backgroundColor = '#f8f9fa';
+        e.target.style.color = '#333';
     } else {
         selectedItems.add(id);
         e.target.textContent = 'Added ✓';
-        e.target.style.background = '#28a745';
+        e.target.style.backgroundColor = '#1a1a1a';
         e.target.style.color = '#fff';
     }
     updateSelectedUI();
-}
-
-function quickView(productId) {
-    // Fetch product details and show in a modal or alert (for simplicity, alert)
-    db.collection('products').doc(productId).get()
-        .then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                alert(`Product: ${data.name}\n\nDescription: ${data.description}\n\nPrice: ₹${data.price ? parseFloat(data.price).toLocaleString() : 'Price on request'}`);
-            } else {
-                alert('Product not found');
-            }
-        })
-        .catch(err => {
-            console.error('Error fetching product:', err);
-            alert('Error loading product details');
-        });
+    
+    // Update header count
+    document.querySelector('.inquiry-btn span').textContent = `(${selectedItems.size})`;
 }
 
 function updateSelectedUI() {
     selectedList.innerHTML = '';
     if (selectedItems.size === 0) {
         selectedItemsEl.style.display = 'none';
-        selectedProductsInput.value = '[]';
-        // Hide cart button if no items and user signed in? we keep based on auth state
         return;
     }
     selectedItemsEl.style.display = 'block';
-    // We need to fetch product names for the selected IDs.
-    const promises = Array.from(selectedItems).map(id =>
-        db.collection('products').doc(id).get()
-    );
+    
+    const promises = Array.from(selectedItems).map(id => db.collection('products').doc(id).get());
     Promise.all(promises).then(snapshots => {
         selectedList.innerHTML = '';
         snapshots.forEach(snap => {
             if (snap.exists) {
-                const data = snap.data();
                 const li = document.createElement('li');
-                li.textContent = data.name || 'Unnamed Product';
+                li.textContent = snap.data().name || 'Unnamed Product';
                 selectedList.appendChild(li);
             }
         });
-        // Store as JSON string for submission
-        selectedProductsInput.value = JSON.stringify(
-            Array.from(selectedItems).map(id => {
-                // We'll try to get name from snapshots if available, otherwise just id.
-                const snap = snapshots.find(s => s.id === id);
-                const name = snap && snap.exists ? snap.data().name : '';
-                return { id: id, name: name };
-            })
-        );
-        // Show cart button if user signed in
-        if (auth.currentUser) {
-            openCartModalBtn.style.display = 'inline-block';
-        }
-    }).catch(err => {
-        console.error('Error fetching selected product names:', err);
-        // Fallback: just show IDs
-        selectedList.innerHTML = Array.from(selectedItems).map(id => `<li>ID: ${id}</li>`).join('');
-        selectedProductsInput.value = JSON.stringify(
-            Array.from(selectedItems).map(id => ({ id: id, name: '' }))
-        );
-        if (auth.currentUser) {
-            openCartModalBtn.style.display = 'inline-block';
-        }
     });
 }
 
-/* --------------------------------------------------------------
-   8️⃣  Modal Inquiry Form submission – write to Firestore under the UID
-   -------------------------------------------------------------- */
+/* 8️⃣ Modal Inquiry Form submission */
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
     modalSubmitBtn.disabled = true;
@@ -1428,44 +367,27 @@ modalInquiryForm.addEventListener('submit', async e => {
     modalFormStatus.style.display = 'none';
 
     const user = auth.currentUser;
-    if (!user) {
-        showModalFormError('You must be signed in to send an inquiry.');
-        modalSubmitBtn.disabled = false;
-        modalSubmitBtn.textContent = 'Send Inquiry';
-        return;
-    }
-
     const formData = {
-        uid:          user.uid,
-        name:         modalName.value.trim(),
-        email:        modalEmail2.value.trim(),
-        phone:        modalPhone.value.trim(),
-        city:         modalCity.value.trim(),
-        message:      modalMessage.value.trim(),
-        selectedProducts: JSON.parse(modalSelectedProducts.value) || [],
-        timestamp:    firebase.firestore.FieldValue.serverTimestamp()
+        uid: user.uid,
+        name: modalName.value.trim(),
+        email: modalEmail2.value.trim(),
+        phone: modalPhone.value.trim(),
+        city: modalCity.value.trim(),
+        message: modalMessage.value.trim(),
+        selectedProducts: Array.from(selectedItems),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // Basic validation
-    if (!formData.name || !formData.email) {
-        showModalFormError('Please fill in the required fields (Name, Email).');
-        modalSubmitBtn.disabled = false;
-        modalSubmitBtn.textContent = 'Send Inquiry';
-        return;
-    }
-
     try {
-        const docRef = await db.collection('inquiries').add(formData);
-        console.log('Document written with ID:', docRef.id);
+        await db.collection('inquiries').add(formData);
         showModalFormSuccess('Inquiry sent successfully! We will contact you soon.');
         modalInquiryForm.reset();
         selectedItems.clear();
         updateSelectedUI();
-        // Close modal after success
-        cartModal.style.display = 'none';
+        document.querySelector('.inquiry-btn span').textContent = `(0)`;
+        setTimeout(() => { cartModal.style.display = 'none'; }, 2000);
     } catch (err) {
-        console.error('Firestore error:', err);
-        showModalFormError('Firestore error: ' + err.message);
+        showModalFormError('Error: ' + err.message);
     } finally {
         modalSubmitBtn.disabled = false;
         modalSubmitBtn.textContent = 'Send Inquiry';
@@ -1483,25 +405,14 @@ function showModalFormSuccess(msg) {
     modalFormStatus.style.display = 'block';
 }
 
-/* --------------------------------------------------------------
-   9️⃣  Newsletter subscription (simple mock)
-   -------------------------------------------------------------- */
+/* 9️⃣ Newsletter */
 newsletterForm.addEventListener('submit', e => {
     e.preventDefault();
-    const email = newsletterEmail.value.trim();
-    if (email) {
-        // In a real app, you would send this to a backend service
-        alert(`Thank you for subscribing! We'll send updates to ${email}`);
-        newsletterForm.reset();
-    } else {
-        alert('Please enter a valid email address');
-    }
+    alert(`Thank you for subscribing!`);
+    newsletterForm.reset();
 });
 
-/* --------------------------------------------------------------
-   🔟  Initial render (products) – load on page load for everyone
-   -------------------------------------------------------------- */
-// Load products immediately so catalog is visible without login
+// Load on init
 loadProductsFromFirestore();
 </script>
 </body>
