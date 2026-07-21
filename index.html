@@ -66,7 +66,7 @@
     </div>
 </div>
 
-<!-- Send Inquiry Details Modal (Scrollable fix applied) -->
+<!-- Send Inquiry Details Modal -->
 <div id="cartModal" class="modal">
     <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
         <span class="close-btn" id="closeCartModal">&times;</span>
@@ -256,6 +256,15 @@ function showToast(message) {
     setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
+// Function to scroll the image gallery left or right
+function scrollGallery(productId, direction) {
+    const gallery = document.getElementById(`gallery-${productId}`);
+    if (gallery) {
+        const scrollAmount = gallery.offsetWidth;
+        gallery.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+    }
+}
+
 function loadProductsFromFirestore() {
     productsSection.innerHTML = `
         <div class="category-filters">
@@ -304,19 +313,31 @@ function renderProducts() {
         card.className = 'product-card';
         
         let imagesHtml = '';
-        if (product.imageUrls && product.imageUrls.length > 0) {
-            imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}">`).join('');
+        let hasMultipleImages = false;
+
+        // Check if there are multiple images to generate arrows
+        if (product.imageUrls && product.imageUrls.length > 1) {
+            hasMultipleImages = true;
+            imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}" loading="lazy">`).join('');
+        } else if (product.imageUrls && product.imageUrls.length === 1) {
+            imagesHtml = `<img src="${product.imageUrls[0]}" alt="${product.name}" loading="lazy">`;
         } else if (product.imageUrl) {
-            imagesHtml = `<img src="${product.imageUrl}" alt="${product.name}">`;
+            imagesHtml = `<img src="${product.imageUrl}" alt="${product.name}" loading="lazy">`;
         } else {
-            imagesHtml = `<img src="default.jpg" alt="${product.name}">`;
+            imagesHtml = `<img src="default.jpg" alt="${product.name}" loading="lazy">`;
         }
         
         card.innerHTML = `
             <div class="product-media">
-                <div class="product-gallery">
+                <div class="product-gallery" id="gallery-${product.id}">
                     ${imagesHtml}
                 </div>
+                <!-- Navigation Arrows if multiple images exist -->
+                ${hasMultipleImages ? `
+                    <button class="gallery-btn prev-btn" onclick="scrollGallery('${product.id}', -1)">&#10094;</button>
+                    <button class="gallery-btn next-btn" onclick="scrollGallery('${product.id}', 1)">&#10095;</button>
+                    <div class="gallery-indicator">Swipe for more</div>
+                ` : ''}
             </div>
             <div class="product-info">
                 <span class="product-category">${product.category || 'Other'}</span>
