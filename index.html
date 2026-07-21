@@ -5,6 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
     <style>
+        /* style.css */
+
+/* --- General Reset & Fonts --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif; /* Modern, clean font */
+    color: #333;
+}
+
+/* --- Sticky Header UI --- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* Blurs the content behind the header */
+    border-bottom: 1px solid #eaeaea;
+    padding: 15px 0;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+}
+
+.logo p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.inquiry-btn {
+    background-color: #1a1a1a;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.inquiry-btn:hover {
+    background-color: #444;
+}
+
+/* --- Immersive Hero Section UI --- */
+.hero-section {
+    background-color: #f8f9fa; /* Light gray fallback */
+    /* To add a background image later, use: */
+    /* background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('your-hero-image.jpg'); */
+    /* background-size: cover; */
+    /* background-position: center; */
+    padding: 100px 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-primary {
+    background-color: #d4af37; /* A rich gold color for contrast */
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
         :root {
             --primary: #8B0000;
             --primary-light: #a50000;
