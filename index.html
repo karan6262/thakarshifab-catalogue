@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
-    <!-- Link to the new external CSS file -->
+    <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,15 +32,14 @@
         </div>
     </section>
 
-    <!-- ---------- AUTH STATUS ---------- -->
-    <div id="authStatus" class="user-info"></div>
+    <!-- Auth Status -->
+    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px;"></div>
 
-    <!-- ---------- PRODUCT SELECTION ---------- -->
+    <!-- Product Selection (Dynamic) -->
     <section id="productsSection" class="catalog-section">
-        <!-- Products and Filters will be injected here by JS -->
+        <!-- JS will inject filters, search, skeletons, and products here -->
     </section>
 
-    
     <!-- Newsletter Section -->
     <section class="newsletter">
         <h2>Stay Updated</h2>
@@ -51,45 +50,29 @@
         </form>
     </section>
 </div>
-<!-- Toast Notification -->
-<div id="toast" class="toast">Item added to inquiry!</div>
 
-<!-- Slide-Out Cart Panel -->
-<div id="cartOverlay" class="cart-overlay"></div>
-<div id="slideOutCart" class="slide-out-cart">
-    <div class="cart-header">
-        <h2>Your Inquiry Cart</h2>
-        <button id="closeSlideCart" class="close-cart-btn">&times;</button>
-    </div>
-    <div class="cart-body">
-        <ul id="selectedList" class="cart-items-list">
-            <!-- Selected fabrics will appear here -->
-        </ul>
-        <div id="emptyCartMsg" class="empty-cart-msg">Your inquiry list is empty.</div>
-    </div>
-    <div class="cart-footer">
-        <button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button>
-    </div>
-</div>
-    
 <!-- Sign In Modal -->
 <div id="signInModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeSignInModal">&times;</span>
         <h2>Sign In</h2>
         <form id="modalAuthForm">
-            <input type="email" id="modalEmail" placeholder="Email" required>
-            <input type="password" id="modalPassword" placeholder="Password" required>
+            <div class="form-group">
+                <input type="email" id="modalEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="modalPassword" placeholder="Password" required>
+            </div>
             <button type="submit" class="submit-btn" id="modalAuthSubmit">Sign In</button>
         </form>
-        <p class="auth-switch" id="modalAuthSwitch">
+        <p class="auth-switch" id="modalAuthSwitch" style="text-align: center; margin-top: 15px;">
             Don’t have an account? <a id="modalToggleLink" href="#">Create one</a>
         </p>
-        <div id="modalAuthMsg" style="margin-top:1rem;min-height:1.2rem;"></div>
+        <div id="modalAuthMsg" style="margin-top:1rem; color: red; text-align: center;"></div>
     </div>
 </div>
 
-<!-- Cart / Inquiry Modal -->
+<!-- Send Inquiry Details Modal -->
 <div id="cartModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeCartModal">&times;</span>
@@ -101,7 +84,7 @@
                 <input type="text" id="modalName" name="name" required>
             </div>
             <div class="form-group">
-                <label for="modalEmail">Email Address *</label>
+                <label for="modalEmail2">Email Address *</label>
                 <input type="email" id="modalEmail2" name="email" required>
             </div>
             <div class="form-group">
@@ -122,13 +105,34 @@
     </div>
 </div>
 
+<!-- Toast Notification -->
+<div id="toast" class="toast">Item added to inquiry!</div>
+
+<!-- Slide-Out Cart Panel -->
+<div id="cartOverlay" class="cart-overlay"></div>
+<div id="slideOutCart" class="slide-out-cart">
+    <div class="cart-header">
+        <h2>Your Inquiry Cart</h2>
+        <button id="closeSlideCart" class="close-cart-btn">&times;</button>
+    </div>
+    <div class="cart-body">
+        <ul id="selectedList" class="cart-items-list">
+            <!-- Selected fabrics will appear here -->
+        </ul>
+        <div id="emptyCartMsg" class="empty-cart-msg">Your inquiry list is empty.</div>
+    </div>
+    <div class="cart-footer">
+        <button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button>
+    </div>
+</div>
+
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* 1️⃣ Firebase configuration */
+/* --- Firebase Configuration --- */
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -142,49 +146,43 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* 2️⃣ UI helpers */
+/* --- UI Elements --- */
 const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
-const selectedItemsEl = document.getElementById('selectedItems');
-const selectedList = document.getElementById('selectedList');
 const newsletterForm = document.getElementById('newsletterForm');
-const newsletterEmail = document.getElementById('newsletterEmail');
 
-// Modals
+// Slide Out Cart & Toast Elements
+const openCartModalBtn = document.getElementById('openCartModal');
+const slideOutCart = document.getElementById('slideOutCart');
+const cartOverlay = document.getElementById('cartOverlay');
+const closeSlideCart = document.getElementById('closeSlideCart');
+const selectedList = document.getElementById('selectedList');
+const emptyCartMsg = document.getElementById('emptyCartMsg');
+const proceedToInquiryBtn = document.getElementById('proceedToInquiryBtn');
+const toast = document.getElementById('toast');
+
+// Modal Elements
 const signInModal = document.getElementById('signInModal');
 const cartModal = document.getElementById('cartModal');
-const openCartModalBtn = document.getElementById('openCartModal');
 const closeSignInModal = document.getElementById('closeSignInModal');
 const closeCartModal = document.getElementById('closeCartModal');
 const modalAuthForm = document.getElementById('modalAuthForm');
 const modalAuthSubmit = document.getElementById('modalAuthSubmit');
 const modalToggleLink = document.getElementById('modalToggleLink');
-const modalEmail = document.getElementById('modalEmail');
-const modalPassword = document.getElementById('modalPassword');
 const modalAuthMsg = document.getElementById('modalAuthMsg');
 const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
-const modalName = document.getElementById('modalName');
-const modalEmail2 = document.getElementById('modalEmail2');
-const modalPhone = document.getElementById('modalPhone');
-const modalCity = document.getElementById('modalCity');
-const modalMessage = document.getElementById('modalMessage');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
 let isLoginMode = true; 
-let productsUnsubscribe = null; 
 const selectedItems = new Set(); 
 
-/* 3️⃣ Auth state listener */
+/* --- Auth State Listener --- */
 auth.onAuthStateChanged(user => {
     if (user) {
-        authStatusEl.innerHTML = `
-            Signed in as <strong>${user.email}</strong>
-            <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem;">Sign out</button>
-        `;
+        authStatusEl.innerHTML = `Signed in as <strong>${user.email}</strong> <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px;">Sign out</button>`;
         openCartModalBtn.style.display = 'inline-block';
-        loadProductsFromFirestore();
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
@@ -192,62 +190,42 @@ auth.onAuthStateChanged(user => {
         openCartModalBtn.style.display = 'none';
         selectedItems.clear();
         updateSelectedUI();
-        loadProductsFromFirestore(); // Still load for logged out users
     }
 });
 
-/* 4️⃣ Auth form handling */
+/* --- Auth Form Handling --- */
 modalAuthForm.addEventListener('submit', e => {
     e.preventDefault();
-    const email = modalEmail.value.trim();
-    const password = modalPassword.value.trim();
+    const email = document.getElementById('modalEmail').value.trim();
+    const password = document.getElementById('modalPassword').value.trim();
     modalAuthMsg.textContent = '';
     modalAuthSubmit.disabled = true;
 
-    if (isLoginMode) {
-        auth.signInWithEmailAndPassword(email, password)
-            .catch(err => {
-                modalAuthMsg.textContent = err.message;
-                modalAuthSubmit.disabled = false;
-            });
-    } else {
-        auth.createUserWithEmailAndPassword(email, password)
-            .catch(err => {
-                modalAuthMsg.textContent = err.message;
-                modalAuthSubmit.disabled = false;
-            });
-    }
+    const authPromise = isLoginMode 
+        ? auth.signInWithEmailAndPassword(email, password)
+        : auth.createUserWithEmailAndPassword(email, password);
+
+    authPromise.catch(err => {
+        modalAuthMsg.textContent = err.message;
+        modalAuthSubmit.disabled = false;
+    });
 });
 
 modalToggleLink.addEventListener('click', e => {
     e.preventDefault();
     isLoginMode = !isLoginMode;
     modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
-    modalToggleLink.innerHTML = isLoginMode
-        ? 'Don’t have an account? <a href="#">Create one</a>'
-        : 'Already have an account? <a href="#">Sign in</a>';
-    modalToggleLink.querySelector('a').addEventListener('click', e => {
-        e.preventDefault();
-        modalToggleLink.click();
-    });
+    modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
+    modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
     modalAuthMsg.textContent = '';
 });
 
-/* 5️⃣ Cart & Modal UI logic */
-const slideOutCart = document.getElementById('slideOutCart');
-const cartOverlay = document.getElementById('cartOverlay');
-const closeSlideCart = document.getElementById('closeSlideCart');
-const proceedToInquiryBtn = document.getElementById('proceedToInquiryBtn');
-const emptyCartMsg = document.getElementById('emptyCartMsg');
-const toast = document.getElementById('toast');
-
-// Header button opens the slide-out cart now
+/* --- Cart Drawer & Modal Logic --- */
 openCartModalBtn.onclick = () => {
     slideOutCart.classList.add('open');
     cartOverlay.classList.add('active');
 };
 
-// Close slide-out cart
 function closeCartDrawer() {
     slideOutCart.classList.remove('open');
     cartOverlay.classList.remove('active');
@@ -255,7 +233,6 @@ function closeCartDrawer() {
 closeSlideCart.onclick = closeCartDrawer;
 cartOverlay.onclick = closeCartDrawer;
 
-// "Proceed to Details" button opens the actual form modal
 proceedToInquiryBtn.onclick = () => {
     closeCartDrawer();
     modalSelectedProducts.value = JSON.stringify(Array.from(selectedItems));
@@ -269,11 +246,32 @@ window.onclick = e => {
     if (e.target === cartModal) cartModal.style.display = 'none';
 };
 
-    
-/* 6️⃣ Load products from Firestore with NEW STEP 2 UI */
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+
+/* --- Load Products & Rendering --- */
 function loadProductsFromFirestore() {
+    const generateSkeletons = () => {
+        let skeletons = '';
+        for(let i=0; i<8; i++) {
+            skeletons += `
+            <div class="skeleton-card">
+                <div class="skeleton-media"></div>
+                <div class="skeleton-info">
+                    <div class="skeleton-text short"></div>
+                    <div class="skeleton-text medium"></div>
+                    <div class="skeleton-text short" style="margin-bottom: 15px;"></div>
+                    <div class="skeleton-button"></div>
+                </div>
+            </div>`;
+        }
+        return skeletons;
+    };
+
     productsSection.innerHTML = `
-        <!-- Modern Category Pills -->
         <div class="category-filters">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
             <button class="filter-pill" data-filter="cotton">Cotton</button>
@@ -281,62 +279,38 @@ function loadProductsFromFirestore() {
             <button class="filter-pill" data-filter="linen">Linen</button>
             <button class="filter-pill" data-filter="blend">Blends</button>
         </div>
-        
-        <!-- Search and Sort container -->
         <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
-            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
-            <select id="sortBy" style="padding: 10px; border-radius: 20px; border: 1px solid #ddd;">
-                <option value="default">Default (Newest)</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="name">Name: A-Z</option>
-            </select>
+            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
         </div>
-
-        <!-- Modern Product Grid -->
-        <div id="productsGrid" class="product-grid">Loading products...</div>
+        <div id="productsGrid" class="product-grid">
+            ${generateSkeletons()}
+        </div>
     `;
 
-    const productsRef = db.collection('products').orderBy('createdAt', 'desc');
-    productsUnsubscribe = productsRef.onSnapshot(snapshot => {
+    db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         const productsGrid = document.getElementById('productsGrid');
         productsGrid.innerHTML = ''; 
 
         if (snapshot.empty) {
-            productsGrid.innerHTML = '<p class="no-results">No products available yet.</p>';
+            productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center;">No products available yet.</p>';
             return;
         }
 
-        const products = [];
         snapshot.forEach(doc => {
-            products.push({ id: doc.id, ...doc.data() });
-        });
-
-        let filteredProducts = [...products]; 
-        
-        // Render step
-        if (filteredProducts.length === 0) {
-            productsGrid.innerHTML = '<p class="no-results">No products match your filters.</p>';
-            return;
-        }
-
-        filteredProducts.forEach(product => {
+            const product = { id: doc.id, ...doc.data() };
             const card = document.createElement('article');
             card.className = 'product-card';
             
-            // Dynamic generation using Step 2 UI (including transition video layer)
+            // Replaced default video with raymond-fabric-transition.mp4 as a placeholder
             card.innerHTML = `
                 <div class="product-media">
                     <img src="${product.imageUrl || 'default.jpg'}" alt="${product.name}" class="media-static">
-                    <!-- Replace 'raymond-transition-placeholder.mp4' with your actual transition video URL in Firebase Storage -->
-                    <video src="raymond-transition-placeholder.mp4" autoplay loop muted playsinline class="media-transition"></video>
+                    <video src="raymond-fabric-transition.mp4" autoplay loop muted playsinline class="media-transition"></video>
                 </div>
-                
                 <div class="product-info">
                     <span class="product-category">${product.category || 'Other'}</span>
                     <h3 class="product-title">${product.name || 'Unnamed Product'}</h3>
                     <p class="product-price">₹${product.price ? parseFloat(product.price).toLocaleString() : 'Request Price'}</p>
-                    
                     <div class="product-actions">
                         <button type="button" class="btn-add-inquiry" data-id="${product.id}">
                             ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
@@ -347,19 +321,13 @@ function loadProductsFromFirestore() {
             productsGrid.appendChild(card);
         });
 
-        // Re-attach listeners for dynamically created add buttons
         document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
             btn.addEventListener('click', toggleSelection);
         });
     });
 }
 
-function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 3000);
-}
-
+/* --- Selection Logic --- */
 function toggleSelection(e) {
     if(!auth.currentUser) {
         signInModal.style.display = 'block';
@@ -369,14 +337,12 @@ function toggleSelection(e) {
     if (selectedItems.has(id)) {
         selectedItems.delete(id);
         e.target.textContent = 'Add to Inquiry';
-        e.target.style.backgroundColor = '#f8f9fa';
-        e.target.style.color = '#333';
+        e.target.classList.remove('added');
         showToast('Removed from inquiry');
     } else {
         selectedItems.add(id);
         e.target.textContent = 'Added ✓';
-        e.target.style.backgroundColor = '#1a1a1a';
-        e.target.style.color = '#fff';
+        e.target.classList.add('added');
         showToast('Added to inquiry list!');
     }
     updateSelectedUI();
@@ -401,8 +367,8 @@ function updateSelectedUI() {
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <div style="flex-grow: 1;">
-                        <span style="font-weight: 600; display: block;">${snap.data().name || 'Unnamed Product'}</span>
-                        <span style="font-size: 0.8rem; color: #666;">₹${snap.data().price || 'N/A'}</span>
+                        <span style="font-weight: 600; display: block; margin-bottom: 4px;">${snap.data().name || 'Unnamed Product'}</span>
+                        <span style="font-size: 0.8rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">₹${snap.data().price || 'N/A'}</span>
                     </div>
                 `;
                 selectedList.appendChild(li);
@@ -410,60 +376,53 @@ function updateSelectedUI() {
         });
     });
 }
-/* 8️⃣ Modal Inquiry Form submission */
+
+/* --- Inquiry Submission --- */
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
     modalSubmitBtn.disabled = true;
     modalSubmitBtn.textContent = 'Sending…';
     modalFormStatus.style.display = 'none';
 
-    const user = auth.currentUser;
     const formData = {
-        uid: user.uid,
-        name: modalName.value.trim(),
-        email: modalEmail2.value.trim(),
-        phone: modalPhone.value.trim(),
-        city: modalCity.value.trim(),
-        message: modalMessage.value.trim(),
+        uid: auth.currentUser.uid,
+        name: document.getElementById('modalName').value.trim(),
+        email: document.getElementById('modalEmail2').value.trim(),
+        phone: document.getElementById('modalPhone').value.trim(),
+        city: document.getElementById('modalCity').value.trim(),
+        message: document.getElementById('modalMessage').value.trim(),
         selectedProducts: Array.from(selectedItems),
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     try {
         await db.collection('inquiries').add(formData);
-        showModalFormSuccess('Inquiry sent successfully! We will contact you soon.');
+        modalFormStatus.textContent = 'Inquiry sent successfully! We will contact you soon.';
+        modalFormStatus.className = 'form-status success';
+        modalFormStatus.style.display = 'block';
         modalInquiryForm.reset();
         selectedItems.clear();
         updateSelectedUI();
         document.querySelector('.inquiry-btn span').textContent = `(0)`;
-        setTimeout(() => { cartModal.style.display = 'none'; }, 2000);
+        setTimeout(() => { cartModal.style.display = 'none'; modalFormStatus.style.display = 'none'; }, 2000);
     } catch (err) {
-        showModalFormError('Error: ' + err.message);
+        modalFormStatus.textContent = 'Error: ' + err.message;
+        modalFormStatus.className = 'form-status error';
+        modalFormStatus.style.display = 'block';
     } finally {
         modalSubmitBtn.disabled = false;
         modalSubmitBtn.textContent = 'Send Inquiry';
     }
 });
 
-function showModalFormError(msg) {
-    modalFormStatus.textContent = msg;
-    modalFormStatus.className = 'form-status error';
-    modalFormStatus.style.display = 'block';
-}
-function showModalFormSuccess(msg) {
-    modalFormStatus.textContent = msg;
-    modalFormStatus.className = 'form-status success';
-    modalFormStatus.style.display = 'block';
-}
-
-/* 9️⃣ Newsletter */
+/* --- Newsletter --- */
 newsletterForm.addEventListener('submit', e => {
     e.preventDefault();
     alert(`Thank you for subscribing!`);
     newsletterForm.reset();
 });
 
-// Load on init
+// Init
 loadProductsFromFirestore();
 </script>
 </body>
