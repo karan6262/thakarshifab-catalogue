@@ -253,80 +253,122 @@ function showToast(message) {
 }
 
 /* --- Load Products & Rendering --- */
-function loadProductsFromFirestore() {
-    const generateSkeletons = () => {
-        let skeletons = '';
-        for(let i=0; i<8; i++) {
-            skeletons += `
-            <div class="skeleton-card">
-                <div class="skeleton-media"></div>
-                <div class="skeleton-info">
-                    <div class="skeleton-text short"></div>
-                    <div class="skeleton-text medium"></div>
-                    <div class="skeleton-text short" style="margin-bottom: 15px;"></div>
-                    <div class="skeleton-button"></div>
-                </div>
-            </div>`;
-        }
-        return skeletons;
-    };
+/* --- Load Products & Rendering --- */
+let allProducts = []; // Stores all products from Firebase
+let currentCategory = 'all'; // Tracks the active category pill
+let currentSearchTerm = ''; // Tracks the search bar input
 
-    productsSection.innerHTML = `
-        <div class="category-filters">
-            <button class="filter-pill active" data-filter="all">All Fabrics</button>
-            <button class="filter-pill" data-filter="cotton">Cotton</button>
-            <button class="filter-pill" data-filter="silk">Silk</button>
-            <button class="filter-pill" data-filter="linen">Linen</button>
-            <button class="filter-pill" data-filter="blend">Blends</button>
-        </div>
-        <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
-            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
-        </div>
-        <div id="productsGrid" class="product-grid">
-            ${generateSkeletons()}
-        </div>
-    `;
+// 1. Fetch data from Firebase once and listen for changes
+function loadProductsFromFirestore() {
+    const productsGrid = document.getElementById('productsGrid');
+    
+    // Show skeletons initially
+    productsGrid.innerHTML = generateSkeletons();
 
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        const productsGrid = document.getElementById('productsGrid');
-        productsGrid.innerHTML = ''; 
-
-        if (snapshot.empty) {
-            productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center;">No products available yet.</p>';
-            return;
-        }
-
+        allProducts = [];
         snapshot.forEach(doc => {
-            const product = { id: doc.id, ...doc.data() };
-            const card = document.createElement('article');
-            card.className = 'product-card';
-            
-            // Replaced default video with raymond-fabric-transition.mp4 as a placeholder
-            card.innerHTML = `
-                <div class="product-media">
-                    <img src="${product.imageUrl || 'default.jpg'}" alt="${product.name}" class="media-static">
-                    <video src="raymond-fabric-transition.mp4" autoplay loop muted playsinline class="media-transition"></video>
-                </div>
-                <div class="product-info">
-                    <span class="product-category">${product.category || 'Other'}</span>
-                    <h3 class="product-title">${product.name || 'Unnamed Product'}</h3>
-                    <p class="product-price">₹${product.price ? parseFloat(product.price).toLocaleString() : 'Request Price'}</p>
-                    <div class="product-actions">
-                        <button type="button" class="btn-add-inquiry" data-id="${product.id}">
-                            ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
-                        </button>
-                    </div>
-                </div>
-            `;
-            productsGrid.appendChild(card);
+            allProducts.push({ id: doc.id, ...doc.data() });
         });
-
-        document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
-            btn.addEventListener('click', toggleSelection);
-        });
+        
+        // Setup the event listeners for filters only once
+        setupFilterListeners();
+        
+        // Render the actual products based on current filters
+        renderProducts();
     });
 }
 
+// 2. Render the grid based on active filters
+function renderProducts() {
+    const productsGrid = document.getElementById('productsGrid');
+    productsGrid.innerHTML = ''; 
+
+    // Filter the array based on search text AND selected category
+    let filteredProducts = allProducts.filter(product => {
+        const matchesCategory = currentCategory === 'all' || (product.category && product.category.toLowerCase() === currentCategory.toLowerCase());
+        const matchesSearch = product.name?.toLowerCase().includes(currentSearchTerm) || product.category?.toLowerCase().includes(currentSearchTerm);
+        return matchesCategory && matchesSearch;
+    });
+
+    if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center; color: #666; margin-top: 20px;">No products match your search or filter.</p>';
+        return;
+    }
+
+    filteredProducts.forEach(product => {
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        
+        card.innerHTML = `
+            <div class="product-media">
+                <img src="${product.imageUrl || 'default.jpg'}" alt="${product.name}" class="media-static">
+                <video src="${product.videoUrl || 'raymond-fabric-transition.mp4'}" autoplay loop muted playsinline class="media-transition"></video>
+            </div>
+            <div class="product-info">
+                <span class="product-category">${product.category || 'Other'}</span>
+                <h3 class="product-title">${product.name || 'Unnamed Product'}</h3>
+                <p class="product-price">₹${product.price ? parseFloat(product.price).toLocaleString() : 'Request Price'}</p>
+                <div class="product-actions">
+                    <button type="button" class="btn-add-inquiry ${selectedItems.has(product.id) ? 'added' : ''}" data-id="${product.id}">
+                        ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
+                    </button>
+                </div>
+            </div>
+        `;
+        productsGrid.appendChild(card);
+    });
+
+    // Re-attach selection logic to new buttons
+    document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
+        btn.addEventListener('click', toggleSelection);
+    });
+}
+
+// 3. Connect the UI buttons to the logic
+function setupFilterListeners() {
+    // Category Pills
+    const pills = document.querySelectorAll('.filter-pill');
+    pills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+            // Remove active class from all pills
+            pills.forEach(p => p.classList.remove('active'));
+            // Add active class to clicked pill
+            e.target.classList.add('active');
+            
+            // Update state and re-render
+            currentCategory = e.target.dataset.filter;
+            renderProducts();
+        });
+    });
+
+    // Search Bar
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value.toLowerCase().trim();
+            renderProducts();
+        });
+    }
+}
+
+// Helper: Skeleton UI
+function generateSkeletons() {
+    let skeletons = '';
+    for(let i=0; i<8; i++) {
+        skeletons += `
+        <div class="skeleton-card">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-info">
+                <div class="skeleton-text short"></div>
+                <div class="skeleton-text medium"></div>
+                <div class="skeleton-text short" style="margin-bottom: 15px;"></div>
+                <div class="skeleton-button"></div>
+            </div>
+        </div>`;
+    }
+    return skeletons;
+}
 /* --- Selection Logic --- */
 function toggleSelection(e) {
     if(!auth.currentUser) {
