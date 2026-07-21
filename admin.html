@@ -6,6 +6,10 @@
     <title>Admin Dashboard - Thakarshi Fab</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Hide the admin container until we verify the user */
+        #adminContent {
+            display: none; 
+        }
         .admin-container {
             max-width: 600px;
             margin: 60px auto;
@@ -43,7 +47,7 @@
     </div>
 </header>
 
-<div class="container">
+<div class="container" id="adminContent">
     <div class="admin-container">
         <h2 style="margin-bottom: 25px; color: var(--primary);">Add New Fabric</h2>
         
@@ -71,7 +75,6 @@
 
             <div class="form-group">
                 <label>Product Images</label>
-                <!-- Added "multiple" attribute to allow selecting multiple images -->
                 <input type="file" id="prodImages" accept="image/*" multiple required>
                 <span class="help-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple images.</span>
             </div>
@@ -89,12 +92,16 @@
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-const CLOUD_NAME = 'ubqtf5go'; // Your Cloudinary cloud name
-const CLOUDINARY_UPLOAD_PRESET = 'thakarshi_product_upload';
-const CLOUDINARY_URL = https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload;
+// REPLACE WITH YOUR ACTUAL ADMIN EMAIL
+const ADMIN_EMAIL = "shahkaran6262@gmail.com"; 
+
+const CLOUD_NAME = "YOUR_CLOUD_NAME"; 
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
@@ -106,7 +113,20 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.firestore();
+
+// --- SECURITY CHECK ---
+auth.onAuthStateChanged(user => {
+    if (user && user.email === ADMIN_EMAIL) {
+        // User is the admin, show the dashboard
+        document.getElementById('adminContent').style.display = 'block';
+    } else {
+        // Not the admin (or not logged in). Kick them out!
+        alert("Unauthorized Access. Redirecting to the store.");
+        window.location.href = "index.html";
+    }
+});
 
 const uploadForm = document.getElementById('uploadForm');
 const uploadBtn = document.getElementById('uploadBtn');
@@ -123,10 +143,7 @@ async function uploadToCloudinary(file) {
         body: formData
     });
 
-    if (!response.ok) {
-        throw new Error('Failed to upload media to Cloudinary');
-    }
-
+    if (!response.ok) throw new Error('Failed to upload media to Cloudinary');
     const data = await response.json();
     return data.secure_url; 
 }
@@ -141,13 +158,12 @@ uploadForm.addEventListener('submit', async (e) => {
     const name = document.getElementById('prodName').value.trim();
     const category = document.getElementById('prodCategory').value;
     const price = document.getElementById('prodPrice').value;
-    const imageFiles = document.getElementById('prodImages').files; // Array of selected files
+    const imageFiles = document.getElementById('prodImages').files; 
     const videoFile = document.getElementById('prodVideo').files[0];
 
     try {
         const imageUrls = [];
         
-        // Loop through and upload multiple images
         for (let i = 0; i < imageFiles.length; i++) {
             progressText.textContent = `Uploading Image ${i + 1} of ${imageFiles.length}...`;
             const url = await uploadToCloudinary(imageFiles[i]);
@@ -162,7 +178,7 @@ uploadForm.addEventListener('submit', async (e) => {
             name: name,
             category: category,
             price: Number(price),
-            imageUrls: imageUrls, // Saved as an array of URLs
+            imageUrls: imageUrls, 
             videoUrl: videoUrl, 
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
