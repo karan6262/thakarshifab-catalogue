@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
-    <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Sticky Header -->
 <header class="site-header">
     <div class="header-container">
         <div class="logo">
@@ -23,7 +21,6 @@
 </header>
 
 <div class="container">
-    <!-- Immersive Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
             <h1>Discover Premium Fabrics</h1>
@@ -32,15 +29,12 @@
         </div>
     </section>
 
-    <!-- Auth Status -->
     <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px;"></div>
 
-    <!-- Product Selection (Dynamic) -->
     <section id="productsSection" class="catalog-section">
         <!-- JS will inject filters, search, skeletons, and products here -->
     </section>
 
-    <!-- Newsletter Section -->
     <section class="newsletter">
         <h2>Stay Updated</h2>
         <p>Subscribe to our newsletter for latest arrivals, exclusive offers, and textile trends.</p>
@@ -126,13 +120,11 @@
     </div>
 </div>
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* --- 1. Firebase Configuration --- */
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -146,19 +138,15 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* --- 2. Global State Variables --- */
 let allProducts = []; 
 let currentCategory = 'all'; 
 let currentSearchTerm = ''; 
 let isLoginMode = true; 
 const selectedItems = new Set(); 
 
-/* --- 3. DOM Elements --- */
 const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
 const newsletterForm = document.getElementById('newsletterForm');
-
-// Slide Out Cart Elements
 const openCartModalBtn = document.getElementById('openCartModal');
 const slideOutCart = document.getElementById('slideOutCart');
 const cartOverlay = document.getElementById('cartOverlay');
@@ -168,7 +156,6 @@ const emptyCartMsg = document.getElementById('emptyCartMsg');
 const proceedToInquiryBtn = document.getElementById('proceedToInquiryBtn');
 const toast = document.getElementById('toast');
 
-// Modal Elements
 const signInModal = document.getElementById('signInModal');
 const cartModal = document.getElementById('cartModal');
 const closeSignInModal = document.getElementById('closeSignInModal');
@@ -182,7 +169,6 @@ const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
-/* --- 4. Auth State Listener --- */
 auth.onAuthStateChanged(user => {
     if (user) {
         authStatusEl.innerHTML = `Signed in as <strong>${user.email}</strong> <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px;">Sign out</button>`;
@@ -197,7 +183,6 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-/* --- 5. Auth Form Handling --- */
 modalAuthForm.addEventListener('submit', e => {
     e.preventDefault();
     const email = document.getElementById('modalEmail').value.trim();
@@ -224,7 +209,6 @@ modalToggleLink.addEventListener('click', e => {
     modalAuthMsg.textContent = '';
 });
 
-/* --- 6. Cart Drawer & Modal Handlers --- */
 openCartModalBtn.onclick = () => {
     slideOutCart.classList.add('open');
     cartOverlay.classList.add('active');
@@ -256,7 +240,6 @@ function showToast(message) {
     setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
-/* --- 7. Load Products & Rendering Logic --- */
 function loadProductsFromFirestore() {
     productsSection.innerHTML = `
         <div class="category-filters">
@@ -304,9 +287,21 @@ function renderProducts() {
         const card = document.createElement('article');
         card.className = 'product-card';
         
+        // Setup image gallery HTML (handles new array structure and backwards compatibility)
+        let imagesHtml = '';
+        if (product.imageUrls && product.imageUrls.length > 0) {
+            imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}">`).join('');
+        } else if (product.imageUrl) {
+            imagesHtml = `<img src="${product.imageUrl}" alt="${product.name}">`;
+        } else {
+            imagesHtml = `<img src="default.jpg" alt="${product.name}">`;
+        }
+        
         card.innerHTML = `
             <div class="product-media">
-                <img src="${product.imageUrl || 'default.jpg'}" alt="${product.name}" class="media-static">
+                <div class="product-gallery media-static">
+                    ${imagesHtml}
+                </div>
                 <video src="${product.videoUrl || 'raymond-fabric-transition.mp4'}" autoplay loop muted playsinline class="media-transition"></video>
             </div>
             <div class="product-info">
@@ -367,7 +362,6 @@ function generateSkeletons() {
     return skeletons;
 }
 
-/* --- 8. Selection & Cart Logic --- */
 function toggleSelection(e) {
     if(!auth.currentUser) {
         signInModal.style.display = 'block';
@@ -414,7 +408,6 @@ function updateSelectedUI() {
     });
 }
 
-/* --- 9. Inquiry Form Submission --- */
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
     modalSubmitBtn.disabled = true;
@@ -441,7 +434,6 @@ modalInquiryForm.addEventListener('submit', async e => {
         selectedItems.clear();
         updateSelectedUI();
         document.querySelector('.inquiry-btn span').textContent = `(0)`;
-        // Re-render to reset button states
         renderProducts();
         setTimeout(() => { cartModal.style.display = 'none'; modalFormStatus.style.display = 'none'; }, 2000);
     } catch (err) {
@@ -454,14 +446,12 @@ modalInquiryForm.addEventListener('submit', async e => {
     }
 });
 
-/* --- 10. Newsletter --- */
 newsletterForm.addEventListener('submit', e => {
     e.preventDefault();
     alert(`Thank you for subscribing!`);
     newsletterForm.reset();
 });
 
-// Initialization
 loadProductsFromFirestore();
 </script>
 </body>
