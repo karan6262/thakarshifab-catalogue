@@ -6,31 +6,75 @@
     <title>Admin Dashboard - Thakarshi Fab</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Hide the admin container until we verify the user */
-        #adminContent {
-            display: none; 
-        }
+        #adminContent { display: none; }
+        
         .admin-container {
-            max-width: 600px;
-            margin: 60px auto;
+            max-width: 1000px;
+            margin: 40px auto;
             padding: 40px;
             background: var(--white);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
         }
-        .progress-text {
-            display: none;
-            margin-top: 15px;
-            text-align: center;
-            font-weight: 600;
-            color: var(--accent);
+
+        /* --- Tabs --- */
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: 10px;
         }
-        .help-text {
-            display: block;
-            font-size: 0.8rem;
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
             color: var(--gray-600);
-            margin-top: 4px;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
+        .tab-btn:hover { background: var(--gray-100); }
+        .tab-btn.active {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+
+        /* --- Tables --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--gray-300);
+            padding: 12px;
+            text-align: left;
+        }
+        .data-table th { background: var(--gray-100); font-weight: 600; }
+        .data-table tr:hover { background: #fdfdfd; }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .delete-btn:hover { background: #c82333; }
+
+        .progress-text { display: none; margin-top: 15px; text-align: center; font-weight: 600; color: var(--accent); }
+        .help-text { display: block; font-size: 0.8rem; color: var(--gray-600); margin-top: 4px; }
+        
+        /* Make form smaller so it doesn't span 1000px */
+        #uploadForm { max-width: 600px; }
     </style>
 </head>
 <body>
@@ -39,55 +83,102 @@
     <div class="header-container">
         <div class="logo">
             <h1>Thakarshi Fab Admin</h1>
-            <p>Automated Upload Portal</p>
+            <p>Dashboard & Upload Portal</p>
         </div>
         <nav class="header-nav">
-            <a href="index.html" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Back to Store</a>
+            <a href="index.html" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem; background-color: #1a1a1a;">Back to Store</a>
         </nav>
     </div>
 </header>
 
 <div class="container" id="adminContent">
     <div class="admin-container">
-        <h2 style="margin-bottom: 25px; color: var(--primary);">Add New Fabric</h2>
         
-        <form id="uploadForm">
-            <div class="form-group">
-                <label>Fabric Name</label>
-                <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
-            </div>
-            
-            <div class="form-group">
-                <label>Category</label>
-                <select id="prodCategory" required>
-                    <option value="cotton">Cotton</option>
-                    <option value="silk">Silk</option>
-                    <option value="linen">Linen</option>
-                    <option value="blend">Blends</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
+        <!-- Navigation Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('section-add', this)">Add New Fabric</button>
+            <button class="tab-btn" onclick="switchTab('section-products', this)">Manage Products</button>
+            <button class="tab-btn" onclick="switchTab('section-inquiries', this)">View Inquiries</button>
+        </div>
 
-            <div class="form-group">
-                <label>Price per Meter (₹)</label>
-                <input type="number" id="prodPrice" required placeholder="e.g., 450">
-            </div>
+        <!-- 1. ADD PRODUCT SECTION -->
+        <div id="section-add" class="admin-section active">
+            <h2 style="margin-bottom: 25px; color: var(--primary);">Upload New Product</h2>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Fabric Name</label>
+                    <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="prodCategory" required>
+                        <option value="cotton">Cotton</option>
+                        <option value="silk">Silk</option>
+                        <option value="linen">Linen</option>
+                        <option value="blend">Blends</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price per Meter (₹)</label>
+                    <input type="number" id="prodPrice" required placeholder="e.g., 450">
+                </div>
+                <div class="form-group">
+                    <label>Product Images</label>
+                    <input type="file" id="prodImages" accept="image/*" multiple required>
+                    <span class="help-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple images.</span>
+                </div>
+                <div class="form-group">
+                    <label>Transition Video (Hover Effect)</label>
+                    <input type="file" id="prodVideo" accept="video/mp4,video/webm" required>
+                </div>
+                <button type="submit" class="submit-btn" id="uploadBtn">Upload Product to Catalog</button>
+                <div id="progressText" class="progress-text">Initializing upload...</div>
+                <div id="statusMsg" class="form-status"></div>
+            </form>
+        </div>
 
-            <div class="form-group">
-                <label>Product Images</label>
-                <input type="file" id="prodImages" accept="image/*" multiple required>
-                <span class="help-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple images.</span>
+        <!-- 2. MANAGE PRODUCTS SECTION -->
+        <div id="section-products" class="admin-section">
+            <h2 style="margin-bottom: 20px;">Live Catalog Inventory</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <tr><td colspan="5">Loading products...</td></tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Transition Video (Hover Effect)</label>
-                <input type="file" id="prodVideo" accept="video/mp4,video/webm" >
+        <!-- 3. VIEW INQUIRIES SECTION -->
+        <div id="section-inquiries" class="admin-section">
+            <h2 style="margin-bottom: 20px;">Customer Inquiries</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Customer Details</th>
+                            <th>Message / Requirements</th>
+                            <th>Selected Product IDs</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inquiriesTableBody">
+                        <tr><td colspan="4">Loading inquiries...</td></tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <button type="submit" class="submit-btn" id="uploadBtn">Upload Product to Catalog</button>
-            <div id="progressText" class="progress-text">Initializing upload...</div>
-            <div id="statusMsg" class="form-status"></div>
-        </form>
     </div>
 </div>
 
@@ -96,11 +187,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-// REPLACE WITH YOUR ACTUAL ADMIN EMAIL
-const ADMIN_EMAIL = "shahkaran6262@gmail.com"; 
+/* =========================================
+   1. CREDENTIALS & CONFIGURATION
+   ========================================= */
+const ADMIN_EMAIL = "shahkaran6262@gmail.com"; // <-- PUT YOUR EMAIL HERE
 
-const CLOUD_NAME = "YOUR_CLOUD_NAME"; 
-const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
+const CLOUD_NAME = "ubqtf5go";       // <-- PUT CLOUDINARY INFO HERE
+const UPLOAD_PRESET = "thakarshi_product_upload"; // <-- PUT CLOUDINARY INFO HERE
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -116,18 +209,126 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// --- SECURITY CHECK ---
+
+/* =========================================
+   2. SECURITY & INITIALIZATION
+   ========================================= */
 auth.onAuthStateChanged(user => {
     if (user && user.email === ADMIN_EMAIL) {
-        // User is the admin, show the dashboard
         document.getElementById('adminContent').style.display = 'block';
+        
+        // Load data for the dashboard tables
+        fetchAdminProducts();
+        fetchAdminInquiries();
     } else {
-        // Not the admin (or not logged in). Kick them out!
         alert("Unauthorized Access. Redirecting to the store.");
         window.location.href = "index.html";
     }
 });
 
+
+/* =========================================
+   3. UI TAB LOGIC
+   ========================================= */
+function switchTab(sectionId, btnElement) {
+    // Hide all sections
+    document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected section and activate button
+    document.getElementById(sectionId).classList.add('active');
+    btnElement.classList.add('active');
+}
+
+
+/* =========================================
+   4. DATA FETCHING (PRODUCTS & INQUIRIES)
+   ========================================= */
+function fetchAdminProducts() {
+    db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        const tbody = document.getElementById('productsTableBody');
+        tbody.innerHTML = '';
+        
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="5">No products in catalog.</td></tr>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const p = doc.data();
+            const id = doc.id;
+            const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td><img src="${imgUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
+                    <td><strong>${p.name}</strong><br><small style="color:gray;">ID: ${id}</small></td>
+                    <td style="text-transform: capitalize;">${p.category}</td>
+                    <td>₹${p.price}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteProduct('${id}')">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    });
+}
+
+async function deleteProduct(id) {
+    if(confirm("Are you sure you want to permanently delete this fabric from the catalog?")) {
+        try {
+            await db.collection('products').doc(id).delete();
+            alert("Product deleted.");
+        } catch (err) {
+            alert("Error deleting product: " + err.message);
+        }
+    }
+}
+
+function fetchAdminInquiries() {
+    db.collection('inquiries').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+        const tbody = document.getElementById('inquiriesTableBody');
+        tbody.innerHTML = '';
+        
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="4">No customer inquiries yet.</td></tr>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const inq = doc.data();
+            const date = inq.timestamp ? inq.timestamp.toDate().toLocaleString() : 'Just now';
+            
+            // Format selected products array
+            let productsHtml = 'None';
+            if (inq.selectedProducts && inq.selectedProducts.length > 0) {
+                productsHtml = `<ul style="margin:0; padding-left:15px; font-size:0.85rem;">` + 
+                               inq.selectedProducts.map(id => `<li>${id}</li>`).join('') + 
+                               `</ul>`;
+            }
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><small>${date}</small></td>
+                    <td>
+                        <strong>${inq.name}</strong><br>
+                        Email: <a href="mailto:${inq.email}">${inq.email}</a><br>
+                        Phone: ${inq.phone || 'N/A'}<br>
+                        City: ${inq.city || 'N/A'}
+                    </td>
+                    <td>${inq.message || '<em style="color:gray;">No message</em>'}</td>
+                    <td>${productsHtml}</td>
+                </tr>
+            `;
+        });
+    });
+}
+
+
+/* =========================================
+   5. CLOUDINARY & PRODUCT UPLOAD LOGIC
+   ========================================= */
 const uploadForm = document.getElementById('uploadForm');
 const uploadBtn = document.getElementById('uploadBtn');
 const progressText = document.getElementById('progressText');
@@ -137,12 +338,7 @@ async function uploadToCloudinary(file) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', UPLOAD_PRESET);
-
-    const response = await fetch(CLOUDINARY_URL, {
-        method: 'POST',
-        body: formData
-    });
-
+    const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
     if (!response.ok) throw new Error('Failed to upload media to Cloudinary');
     const data = await response.json();
     return data.secure_url; 
@@ -150,7 +346,6 @@ async function uploadToCloudinary(file) {
 
 uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     uploadBtn.disabled = true;
     progressText.style.display = 'block';
     statusMsg.style.display = 'none';
@@ -163,7 +358,6 @@ uploadForm.addEventListener('submit', async (e) => {
 
     try {
         const imageUrls = [];
-        
         for (let i = 0; i < imageFiles.length; i++) {
             progressText.textContent = `Uploading Image ${i + 1} of ${imageFiles.length}...`;
             const url = await uploadToCloudinary(imageFiles[i]);
@@ -187,6 +381,11 @@ uploadForm.addEventListener('submit', async (e) => {
         statusMsg.className = 'form-status success';
         statusMsg.style.display = 'block';
         uploadForm.reset();
+        
+        // Switch to the Manage Products tab automatically to see the new item
+        setTimeout(() => {
+            switchTab('section-products', document.querySelectorAll('.tab-btn')[1]);
+        }, 1500);
 
     } catch (error) {
         console.error("Upload process failed: ", error);
