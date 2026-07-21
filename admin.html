@@ -36,10 +36,7 @@
             transition: all 0.2s;
         }
         .tab-btn:hover { background: var(--gray-100); }
-        .tab-btn.active {
-            background: #1a1a1a;
-            color: white;
-        }
+        .tab-btn.active { background: #1a1a1a; color: white; }
         
         .admin-section { display: none; }
         .admin-section.active { display: block; }
@@ -58,13 +55,15 @@
         .data-table th { background: var(--gray-100); font-weight: 600; }
         .data-table tr:hover { background: #fdfdfd; }
         
-        .action-btns { display: flex; gap: 8px; }
+        .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
         
         .edit-btn { background: #1a1a1a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .edit-btn:hover { background: #333; }
 
         .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .delete-btn:hover { background: #c82333; }
+        
+        .toggle-btn { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: white; font-weight: bold; }
 
         .status-select { padding: 6px; border-radius: 4px; border: 1px solid var(--gray-300); font-weight: bold; cursor: pointer; }
         .status-new { color: #dc3545; }
@@ -76,7 +75,6 @@
         
         #uploadForm { max-width: 600px; }
         
-        /* Admin Search Bar Styling */
         .admin-search-bar {
             padding: 10px 15px;
             border-radius: 8px;
@@ -151,7 +149,6 @@
         <div id="section-products" class="admin-section">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Live Catalog Inventory</h2>
-                <!-- Product Search Bar -->
                 <input type="text" id="adminProductSearch" class="admin-search-bar" placeholder="Search products, ID, category...">
             </div>
             <div style="overflow-x: auto;">
@@ -160,13 +157,12 @@
                         <tr>
                             <th>Image</th>
                             <th>Details</th>
-                            <th>Category</th>
-                            <th>Price</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="productsTableBody">
-                        <tr><td colspan="5">Loading products...</td></tr>
+                        <tr><td colspan="4">Loading products...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -176,7 +172,6 @@
         <div id="section-inquiries" class="admin-section">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Customer Inquiries</h2>
-                <!-- Inquiry Search Bar -->
                 <input type="text" id="adminInquirySearch" class="admin-search-bar" placeholder="Search by name, city, status...">
             </div>
             <div style="overflow-x: auto;">
@@ -226,6 +221,13 @@
                 <input type="number" id="editProdPrice" required>
             </div>
             <div class="form-group">
+                <label>Availability</label>
+                <select id="editProdAvailable">
+                    <option value="true">Available (Visible in Store)</option>
+                    <option value="false">Unavailable (Hidden from Store)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Product Description</label>
                 <textarea id="editProdDesc" style="min-height: 80px;"></textarea>
             </div>
@@ -269,11 +271,10 @@ auth.onAuthStateChanged(async user => {
                 fetchAdminProducts();
                 fetchAdminInquiries();
             } else {
-                alert("Unauthorized Access. You do not have admin privileges.");
+                alert("Unauthorized Access.");
                 window.location.href = "index.html";
             }
         } catch (error) {
-            console.error("Permission verification failed:", error);
             window.location.href = "index.html";
         }
     } else {
@@ -289,42 +290,22 @@ function switchTab(sectionId, btnElement) {
     btnElement.classList.add('active');
 }
 
-
-/* --- ADMIN SEARCH FUNCTIONALITY --- */
-
-// Search Filter for Products Table
+/* --- ADMIN SEARCH --- */
 document.getElementById('adminProductSearch').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
     const tableRows = document.getElementById('productsTableBody').getElementsByTagName('tr');
-    
     Array.from(tableRows).forEach(row => {
-        // Skip filtering the "Loading products..." or empty state row
         if (row.cells.length <= 1) return; 
-        
-        const rowText = row.textContent.toLowerCase();
-        if (rowText.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
     });
 });
 
-// Search Filter for Inquiries Table
 document.getElementById('adminInquirySearch').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
     const tableRows = document.getElementById('inquiriesTableBody').getElementsByTagName('tr');
-    
     Array.from(tableRows).forEach(row => {
-        // Skip filtering the "Loading inquiries..." or empty state row
         if (row.cells.length <= 1) return;
-        
-        const rowText = row.textContent.toLowerCase();
-        if (rowText.includes(searchTerm)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
     });
 });
 
@@ -337,7 +318,7 @@ function fetchAdminProducts() {
         adminProductsMap = {}; 
         
         if (snapshot.empty) {
-            tbody.innerHTML = '<tr><td colspan="5">No products in catalog.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4">No products in catalog.</td></tr>';
             return;
         }
 
@@ -349,14 +330,27 @@ function fetchAdminProducts() {
             const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
             
+            // Check Availability (defaults to true if missing)
+            const isAvail = p.isAvailable !== false; 
+            const statusHtml = isAvail 
+                ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' 
+                : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
+            
+            const toggleBtnText = isAvail ? 'Hide from Store' : 'Show in Store';
+            const toggleBtnColor = isAvail ? '#ff9800' : '#28a745';
+
             tbody.innerHTML += `
                 <tr>
-                    <td><img src="${imgUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
-                    <td><strong>${p.name}</strong><br><small style="color:#888;">ID: ${id}</small>${descHtml}</td>
-                    <td style="text-transform: capitalize;">${p.category}</td>
-                    <td>₹${p.price}</td>
+                    <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
+                    <td>
+                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(₹${p.price} | ${p.category})</span><br>
+                        <small style="color:#888;">ID: ${id}</small>
+                        ${descHtml}
+                    </td>
+                    <td>${statusHtml}</td>
                     <td>
                         <div class="action-btns">
+                            <button class="toggle-btn" style="background-color: ${toggleBtnColor};" onclick="toggleAvailability('${id}', ${isAvail})">${toggleBtnText}</button>
                             <button class="edit-btn" onclick="openEditModal('${id}')">Edit</button>
                             <button class="delete-btn" onclick="deleteProduct('${id}')">Delete</button>
                         </div>
@@ -364,10 +358,16 @@ function fetchAdminProducts() {
                 </tr>
             `;
         });
-
-        // Re-trigger search filter just in case search bar is not empty when DB updates
         document.getElementById('adminProductSearch').dispatchEvent(new Event('input'));
     });
+}
+
+async function toggleAvailability(id, currentStatus) {
+    try {
+        await db.collection('products').doc(id).update({ isAvailable: !currentStatus });
+    } catch (err) {
+        alert("Failed to update status: " + err.message);
+    }
 }
 
 function openEditModal(id) {
@@ -377,6 +377,9 @@ function openEditModal(id) {
     document.getElementById('editProdCategory').value = p.category;
     document.getElementById('editProdPrice').value = p.price;
     document.getElementById('editProdDesc').value = p.description || '';
+    
+    // Set Availability Dropdown
+    document.getElementById('editProdAvailable').value = p.isAvailable !== false ? 'true' : 'false';
     
     document.getElementById('editStatusMsg').style.display = 'none';
     document.getElementById('editModal').style.display = 'block';
@@ -391,13 +394,15 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
     btn.textContent = "Saving...";
     
     const id = document.getElementById('editProdId').value;
+    const isAvail = document.getElementById('editProdAvailable').value === 'true';
     
     try {
         await db.collection('products').doc(id).update({
             name: document.getElementById('editProdName').value.trim(),
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
-            description: document.getElementById('editProdDesc').value.trim()
+            description: document.getElementById('editProdDesc').value.trim(),
+            isAvailable: isAvail
         });
         
         msg.textContent = "Product updated successfully!";
@@ -415,12 +420,9 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
 });
 
 async function deleteProduct(id) {
-    if(confirm("Are you sure you want to permanently delete this fabric from the catalog?")) {
-        try {
-            await db.collection('products').doc(id).delete();
-        } catch (err) {
-            alert("Error deleting product: " + err.message);
-        }
+    if(confirm("Are you sure you want to permanently delete this fabric?")) {
+        try { await db.collection('products').doc(id).delete(); } 
+        catch (err) { alert("Error deleting product: " + err.message); }
     }
 }
 
@@ -475,8 +477,6 @@ async function fetchAdminInquiries() {
                 </tr>
             `;
         });
-        
-        // Re-trigger search filter just in case search bar is not empty when DB updates
         document.getElementById('adminInquirySearch').dispatchEvent(new Event('input'));
     });
 }
@@ -534,6 +534,7 @@ uploadForm.addEventListener('submit', async (e) => {
             price: Number(price),
             description: description,
             imageUrls: imageUrls, 
+            isAvailable: true, // Default to available on upload
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
