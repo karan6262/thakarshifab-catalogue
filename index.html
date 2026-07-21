@@ -125,9 +125,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-// REPLACE WITH YOUR ACTUAL ADMIN EMAIL
-const ADMIN_EMAIL = "shahkaran6262@gmail.com"; 
-
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -172,13 +169,18 @@ const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
-/* --- Auth State Listener with Admin Check --- */
-auth.onAuthStateChanged(user => {
+/* --- Dynamic Auth Listener checking Firestore Admins --- */
+auth.onAuthStateChanged(async user => {
     if (user) {
-        // Create an Admin button that only generates if the emails match
         let adminButtonHtml = '';
-        if (user.email === ADMIN_EMAIL) {
-            adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
+        
+        try {
+            const adminDoc = await db.collection('admins').doc(user.email).get();
+            if (adminDoc.exists) {
+                adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
+            }
+        } catch (error) {
+            console.error("Error verifying admin status:", error);
         }
 
         authStatusEl.innerHTML = `
@@ -302,7 +304,6 @@ function renderProducts() {
         const card = document.createElement('article');
         card.className = 'product-card';
         
-        // Setup image gallery HTML for multiple images support
         let imagesHtml = '';
         if (product.imageUrls && product.imageUrls.length > 0) {
             imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}">`).join('');
@@ -314,10 +315,9 @@ function renderProducts() {
         
         card.innerHTML = `
             <div class="product-media">
-                <div class="product-gallery media-static">
+                <div class="product-gallery">
                     ${imagesHtml}
                 </div>
-                <video src="${product.videoUrl || 'raymond-fabric-transition.mp4'}" autoplay loop muted playsinline class="media-transition"></video>
             </div>
             <div class="product-info">
                 <span class="product-category">${product.category || 'Other'}</span>
