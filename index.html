@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles for the new Connect With Us section */
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 1.1rem;
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: var(--radius);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+        .contact-details p {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
 
@@ -32,13 +55,18 @@
         <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
     </div>
 
+    <!-- NEW CONNECT WITH US SECTION -->
     <section class="newsletter">
-        <h2>Stay Updated</h2>
-        <p>Subscribe to our newsletter for latest arrivals, exclusive offers, and textile trends.</p>
-        <form class="newsletter-form" id="newsletterForm">
-            <input type="email" id="newsletterEmail" placeholder="Enter your email" required>
-            <button type="submit">Subscribe</button>
-        </form>
+        <h2>Connect With Us</h2>
+        <p>We supply premium textiles across India. Reach out for bulk orders and business inquiries.</p>
+        
+        <div class="contact-details">
+            <!-- REPLACE THESE DETAILS WITH YOUR ACTUAL INFO -->
+            <p><strong>📍 Office-1:</strong> 2673, Khadtar ni khadki, Zaweriwad Chowk, Ratanpole, Ahmedabad - 380001</p>
+            <p><strong>📞 Phone:</strong> +91 9512341802</p>
+            <p><strong>✉️ Email:</strong> citypulse64@gmail.com</p>
+            <p><strong>🕒 Hours:</strong> Monday - Saturday, 10:00 AM - 8:00 PM</p>
+        </div>
     </section>
 </div>
 
@@ -172,7 +200,6 @@ const itemsPerPage = 12; // Number of items to show at a time
    ========================================= */
 const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
-const newsletterForm = document.getElementById('newsletterForm');
 const openCartModalBtn = document.getElementById('openCartModal');
 const slideOutCart = document.getElementById('slideOutCart');
 const cartOverlay = document.getElementById('cartOverlay');
@@ -206,6 +233,7 @@ auth.onAuthStateChanged(async user => {
         try {
             const adminDoc = await db.collection('admins').doc(user.email).get();
             if (adminDoc.exists) {
+                // Pointing back to admin.html as requested
                 adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
             }
         } catch (error) { console.error("Error verifying admin status:", error); }
@@ -311,14 +339,14 @@ function loadProductsFromFirestore() {
         snapshot.forEach(doc => { allProducts.push({ id: doc.id, ...doc.data() }); });
         
         setupFilterListeners();
-        renderProducts(true); // Reset to page 1 on fresh load
+        renderProducts(true); 
     });
 }
 
 // "Load More" Button Logic
 loadMoreBtn.addEventListener('click', () => {
     currentPage++;
-    renderProducts(false); // Do not reset page, just append
+    renderProducts(false); 
 });
 
 function renderProducts(resetPage = true) {
@@ -326,14 +354,12 @@ function renderProducts(resetPage = true) {
     
     const productsGrid = document.getElementById('productsGrid');
     
-    // 1. Filter the entire array first
     let filteredProducts = allProducts.filter(product => {
         const matchesCategory = currentCategory === 'all' || (product.category && product.category.toLowerCase() === currentCategory.toLowerCase());
         const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || (product.category?.toLowerCase().includes(currentSearchTerm));
         return matchesCategory && matchesSearch;
     });
 
-    // 2. Clear grid ONLY if we are resetting the page (e.g. new search or filter)
     if (resetPage) productsGrid.innerHTML = ''; 
 
     if (filteredProducts.length === 0) {
@@ -342,12 +368,10 @@ function renderProducts(resetPage = true) {
         return;
     }
 
-    // 3. Apply Pagination (Slice the filtered array)
     const startIndex = resetPage ? 0 : (currentPage - 1) * itemsPerPage;
     const endIndex = currentPage * itemsPerPage;
     const productsToRender = filteredProducts.slice(startIndex, endIndex);
 
-    // 4. Render the sliced products
     productsToRender.forEach(product => {
         const card = document.createElement('article');
         card.className = 'product-card';
@@ -396,14 +420,11 @@ function renderProducts(resetPage = true) {
         productsGrid.appendChild(card);
     });
 
-    // 5. Re-attach listeners for the new buttons
     document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
-        // Prevent duplicate listeners
         btn.removeEventListener('click', toggleSelection);
         btn.addEventListener('click', toggleSelection);
     });
 
-    // 6. Handle "Load More" button visibility
     if (filteredProducts.length > endIndex) {
         loadMoreContainer.style.display = 'block';
     } else {
@@ -418,7 +439,7 @@ function setupFilterListeners() {
             pills.forEach(p => p.classList.remove('active'));
             e.target.classList.add('active');
             currentCategory = e.target.dataset.filter;
-            renderProducts(true); // Reset page on filter
+            renderProducts(true); 
         });
     });
 
@@ -428,7 +449,7 @@ function setupFilterListeners() {
         const newSearchInput = document.getElementById('searchInput');
         newSearchInput.addEventListener('input', (e) => {
             currentSearchTerm = e.target.value.toLowerCase().trim();
-            renderProducts(true); // Reset page on search
+            renderProducts(true); 
         });
     }
 }
@@ -502,7 +523,6 @@ modalInquiryForm.addEventListener('submit', async e => {
     modalSubmitBtn.textContent = 'Sending…';
     modalFormStatus.style.display = 'none';
 
-    // Get Form Data
     const customerName = document.getElementById('modalName').value.trim();
     const customerEmail = document.getElementById('modalEmail2').value.trim();
     const customerPhone = document.getElementById('modalPhone').value.trim();
@@ -523,16 +543,13 @@ modalInquiryForm.addEventListener('submit', async e => {
     };
 
     try {
-        // 1. Save to Firebase Database
         await db.collection('inquiries').add(formData);
 
-        // 2. Fetch Product Names for the Email
         const productNames = selectedArray.map(id => {
             const p = allProducts.find(prod => prod.id === id);
             return p ? p.name : id;
         }).join(", ");
 
-        // 3. Send Email Notification via EmailJS
         const emailParams = {
             from_name: customerName,
             from_email: customerEmail,
@@ -542,12 +559,10 @@ modalInquiryForm.addEventListener('submit', async e => {
             products: productNames
         };
         
-        // This runs silently in the background
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
             .then(() => console.log('Email sent successfully'))
             .catch((err) => console.error('Email failed to send', err));
 
-        // 4. Update UI Success
         modalFormStatus.textContent = 'Inquiry sent successfully! We will contact you soon.';
         modalFormStatus.className = 'form-status success';
         modalFormStatus.style.display = 'block';
@@ -556,7 +571,6 @@ modalInquiryForm.addEventListener('submit', async e => {
         updateSelectedUI();
         document.querySelector('.inquiry-btn span').textContent = `(0)`;
         
-        // Refresh the buttons in the grid without resetting page
         renderProducts(false); 
         
         setTimeout(() => { cartModal.style.display = 'none'; modalFormStatus.style.display = 'none'; }, 2000);
@@ -570,13 +584,6 @@ modalInquiryForm.addEventListener('submit', async e => {
     }
 });
 
-newsletterForm.addEventListener('submit', e => {
-    e.preventDefault();
-    alert(`Thank you for subscribing!`);
-    newsletterForm.reset();
-});
-
-// Init
 loadProductsFromFirestore();
 </script>
 </body>
