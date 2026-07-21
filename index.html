@@ -6,33 +6,12 @@
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .connect-section {
-            background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); 
-            color: var(--white);
-            text-align: center;
-            padding: 4rem 1.5rem;
-            margin-top: 4rem;
-            margin-bottom: 2rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
+        .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
-        .contact-grid {
-            display: flex; flex-wrap: wrap; gap: 25px; justify-content: center;
-            margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto;
-        }
-        .contact-card {
-            flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.1);
-            padding: 30px; border-radius: var(--radius); text-align: left;
-            font-size: 1.05rem; border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        .contact-card h3 {
-            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-            color: #f1dfc8; font-size: 1.3rem; display: flex; align-items: center; gap: 10px;
-        }
-        .contact-card p {
-            margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
-        }
+        .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+        .contact-card { flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: var(--radius); text-align: left; font-size: 1.05rem; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .contact-card h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); color: #f1dfc8; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .contact-card p { margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -61,25 +40,13 @@
         <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
     </div>
 
-    <!-- CONNECT WITH US SECTION -->
-    <section class="connect-section">
+    <!-- DYNAMIC CONNECT WITH US SECTION -->
+    <section class="connect-section" id="connectSection" style="display: none;">
         <h2>Connect With Us</h2>
-        <p style="font-size: 1.1rem; opacity: 0.9;">We supply premium textiles across India. Reach out for bulk orders and business inquiries.</p>
+        <p id="connectDesc" style="font-size: 1.1rem; opacity: 0.9;">Loading details...</p>
         
-        <div class="contact-grid">
-            <div class="contact-card">
-                <h3>🏢 Head Office</h3>
-                <p><strong>📍 Address:</strong> 123 New Textile Market, Ring Road, Ahmedabad, Gujarat 380002</p>
-                <p><strong>📞 Phone:</strong> +91 98765 43210</p>
-                <p><strong>✉️ Email:</strong> contact@thakarshifab.com</p>
-            </div>
-            
-            <div class="contact-card">
-                <h3>🏭 Branch Office</h3>
-                <p><strong>📍 Address:</strong> 456 Secondary Market, Ashram Road, Ahmedabad, Gujarat 380009</p>
-                <p><strong>📞 Phone:</strong> +91 91234 56789</p>
-                <p><strong>🕒 Hours:</strong> Monday - Saturday, 10:00 AM - 7:00 PM</p>
-            </div>
+        <div class="contact-grid" id="contactGrid">
+            <!-- Injected via JavaScript from Database -->
         </div>
     </section>
 </div>
@@ -90,12 +57,8 @@
         <span class="close-btn" id="closeSignInModal">&times;</span>
         <h2>Sign In</h2>
         <form id="modalAuthForm">
-            <div class="form-group">
-                <input type="email" id="modalEmail" placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <input type="password" id="modalPassword" placeholder="Password" required>
-            </div>
+            <div class="form-group"><input type="email" id="modalEmail" placeholder="Email" required></div>
+            <div class="form-group"><input type="password" id="modalPassword" placeholder="Password" required></div>
             <button type="submit" class="submit-btn" id="modalAuthSubmit">Sign In</button>
         </form>
         <p class="auth-switch" id="modalAuthSwitch" style="text-align: center; margin-top: 15px;">
@@ -112,51 +75,24 @@
         <h2 style="margin-bottom: 15px;">Send Inquiry</h2>
         <form id="modalInquiryForm" style="overflow-y: auto; padding-right: 5px; flex-grow: 1;">
             <input type="hidden" id="modalSelectedProducts" name="selectedProducts" value="">
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label for="modalName">Full Name *</label>
-                <input type="text" id="modalName" name="name" required>
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label for="modalEmail2">Email Address *</label>
-                <input type="email" id="modalEmail2" name="email" required>
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label for="modalPhone">Phone Number</label>
-                <input type="tel" id="modalPhone" name="phone">
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label for="modalCity">City</label>
-                <input type="text" id="modalCity" name="city">
-            </div>
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label for="modalMessage">Additional Message / Requirements</label>
-                <textarea id="modalMessage" name="message" style="min-height: 80px;"></textarea>
-            </div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Full Name *</label><input type="text" id="modalName" required></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Email Address *</label><input type="email" id="modalEmail2" required></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Phone Number</label><input type="tel" id="modalPhone"></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>City</label><input type="text" id="modalCity"></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Additional Message / Requirements</label><textarea id="modalMessage" style="min-height: 80px;"></textarea></div>
             <button type="submit" class="submit-btn" id="modalSubmitBtn">Send Inquiry</button>
             <div class="form-status" id="modalFormStatus"></div>
         </form>
     </div>
 </div>
 
-<!-- Toast Notification -->
+<!-- Toast & Slide Cart -->
 <div id="toast" class="toast">Item added to inquiry!</div>
-
-<!-- Slide-Out Cart Panel -->
 <div id="cartOverlay" class="cart-overlay"></div>
 <div id="slideOutCart" class="slide-out-cart">
-    <div class="cart-header">
-        <h2>Your Inquiry Cart</h2>
-        <button id="closeSlideCart" class="close-cart-btn">&times;</button>
-    </div>
-    <div class="cart-body">
-        <ul id="selectedList" class="cart-items-list">
-            <!-- Selected fabrics will appear here -->
-        </ul>
-        <div id="emptyCartMsg" class="empty-cart-msg">Your inquiry list is empty.</div>
-    </div>
-    <div class="cart-footer">
-        <button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button>
-    </div>
+    <div class="cart-header"><h2>Your Inquiry Cart</h2><button id="closeSlideCart" class="close-cart-btn">&times;</button></div>
+    <div class="cart-body"><ul id="selectedList" class="cart-items-list"></ul><div id="emptyCartMsg" class="empty-cart-msg">Your inquiry list is empty.</div></div>
+    <div class="cart-footer"><button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button></div>
 </div>
 
 <!-- Firebase & EmailJS SDKs -->
@@ -245,6 +181,49 @@ auth.onAuthStateChanged(async user => {
         updateSelectedUI();
     }
 });
+
+/* --- DYNAMIC CONTACT INFO --- */
+function loadContactSettings() {
+    db.collection('settings').doc('contactInfo').onSnapshot(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('connectSection').style.display = 'block';
+            document.getElementById('connectDesc').textContent = data.desc || 'We supply premium textiles across India.';
+            
+            let gridHtml = '';
+            
+            // Render Head Office if data exists
+            if (data.headAddress || data.headPhone || data.headEmail) {
+                gridHtml += `
+                    <div class="contact-card">
+                        <h3>🏢 Head Office</h3>
+                        ${data.headAddress ? `<p><strong>📍 Address:</strong> ${data.headAddress}</p>` : ''}
+                        ${data.headPhone ? `<p><strong>📞 Phone:</strong> ${data.headPhone}</p>` : ''}
+                        ${data.headEmail ? `<p><strong>✉️ Email:</strong> ${data.headEmail}</p>` : ''}
+                    </div>
+                `;
+            }
+            
+            // Render Branch Office if data exists
+            if (data.branchAddress || data.branchPhone || data.branchHours) {
+                gridHtml += `
+                    <div class="contact-card">
+                        <h3>🏭 Branch Office</h3>
+                        ${data.branchAddress ? `<p><strong>📍 Address:</strong> ${data.branchAddress}</p>` : ''}
+                        ${data.branchPhone ? `<p><strong>📞 Phone:</strong> ${data.branchPhone}</p>` : ''}
+                        ${data.branchHours ? `<p><strong>🕒 Hours:</strong> ${data.branchHours}</p>` : ''}
+                    </div>
+                `;
+            }
+
+            document.getElementById('contactGrid').innerHTML = gridHtml;
+        } else {
+            // Hide section if admin hasn't configured it yet
+            document.getElementById('connectSection').style.display = 'none';
+        }
+    });
+}
+
 
 modalAuthForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -340,9 +319,7 @@ function renderProducts(resetPage = true) {
     
     const productsGrid = document.getElementById('productsGrid');
     
-    // --- THIS IS THE CRUCIAL UPDATE ---
     let filteredProducts = allProducts.filter(product => {
-        // Filter out any products marked as Hidden/Unavailable
         if (product.isAvailable === false) return false;
 
         const matchesCategory = currentCategory === 'all' || (product.category && product.category.toLowerCase() === currentCategory.toLowerCase());
@@ -566,7 +543,9 @@ modalInquiryForm.addEventListener('submit', async e => {
     }
 });
 
+// Init
 loadProductsFromFirestore();
+loadContactSettings(); // NEW: Trigger dynamic settings load
 </script>
 </body>
 </html>
