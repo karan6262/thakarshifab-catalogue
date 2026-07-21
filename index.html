@@ -21,13 +21,7 @@
 </header>
 
 <div class="container">
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Discover Premium Fabrics</h1>
-            <p>Explore our exquisite collection of textiles crafted for quality and style.</p>
-            <a href="#productsSection" class="btn-primary">Shop Now</a>
-        </div>
-    </section>
+    <!-- Removed Hero Section -->
 
     <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;"></div>
 
@@ -266,8 +260,9 @@ function scrollGallery(productId, direction) {
 }
 
 function loadProductsFromFirestore() {
+    // Note: The margin-top has been adjusted slightly since the hero section was removed.
     productsSection.innerHTML = `
-        <div class="category-filters">
+        <div class="category-filters" style="margin-top: 30px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
             <button class="filter-pill" data-filter="cotton">Cotton</button>
             <button class="filter-pill" data-filter="silk">Silk</button>
