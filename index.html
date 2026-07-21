@@ -66,32 +66,32 @@
     </div>
 </div>
 
-<!-- Send Inquiry Details Modal -->
+<!-- Send Inquiry Details Modal (Scrollable fix applied) -->
 <div id="cartModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
         <span class="close-btn" id="closeCartModal">&times;</span>
-        <h2>Send Inquiry</h2>
-        <form id="modalInquiryForm">
+        <h2 style="margin-bottom: 15px;">Send Inquiry</h2>
+        <form id="modalInquiryForm" style="overflow-y: auto; padding-right: 5px; flex-grow: 1;">
             <input type="hidden" id="modalSelectedProducts" name="selectedProducts" value="">
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 1rem;">
                 <label for="modalName">Full Name *</label>
                 <input type="text" id="modalName" name="name" required>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 1rem;">
                 <label for="modalEmail2">Email Address *</label>
                 <input type="email" id="modalEmail2" name="email" required>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 1rem;">
                 <label for="modalPhone">Phone Number</label>
                 <input type="tel" id="modalPhone" name="phone">
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 1rem;">
                 <label for="modalCity">City</label>
                 <input type="text" id="modalCity" name="city">
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 1rem;">
                 <label for="modalMessage">Additional Message / Requirements</label>
-                <textarea id="modalMessage" name="message"></textarea>
+                <textarea id="modalMessage" name="message" style="min-height: 80px;"></textarea>
             </div>
             <button type="submit" class="submit-btn" id="modalSubmitBtn">Send Inquiry</button>
             <div class="form-status" id="modalFormStatus"></div>
@@ -169,7 +169,6 @@ const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
-/* --- Dynamic Auth Listener checking Firestore Admins --- */
 auth.onAuthStateChanged(async user => {
     if (user) {
         let adminButtonHtml = '';
