@@ -58,40 +58,15 @@
         .data-table th { background: var(--gray-100); font-weight: 600; }
         .data-table tr:hover { background: #fdfdfd; }
         
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
+        .action-btns { display: flex; gap: 8px; }
         
-        .edit-btn {
-            background: #1a1a1a;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
+        .edit-btn { background: #1a1a1a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .edit-btn:hover { background: #333; }
 
-        .delete-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
+        .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .delete-btn:hover { background: #c82333; }
 
-        .status-select {
-            padding: 6px;
-            border-radius: 4px;
-            border: 1px solid var(--gray-300);
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .status-select { padding: 6px; border-radius: 4px; border: 1px solid var(--gray-300); font-weight: bold; cursor: pointer; }
         .status-new { color: #dc3545; }
         .status-contacted { color: #ff9800; }
         .status-closed { color: #28a745; }
@@ -100,6 +75,16 @@
         .help-text { display: block; font-size: 0.8rem; color: var(--gray-600); margin-top: 4px; }
         
         #uploadForm { max-width: 600px; }
+        
+        /* Admin Search Bar Styling */
+        .admin-search-bar {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-300);
+            width: 100%;
+            max-width: 300px;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -164,7 +149,11 @@
 
         <!-- 2. MANAGE PRODUCTS SECTION -->
         <div id="section-products" class="admin-section">
-            <h2 style="margin-bottom: 20px;">Live Catalog Inventory</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Live Catalog Inventory</h2>
+                <!-- Product Search Bar -->
+                <input type="text" id="adminProductSearch" class="admin-search-bar" placeholder="Search products, ID, category...">
+            </div>
             <div style="overflow-x: auto;">
                 <table class="data-table">
                     <thead>
@@ -185,7 +174,11 @@
 
         <!-- 3. VIEW INQUIRIES SECTION -->
         <div id="section-inquiries" class="admin-section">
-            <h2 style="margin-bottom: 20px;">Customer Inquiries</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Customer Inquiries</h2>
+                <!-- Inquiry Search Bar -->
+                <input type="text" id="adminInquirySearch" class="admin-search-bar" placeholder="Search by name, city, status...">
+            </div>
             <div style="overflow-x: auto;">
                 <table class="data-table">
                     <thead>
@@ -247,8 +240,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-const CLOUD_NAME = "ubqtf5go";       
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
+// REPLACE THESE WITH YOUR CLOUDINARY DETAILS
+const CLOUD_NAME = "YOUR_CLOUD_NAME";       
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -264,7 +258,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let adminProductsMap = {}; // Stores products for quick editing
+let adminProductsMap = {}; 
 
 auth.onAuthStateChanged(async user => {
     if (user) {
@@ -295,12 +289,52 @@ function switchTab(sectionId, btnElement) {
     btnElement.classList.add('active');
 }
 
+
+/* --- ADMIN SEARCH FUNCTIONALITY --- */
+
+// Search Filter for Products Table
+document.getElementById('adminProductSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const tableRows = document.getElementById('productsTableBody').getElementsByTagName('tr');
+    
+    Array.from(tableRows).forEach(row => {
+        // Skip filtering the "Loading products..." or empty state row
+        if (row.cells.length <= 1) return; 
+        
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Search Filter for Inquiries Table
+document.getElementById('adminInquirySearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const tableRows = document.getElementById('inquiriesTableBody').getElementsByTagName('tr');
+    
+    Array.from(tableRows).forEach(row => {
+        // Skip filtering the "Loading inquiries..." or empty state row
+        if (row.cells.length <= 1) return;
+        
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+
 /* --- MANAGE PRODUCTS --- */
 function fetchAdminProducts() {
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         const tbody = document.getElementById('productsTableBody');
         tbody.innerHTML = '';
-        adminProductsMap = {}; // Reset map
+        adminProductsMap = {}; 
         
         if (snapshot.empty) {
             tbody.innerHTML = '<tr><td colspan="5">No products in catalog.</td></tr>';
@@ -310,7 +344,7 @@ function fetchAdminProducts() {
         snapshot.forEach(doc => {
             const p = doc.data();
             const id = doc.id;
-            adminProductsMap[id] = p; // Store for the edit modal
+            adminProductsMap[id] = p; 
             
             const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
@@ -318,7 +352,7 @@ function fetchAdminProducts() {
             tbody.innerHTML += `
                 <tr>
                     <td><img src="${imgUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;"></td>
-                    <td><strong>${p.name}</strong>${descHtml}</td>
+                    <td><strong>${p.name}</strong><br><small style="color:#888;">ID: ${id}</small>${descHtml}</td>
                     <td style="text-transform: capitalize;">${p.category}</td>
                     <td>₹${p.price}</td>
                     <td>
@@ -330,6 +364,9 @@ function fetchAdminProducts() {
                 </tr>
             `;
         });
+
+        // Re-trigger search filter just in case search bar is not empty when DB updates
+        document.getElementById('adminProductSearch').dispatchEvent(new Event('input'));
     });
 }
 
@@ -406,7 +443,7 @@ async function fetchAdminInquiries() {
             const inq = doc.data();
             const id = doc.id;
             const date = inq.timestamp ? inq.timestamp.toDate().toLocaleString() : 'Just now';
-            const status = inq.status || 'New'; // Default to New if missing
+            const status = inq.status || 'New'; 
             
             let productsHtml = 'None';
             if (inq.selectedProducts && inq.selectedProducts.length > 0) {
@@ -415,7 +452,6 @@ async function fetchAdminInquiries() {
                                `</ul>`;
             }
 
-            // Status color classes
             let selectClass = status === 'New' ? 'status-new' : (status === 'Contacted' ? 'status-contacted' : 'status-closed');
 
             tbody.innerHTML += `
@@ -439,6 +475,9 @@ async function fetchAdminInquiries() {
                 </tr>
             `;
         });
+        
+        // Re-trigger search filter just in case search bar is not empty when DB updates
+        document.getElementById('adminInquirySearch').dispatchEvent(new Event('input'));
     });
 }
 
@@ -446,7 +485,6 @@ async function updateInquiryStatus(id, selectElement) {
     const newStatus = selectElement.value;
     try {
         await db.collection('inquiries').doc(id).update({ status: newStatus });
-        // Update color class dynamically
         selectElement.className = `status-select status-${newStatus.toLowerCase()}`;
     } catch (err) {
         alert("Failed to update status: " + err.message);
