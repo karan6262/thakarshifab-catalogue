@@ -21,13 +21,16 @@
 </header>
 
 <div class="container">
-    <!-- Removed Hero Section -->
-
-    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;"></div>
+    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;"></div>
 
     <section id="productsSection" class="catalog-section">
         <!-- JS will inject filters, search, skeletons, and products here -->
     </section>
+
+    <!-- Load More Button Container (Hidden by default) -->
+    <div id="loadMoreContainer" style="text-align: center; margin-top: 30px; margin-bottom: 40px; display: none;">
+        <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
+    </div>
 
     <section class="newsletter">
         <h2>Stay Updated</h2>
@@ -114,11 +117,28 @@
     </div>
 </div>
 
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+<!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
 <script>
+/* =========================================
+   1. CONFIGURATION
+   ========================================= */
+const ADMIN_EMAIL = "your.email@gmail.com"; // Replace with your admin email
+
+// --- EmailJS Details ---
+const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
+
+emailjs.init(EMAILJS_PUBLIC_KEY); // Initialize EmailJS
+
+// --- Firebase Details ---
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -132,12 +152,24 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+
+/* =========================================
+   2. GLOBAL STATE & PAGINATION VARIABLES
+   ========================================= */
 let allProducts = []; 
 let currentCategory = 'all'; 
 let currentSearchTerm = ''; 
 let isLoginMode = true; 
 const selectedItems = new Set(); 
 
+// Pagination Config
+let currentPage = 1;
+const itemsPerPage = 12; // Number of items to show at a time
+
+
+/* =========================================
+   3. DOM ELEMENTS
+   ========================================= */
 const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
 const newsletterForm = document.getElementById('newsletterForm');
@@ -149,6 +181,8 @@ const selectedList = document.getElementById('selectedList');
 const emptyCartMsg = document.getElementById('emptyCartMsg');
 const proceedToInquiryBtn = document.getElementById('proceedToInquiryBtn');
 const toast = document.getElementById('toast');
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const loadMoreContainer = document.getElementById('loadMoreContainer');
 
 const signInModal = document.getElementById('signInModal');
 const cartModal = document.getElementById('cartModal');
@@ -161,20 +195,20 @@ const modalAuthMsg = document.getElementById('modalAuthMsg');
 const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
-const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
+
+/* =========================================
+   4. AUTHENTICATION & MODALS
+   ========================================= */
 auth.onAuthStateChanged(async user => {
     if (user) {
         let adminButtonHtml = '';
-        
         try {
             const adminDoc = await db.collection('admins').doc(user.email).get();
             if (adminDoc.exists) {
                 adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
             }
-        } catch (error) {
-            console.error("Error verifying admin status:", error);
-        }
+        } catch (error) { console.error("Error verifying admin status:", error); }
 
         authStatusEl.innerHTML = `
             <span>Signed in as <strong>${user.email}</strong></span>
@@ -219,21 +253,14 @@ modalToggleLink.addEventListener('click', e => {
     modalAuthMsg.textContent = '';
 });
 
-openCartModalBtn.onclick = () => {
-    slideOutCart.classList.add('open');
-    cartOverlay.classList.add('active');
-};
-
-function closeCartDrawer() {
-    slideOutCart.classList.remove('open');
-    cartOverlay.classList.remove('active');
-}
+openCartModalBtn.onclick = () => { slideOutCart.classList.add('open'); cartOverlay.classList.add('active'); };
+function closeCartDrawer() { slideOutCart.classList.remove('open'); cartOverlay.classList.remove('active'); }
 closeSlideCart.onclick = closeCartDrawer;
 cartOverlay.onclick = closeCartDrawer;
 
 proceedToInquiryBtn.onclick = () => {
     closeCartDrawer();
-    modalSelectedProducts.value = JSON.stringify(Array.from(selectedItems));
+    document.getElementById('modalSelectedProducts').value = JSON.stringify(Array.from(selectedItems));
     cartModal.style.display = 'block';
 };
 
@@ -250,7 +277,6 @@ function showToast(message) {
     setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
-// Function to scroll the image gallery left or right
 function scrollGallery(productId, direction) {
     const gallery = document.getElementById(`gallery-${productId}`);
     if (gallery) {
@@ -259,10 +285,13 @@ function scrollGallery(productId, direction) {
     }
 }
 
+
+/* =========================================
+   5. PRODUCT LOADING & PAGINATION
+   ========================================= */
 function loadProductsFromFirestore() {
-    // Note: The margin-top has been adjusted slightly since the hero section was removed.
     productsSection.innerHTML = `
-        <div class="category-filters" style="margin-top: 30px;">
+        <div class="category-filters" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
             <button class="filter-pill" data-filter="cotton">Cotton</button>
             <button class="filter-pill" data-filter="silk">Silk</button>
@@ -279,38 +308,53 @@ function loadProductsFromFirestore() {
 
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         allProducts = [];
-        snapshot.forEach(doc => {
-            allProducts.push({ id: doc.id, ...doc.data() });
-        });
+        snapshot.forEach(doc => { allProducts.push({ id: doc.id, ...doc.data() }); });
         
         setupFilterListeners();
-        renderProducts();
+        renderProducts(true); // Reset to page 1 on fresh load
     });
 }
 
-function renderProducts() {
-    const productsGrid = document.getElementById('productsGrid');
-    productsGrid.innerHTML = ''; 
+// "Load More" Button Logic
+loadMoreBtn.addEventListener('click', () => {
+    currentPage++;
+    renderProducts(false); // Do not reset page, just append
+});
 
+function renderProducts(resetPage = true) {
+    if (resetPage) currentPage = 1;
+    
+    const productsGrid = document.getElementById('productsGrid');
+    
+    // 1. Filter the entire array first
     let filteredProducts = allProducts.filter(product => {
         const matchesCategory = currentCategory === 'all' || (product.category && product.category.toLowerCase() === currentCategory.toLowerCase());
         const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || (product.category?.toLowerCase().includes(currentSearchTerm));
         return matchesCategory && matchesSearch;
     });
 
+    // 2. Clear grid ONLY if we are resetting the page (e.g. new search or filter)
+    if (resetPage) productsGrid.innerHTML = ''; 
+
     if (filteredProducts.length === 0) {
         productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center; color: #666; margin-top: 20px;">No products match your search or filter.</p>';
+        loadMoreContainer.style.display = 'none';
         return;
     }
 
-    filteredProducts.forEach(product => {
+    // 3. Apply Pagination (Slice the filtered array)
+    const startIndex = resetPage ? 0 : (currentPage - 1) * itemsPerPage;
+    const endIndex = currentPage * itemsPerPage;
+    const productsToRender = filteredProducts.slice(startIndex, endIndex);
+
+    // 4. Render the sliced products
+    productsToRender.forEach(product => {
         const card = document.createElement('article');
         card.className = 'product-card';
         
         let imagesHtml = '';
         let hasMultipleImages = false;
 
-        // Check if there are multiple images to generate arrows
         if (product.imageUrls && product.imageUrls.length > 1) {
             hasMultipleImages = true;
             imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}" loading="lazy">`).join('');
@@ -322,12 +366,15 @@ function renderProducts() {
             imagesHtml = `<img src="default.jpg" alt="${product.name}" loading="lazy">`;
         }
         
+        const descriptionHtml = product.description 
+            ? `<p style="font-size: 0.85rem; color: #666; margin-bottom: 12px; line-height: 1.4;">${product.description}</p>` 
+            : '';
+
         card.innerHTML = `
             <div class="product-media">
                 <div class="product-gallery" id="gallery-${product.id}">
                     ${imagesHtml}
                 </div>
-                <!-- Navigation Arrows if multiple images exist -->
                 ${hasMultipleImages ? `
                     <button class="gallery-btn prev-btn" onclick="scrollGallery('${product.id}', -1)">&#10094;</button>
                     <button class="gallery-btn next-btn" onclick="scrollGallery('${product.id}', 1)">&#10095;</button>
@@ -337,6 +384,7 @@ function renderProducts() {
             <div class="product-info">
                 <span class="product-category">${product.category || 'Other'}</span>
                 <h3 class="product-title">${product.name || 'Unnamed Product'}</h3>
+                ${descriptionHtml}
                 <p class="product-price">₹${product.price ? parseFloat(product.price).toLocaleString() : 'Request Price'}</p>
                 <div class="product-actions">
                     <button type="button" class="btn-add-inquiry ${selectedItems.has(product.id) ? 'added' : ''}" data-id="${product.id}">
@@ -348,9 +396,19 @@ function renderProducts() {
         productsGrid.appendChild(card);
     });
 
+    // 5. Re-attach listeners for the new buttons
     document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
+        // Prevent duplicate listeners
+        btn.removeEventListener('click', toggleSelection);
         btn.addEventListener('click', toggleSelection);
     });
+
+    // 6. Handle "Load More" button visibility
+    if (filteredProducts.length > endIndex) {
+        loadMoreContainer.style.display = 'block';
+    } else {
+        loadMoreContainer.style.display = 'none';
+    }
 }
 
 function setupFilterListeners() {
@@ -360,7 +418,7 @@ function setupFilterListeners() {
             pills.forEach(p => p.classList.remove('active'));
             e.target.classList.add('active');
             currentCategory = e.target.dataset.filter;
-            renderProducts();
+            renderProducts(true); // Reset page on filter
         });
     });
 
@@ -370,7 +428,7 @@ function setupFilterListeners() {
         const newSearchInput = document.getElementById('searchInput');
         newSearchInput.addEventListener('input', (e) => {
             currentSearchTerm = e.target.value.toLowerCase().trim();
-            renderProducts();
+            renderProducts(true); // Reset page on search
         });
     }
 }
@@ -379,19 +437,15 @@ function generateSkeletons() {
     let skeletons = '';
     for(let i=0; i<8; i++) {
         skeletons += `
-        <div class="skeleton-card">
-            <div class="skeleton-media"></div>
-            <div class="skeleton-info">
-                <div class="skeleton-text short"></div>
-                <div class="skeleton-text medium"></div>
-                <div class="skeleton-text short" style="margin-bottom: 15px;"></div>
-                <div class="skeleton-button"></div>
-            </div>
-        </div>`;
+        <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-info"><div class="skeleton-text short"></div><div class="skeleton-text medium"></div><div class="skeleton-button"></div></div></div>`;
     }
     return skeletons;
 }
 
+
+/* =========================================
+   6. CART SELECTION LOGIC
+   ========================================= */
 function toggleSelection(e) {
     if(!auth.currentUser) {
         signInModal.style.display = 'block';
@@ -438,25 +492,62 @@ function updateSelectedUI() {
     });
 }
 
+
+/* =========================================
+   7. INQUIRY SUBMISSION & EMAILJS
+   ========================================= */
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
     modalSubmitBtn.disabled = true;
     modalSubmitBtn.textContent = 'Sending…';
     modalFormStatus.style.display = 'none';
 
+    // Get Form Data
+    const customerName = document.getElementById('modalName').value.trim();
+    const customerEmail = document.getElementById('modalEmail2').value.trim();
+    const customerPhone = document.getElementById('modalPhone').value.trim();
+    const customerCity = document.getElementById('modalCity').value.trim();
+    const customerMessage = document.getElementById('modalMessage').value.trim();
+    const selectedArray = Array.from(selectedItems);
+
     const formData = {
         uid: auth.currentUser.uid,
-        name: document.getElementById('modalName').value.trim(),
-        email: document.getElementById('modalEmail2').value.trim(),
-        phone: document.getElementById('modalPhone').value.trim(),
-        city: document.getElementById('modalCity').value.trim(),
-        message: document.getElementById('modalMessage').value.trim(),
-        selectedProducts: Array.from(selectedItems),
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+        city: customerCity,
+        message: customerMessage,
+        selectedProducts: selectedArray,
+        status: 'New', 
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     try {
+        // 1. Save to Firebase Database
         await db.collection('inquiries').add(formData);
+
+        // 2. Fetch Product Names for the Email
+        const productNames = selectedArray.map(id => {
+            const p = allProducts.find(prod => prod.id === id);
+            return p ? p.name : id;
+        }).join(", ");
+
+        // 3. Send Email Notification via EmailJS
+        const emailParams = {
+            from_name: customerName,
+            from_email: customerEmail,
+            phone: customerPhone,
+            city: customerCity,
+            message: customerMessage,
+            products: productNames
+        };
+        
+        // This runs silently in the background
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
+            .then(() => console.log('Email sent successfully'))
+            .catch((err) => console.error('Email failed to send', err));
+
+        // 4. Update UI Success
         modalFormStatus.textContent = 'Inquiry sent successfully! We will contact you soon.';
         modalFormStatus.className = 'form-status success';
         modalFormStatus.style.display = 'block';
@@ -464,7 +555,10 @@ modalInquiryForm.addEventListener('submit', async e => {
         selectedItems.clear();
         updateSelectedUI();
         document.querySelector('.inquiry-btn span').textContent = `(0)`;
-        renderProducts();
+        
+        // Refresh the buttons in the grid without resetting page
+        renderProducts(false); 
+        
         setTimeout(() => { cartModal.style.display = 'none'; modalFormStatus.style.display = 'none'; }, 2000);
     } catch (err) {
         modalFormStatus.textContent = 'Error: ' + err.message;
@@ -482,6 +576,7 @@ newsletterForm.addEventListener('submit', e => {
     newsletterForm.reset();
 });
 
+// Init
 loadProductsFromFirestore();
 </script>
 </body>
