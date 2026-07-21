@@ -132,7 +132,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* --- Firebase Configuration --- */
+/* --- 1. Firebase Configuration --- */
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -146,12 +146,19 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* --- UI Elements --- */
+/* --- 2. Global State Variables --- */
+let allProducts = []; 
+let currentCategory = 'all'; 
+let currentSearchTerm = ''; 
+let isLoginMode = true; 
+const selectedItems = new Set(); 
+
+/* --- 3. DOM Elements --- */
 const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
 const newsletterForm = document.getElementById('newsletterForm');
 
-// Slide Out Cart & Toast Elements
+// Slide Out Cart Elements
 const openCartModalBtn = document.getElementById('openCartModal');
 const slideOutCart = document.getElementById('slideOutCart');
 const cartOverlay = document.getElementById('cartOverlay');
@@ -175,10 +182,7 @@ const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalSelectedProducts = document.getElementById('modalSelectedProducts');
 
-let isLoginMode = true; 
-const selectedItems = new Set(); 
-
-/* --- Auth State Listener --- */
+/* --- 4. Auth State Listener --- */
 auth.onAuthStateChanged(user => {
     if (user) {
         authStatusEl.innerHTML = `Signed in as <strong>${user.email}</strong> <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px;">Sign out</button>`;
@@ -193,7 +197,7 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-/* --- Auth Form Handling --- */
+/* --- 5. Auth Form Handling --- */
 modalAuthForm.addEventListener('submit', e => {
     e.preventDefault();
     const email = document.getElementById('modalEmail').value.trim();
@@ -220,7 +224,7 @@ modalToggleLink.addEventListener('click', e => {
     modalAuthMsg.textContent = '';
 });
 
-/* --- Cart Drawer & Modal Logic --- */
+/* --- 6. Cart Drawer & Modal Handlers --- */
 openCartModalBtn.onclick = () => {
     slideOutCart.classList.add('open');
     cartOverlay.classList.add('active');
@@ -252,18 +256,23 @@ function showToast(message) {
     setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
-/* --- Load Products & Rendering --- */
-/* --- Load Products & Rendering --- */
-let allProducts = []; // Stores all products from Firebase
-let currentCategory = 'all'; // Tracks the active category pill
-let currentSearchTerm = ''; // Tracks the search bar input
-
-// 1. Fetch data from Firebase once and listen for changes
+/* --- 7. Load Products & Rendering Logic --- */
 function loadProductsFromFirestore() {
-    const productsGrid = document.getElementById('productsGrid');
-    
-    // Show skeletons initially
-    productsGrid.innerHTML = generateSkeletons();
+    productsSection.innerHTML = `
+        <div class="category-filters">
+            <button class="filter-pill active" data-filter="all">All Fabrics</button>
+            <button class="filter-pill" data-filter="cotton">Cotton</button>
+            <button class="filter-pill" data-filter="silk">Silk</button>
+            <button class="filter-pill" data-filter="linen">Linen</button>
+            <button class="filter-pill" data-filter="blend">Blends</button>
+        </div>
+        <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
+        </div>
+        <div id="productsGrid" class="product-grid">
+            ${generateSkeletons()}
+        </div>
+    `;
 
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         allProducts = [];
@@ -271,23 +280,18 @@ function loadProductsFromFirestore() {
             allProducts.push({ id: doc.id, ...doc.data() });
         });
         
-        // Setup the event listeners for filters only once
         setupFilterListeners();
-        
-        // Render the actual products based on current filters
         renderProducts();
     });
 }
 
-// 2. Render the grid based on active filters
 function renderProducts() {
     const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = ''; 
 
-    // Filter the array based on search text AND selected category
     let filteredProducts = allProducts.filter(product => {
         const matchesCategory = currentCategory === 'all' || (product.category && product.category.toLowerCase() === currentCategory.toLowerCase());
-        const matchesSearch = product.name?.toLowerCase().includes(currentSearchTerm) || product.category?.toLowerCase().includes(currentSearchTerm);
+        const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || (product.category?.toLowerCase().includes(currentSearchTerm));
         return matchesCategory && matchesSearch;
     });
 
@@ -319,40 +323,33 @@ function renderProducts() {
         productsGrid.appendChild(card);
     });
 
-    // Re-attach selection logic to new buttons
     document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
         btn.addEventListener('click', toggleSelection);
     });
 }
 
-// 3. Connect the UI buttons to the logic
 function setupFilterListeners() {
-    // Category Pills
     const pills = document.querySelectorAll('.filter-pill');
     pills.forEach(pill => {
         pill.addEventListener('click', (e) => {
-            // Remove active class from all pills
             pills.forEach(p => p.classList.remove('active'));
-            // Add active class to clicked pill
             e.target.classList.add('active');
-            
-            // Update state and re-render
             currentCategory = e.target.dataset.filter;
             renderProducts();
         });
     });
 
-    // Search Bar
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
+        searchInput.replaceWith(searchInput.cloneNode(true));
+        const newSearchInput = document.getElementById('searchInput');
+        newSearchInput.addEventListener('input', (e) => {
             currentSearchTerm = e.target.value.toLowerCase().trim();
             renderProducts();
         });
     }
 }
 
-// Helper: Skeleton UI
 function generateSkeletons() {
     let skeletons = '';
     for(let i=0; i<8; i++) {
@@ -369,7 +366,8 @@ function generateSkeletons() {
     }
     return skeletons;
 }
-/* --- Selection Logic --- */
+
+/* --- 8. Selection & Cart Logic --- */
 function toggleSelection(e) {
     if(!auth.currentUser) {
         signInModal.style.display = 'block';
@@ -401,25 +399,22 @@ function updateSelectedUI() {
     emptyCartMsg.style.display = 'none';
     proceedToInquiryBtn.style.display = 'block';
     
-    const promises = Array.from(selectedItems).map(id => db.collection('products').doc(id).get());
-    Promise.all(promises).then(snapshots => {
-        selectedList.innerHTML = '';
-        snapshots.forEach(snap => {
-            if (snap.exists) {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <div style="flex-grow: 1;">
-                        <span style="font-weight: 600; display: block; margin-bottom: 4px;">${snap.data().name || 'Unnamed Product'}</span>
-                        <span style="font-size: 0.8rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">₹${snap.data().price || 'N/A'}</span>
-                    </div>
-                `;
-                selectedList.appendChild(li);
-            }
-        });
+    Array.from(selectedItems).forEach(id => {
+        const product = allProducts.find(p => p.id === id);
+        if (product) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div style="flex-grow: 1;">
+                    <span style="font-weight: 600; display: block; margin-bottom: 4px;">${product.name || 'Unnamed Product'}</span>
+                    <span style="font-size: 0.8rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">₹${product.price || 'N/A'}</span>
+                </div>
+            `;
+            selectedList.appendChild(li);
+        }
     });
 }
 
-/* --- Inquiry Submission --- */
+/* --- 9. Inquiry Form Submission --- */
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
     modalSubmitBtn.disabled = true;
@@ -446,6 +441,8 @@ modalInquiryForm.addEventListener('submit', async e => {
         selectedItems.clear();
         updateSelectedUI();
         document.querySelector('.inquiry-btn span').textContent = `(0)`;
+        // Re-render to reset button states
+        renderProducts();
         setTimeout(() => { cartModal.style.display = 'none'; modalFormStatus.style.display = 'none'; }, 2000);
     } catch (err) {
         modalFormStatus.textContent = 'Error: ' + err.message;
@@ -457,14 +454,14 @@ modalInquiryForm.addEventListener('submit', async e => {
     }
 });
 
-/* --- Newsletter --- */
+/* --- 10. Newsletter --- */
 newsletterForm.addEventListener('submit', e => {
     e.preventDefault();
     alert(`Thank you for subscribing!`);
     newsletterForm.reset();
 });
 
-// Init
+// Initialization
 loadProductsFromFirestore();
 </script>
 </body>
