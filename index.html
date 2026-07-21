@@ -40,12 +40,7 @@
         <!-- Products and Filters will be injected here by JS -->
     </section>
 
-    <!-- ---------- SELECTED ITEMS SUMMARY ---------- -->
-    <div class="selected-items" id="selectedItems">
-        <h3>Selected Items for Inquiry</h3>
-        <ul id="selectedList"></ul>
-    </div>
-
+    
     <!-- Newsletter Section -->
     <section class="newsletter">
         <h2>Stay Updated</h2>
@@ -56,7 +51,27 @@
         </form>
     </section>
 </div>
+<!-- Toast Notification -->
+<div id="toast" class="toast">Item added to inquiry!</div>
 
+<!-- Slide-Out Cart Panel -->
+<div id="cartOverlay" class="cart-overlay"></div>
+<div id="slideOutCart" class="slide-out-cart">
+    <div class="cart-header">
+        <h2>Your Inquiry Cart</h2>
+        <button id="closeSlideCart" class="close-cart-btn">&times;</button>
+    </div>
+    <div class="cart-body">
+        <ul id="selectedList" class="cart-items-list">
+            <!-- Selected fabrics will appear here -->
+        </ul>
+        <div id="emptyCartMsg" class="empty-cart-msg">Your inquiry list is empty.</div>
+    </div>
+    <div class="cart-footer">
+        <button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button>
+    </div>
+</div>
+    
 <!-- Sign In Modal -->
 <div id="signInModal" class="modal">
     <div class="modal-content">
@@ -218,11 +233,35 @@ modalToggleLink.addEventListener('click', e => {
     modalAuthMsg.textContent = '';
 });
 
-/* 5️⃣ Modal open/close handlers */
+/* 5️⃣ Cart & Modal UI logic */
+const slideOutCart = document.getElementById('slideOutCart');
+const cartOverlay = document.getElementById('cartOverlay');
+const closeSlideCart = document.getElementById('closeSlideCart');
+const proceedToInquiryBtn = document.getElementById('proceedToInquiryBtn');
+const emptyCartMsg = document.getElementById('emptyCartMsg');
+const toast = document.getElementById('toast');
+
+// Header button opens the slide-out cart now
 openCartModalBtn.onclick = () => {
+    slideOutCart.classList.add('open');
+    cartOverlay.classList.add('active');
+};
+
+// Close slide-out cart
+function closeCartDrawer() {
+    slideOutCart.classList.remove('open');
+    cartOverlay.classList.remove('active');
+}
+closeSlideCart.onclick = closeCartDrawer;
+cartOverlay.onclick = closeCartDrawer;
+
+// "Proceed to Details" button opens the actual form modal
+proceedToInquiryBtn.onclick = () => {
+    closeCartDrawer();
     modalSelectedProducts.value = JSON.stringify(Array.from(selectedItems));
     cartModal.style.display = 'block';
 };
+
 closeSignInModal.onclick = () => { signInModal.style.display = 'none'; };
 closeCartModal.onclick = () => { cartModal.style.display = 'none'; };
 window.onclick = e => {
@@ -230,6 +269,7 @@ window.onclick = e => {
     if (e.target === cartModal) cartModal.style.display = 'none';
 };
 
+    
 /* 6️⃣ Load products from Firestore with NEW STEP 2 UI */
 function loadProductsFromFirestore() {
     productsSection.innerHTML = `
@@ -314,7 +354,12 @@ function loadProductsFromFirestore() {
     });
 }
 
-/* 7️⃣ Selection logic */
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+
 function toggleSelection(e) {
     if(!auth.currentUser) {
         signInModal.style.display = 'block';
@@ -326,25 +371,27 @@ function toggleSelection(e) {
         e.target.textContent = 'Add to Inquiry';
         e.target.style.backgroundColor = '#f8f9fa';
         e.target.style.color = '#333';
+        showToast('Removed from inquiry');
     } else {
         selectedItems.add(id);
         e.target.textContent = 'Added ✓';
         e.target.style.backgroundColor = '#1a1a1a';
         e.target.style.color = '#fff';
+        showToast('Added to inquiry list!');
     }
     updateSelectedUI();
-    
-    // Update header count
     document.querySelector('.inquiry-btn span').textContent = `(${selectedItems.size})`;
 }
 
 function updateSelectedUI() {
     selectedList.innerHTML = '';
     if (selectedItems.size === 0) {
-        selectedItemsEl.style.display = 'none';
+        emptyCartMsg.style.display = 'block';
+        proceedToInquiryBtn.style.display = 'none';
         return;
     }
-    selectedItemsEl.style.display = 'block';
+    emptyCartMsg.style.display = 'none';
+    proceedToInquiryBtn.style.display = 'block';
     
     const promises = Array.from(selectedItems).map(id => db.collection('products').doc(id).get());
     Promise.all(promises).then(snapshots => {
@@ -352,13 +399,17 @@ function updateSelectedUI() {
         snapshots.forEach(snap => {
             if (snap.exists) {
                 const li = document.createElement('li');
-                li.textContent = snap.data().name || 'Unnamed Product';
+                li.innerHTML = `
+                    <div style="flex-grow: 1;">
+                        <span style="font-weight: 600; display: block;">${snap.data().name || 'Unnamed Product'}</span>
+                        <span style="font-size: 0.8rem; color: #666;">₹${snap.data().price || 'N/A'}</span>
+                    </div>
+                `;
                 selectedList.appendChild(li);
             }
         });
     });
 }
-
 /* 8️⃣ Modal Inquiry Form submission */
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
