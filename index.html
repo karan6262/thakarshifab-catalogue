@@ -404,10 +404,13 @@ function loadProductsFromFirestore() {
     productsSection.innerHTML = `
         <div class="category-filters" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
+            <button class="filter-pill" data-filter="blend">Suiting</button>
+            <button class="filter-pill" data-filter="blend">Shirting</button>
             <button class="filter-pill" data-filter="cotton">Cotton</button>
             <button class="filter-pill" data-filter="silk">Silk</button>
             <button class="filter-pill" data-filter="linen">Linen</button>
             <button class="filter-pill" data-filter="blend">Blends</button>
+            
         </div>
         <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
             <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
