@@ -206,7 +206,7 @@
     </div>
 </div>
 
-<!-- EDIT PRODUCT MODAL -->
+<!-- EDIT PRODUCT MODAL WITH IMAGE MANAGEMENT -->
 <div id="editModal" class="modal">
     <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
         <span class="close-btn" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
@@ -260,6 +260,17 @@
                 <label>Product Description</label>
                 <textarea id="editProdDesc" style="min-height: 80px;"></textarea>
             </div>
+
+            <!-- CURRENT IMAGES & REPLACEMENT INPUT -->
+            <div class="form-group" style="background: var(--gray-100); padding: 15px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
+                <label style="margin-bottom: 8px;">Current Product Images</label>
+                <div id="editCurrentImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;"></div>
+                
+                <label style="margin-bottom: 4px;">Replace Product Images (Optional)</label>
+                <input type="file" id="editProdImages" accept="image/*" multiple>
+                <span class="help-text">Leave blank to keep existing images. Select new files to completely replace current images.</span>
+            </div>
+
             <button type="submit" class="submit-btn" id="saveEditBtn">Save Changes</button>
             <div id="editStatusMsg" class="form-status"></div>
         </form>
@@ -272,8 +283,8 @@
 
 <script>
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";       
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
+const CLOUD_NAME = "YOUR_CLOUD_NAME";       
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -364,7 +375,6 @@ document.getElementById('settingsForm').addEventListener('submit', async (e) => 
     }
 });
 
-
 /* --- ADMIN SEARCH --- */
 document.getElementById('adminProductSearch').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
@@ -403,7 +413,7 @@ function fetchAdminProducts() {
             
             const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
-            const uom = p.uom || 'meter'; // Default to meter for older products
+            const uom = p.uom || 'meter';
             
             const isAvail = p.isAvailable !== false; 
             const statusHtml = isAvail 
@@ -441,6 +451,7 @@ async function toggleAvailability(id, currentStatus) {
     catch (err) { alert("Failed to update status: " + err.message); }
 }
 
+/* OPEN EDIT MODAL & SHOW IMAGE PREVIEWS */
 function openEditModal(id) {
     const p = adminProductsMap[id];
     document.getElementById('editProdId').value = id;
@@ -451,35 +462,74 @@ function openEditModal(id) {
     document.getElementById('editProdDesc').value = p.description || '';
     document.getElementById('editProdAvailable').value = p.isAvailable !== false ? 'true' : 'false';
     
+    // Clear file input
+    document.getElementById('editProdImages').value = '';
+    
+    // Populate Image Previews
+    const previewContainer = document.getElementById('editCurrentImagesPreview');
+    previewContainer.innerHTML = '';
+    const existingImgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
+    
+    if (existingImgs.length > 0) {
+        existingImgs.forEach(url => {
+            previewContainer.innerHTML += `<img src="${url}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid #ccc;">`;
+        });
+    } else {
+        previewContainer.innerHTML = '<small style="color:gray;">No images set.</small>';
+    }
+
     document.getElementById('editStatusMsg').style.display = 'none';
     document.getElementById('editModal').style.display = 'block';
 }
 
+/* SAVE EDIT FORM WITH OPTIONAL CLOUDINARY UPLOAD */
 document.getElementById('editForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('saveEditBtn');
     const msg = document.getElementById('editStatusMsg');
-    btn.disabled = true; btn.textContent = "Saving...";
+    btn.disabled = true; 
+    btn.textContent = "Saving...";
     
     const id = document.getElementById('editProdId').value;
+    const p = adminProductsMap[id];
     const isAvail = document.getElementById('editProdAvailable').value === 'true';
-    
+    const newImageFiles = document.getElementById('editProdImages').files;
+
     try {
+        let imageUrls = p.imageUrls || (p.imageUrl ? [p.imageUrl] : []);
+
+        // If user selected replacement images, upload them to Cloudinary
+        if (newImageFiles.length > 0) {
+            imageUrls = [];
+            for (let i = 0; i < newImageFiles.length; i++) {
+                btn.textContent = `Uploading Image ${i + 1} of ${newImageFiles.length}...`;
+                const url = await uploadToCloudinary(newImageFiles[i]);
+                imageUrls.push(url);
+            }
+        }
+
+        btn.textContent = "Updating database...";
         await db.collection('products').doc(id).update({
             name: document.getElementById('editProdName').value.trim(),
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
             uom: document.getElementById('editProdUom').value,
             description: document.getElementById('editProdDesc').value.trim(),
-            isAvailable: isAvail
+            isAvailable: isAvail,
+            imageUrls: imageUrls
         });
+
         msg.textContent = "Product updated successfully!";
-        msg.className = "form-status success"; msg.style.display = "block";
+        msg.className = "form-status success"; 
+        msg.style.display = "block";
         setTimeout(() => { document.getElementById('editModal').style.display = 'none'; }, 1000);
     } catch (err) {
-        msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
+        msg.textContent = "Error: " + err.message; 
+        msg.className = "form-status error"; 
+        msg.style.display = "block";
     } finally {
-        btn.disabled = false; btn.textContent = "Save Changes";
+        btn.disabled = false; 
+        btn.textContent = "Save Changes";
     }
 });
 
