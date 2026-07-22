@@ -13,12 +13,10 @@
         .contact-card h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); color: #f1dfc8; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
         .contact-card p { margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
         
-        /* Interactive Link Hover Effects */
         .hover-link { cursor: pointer; transition: color 0.2s; }
         .hover-link:hover { color: var(--primary); }
         .product-media img { cursor: pointer; }
 
-        /* --- BIG PRODUCT DETAILS MODAL --- */
         #productDetailsModal { display: none; }
         #productDetailsModal.show-modal { display: flex !important; align-items: center; justify-content: center; }
         
@@ -76,7 +74,7 @@
 </header>
 
 <div class="container">
-    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;"></div>
+    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;"></div>
 
     <section id="productsSection" class="catalog-section">
         <!-- JS will inject filters, search, skeletons, and products here -->
@@ -112,24 +110,21 @@
     </div>
 </div>
 
-<!-- BIG PRODUCT DETAILS MODAL (Pop-up) -->
+<!-- BIG PRODUCT DETAILS MODAL -->
 <div id="productDetailsModal" class="modal" style="z-index: 2500;">
     <div class="pd-content">
         <span class="pd-close" onclick="closeProductModal()">&times;</span>
         
-        <!-- Large Image Gallery Left Side -->
         <div class="pd-gallery-section">
             <img id="pdMainImage" src="" alt="Product view">
             <button class="pd-arrow pd-arrow-left" id="pdPrevBtn" onclick="changePdImage(-1)">&#10094;</button>
             <button class="pd-arrow pd-arrow-right" id="pdNextBtn" onclick="changePdImage(1)">&#10095;</button>
         </div>
         
-        <!-- Details Right Side -->
         <div class="pd-info-section">
             <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold;"></span>
             <h2 id="pdName" style="margin: 8px 0 15px 0; font-size: 2rem; color: var(--gray-900);"></h2>
             
-            <!-- Price and UOM -->
             <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid var(--primary);">
                 <h3 id="pdPrice" style="color: var(--primary); margin: 0; font-size: 1.6rem;"></h3>
             </div>
@@ -140,7 +135,6 @@
             </div>
             
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                <!-- Reuses the exact same logic as grid buttons -->
                 <button id="pdAddBtn" class="btn-primary" style="width: 100%; padding: 16px; font-size: 1.1rem; border-radius: 8px; background-color: #1a1a1a;" onclick="toggleSelection(event)"></button>
             </div>
         </div>
@@ -174,7 +168,6 @@
     <div class="cart-footer"><button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button></div>
 </div>
 
-<!-- Firebase & EmailJS SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -210,7 +203,6 @@ const selectedItems = new Set();
 let currentPage = 1;
 const itemsPerPage = 12; 
 
-// Variables for Large Product Modal Image Gallery
 let pdImagesArray = [];
 let pdCurrentIndex = 0;
 let pdCurrentProductId = null;
@@ -239,6 +231,16 @@ const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 
+// HELPER FUNCTION: Opens the Auth Modal in specific mode
+function openAuthModal(mode) {
+    isLoginMode = (mode === 'login');
+    modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+    modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
+    modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
+    modalAuthMsg.textContent = '';
+    signInModal.style.display = 'block';
+}
+
 auth.onAuthStateChanged(async user => {
     if (user) {
         let adminButtonHtml = '';
@@ -258,7 +260,15 @@ auth.onAuthStateChanged(async user => {
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
-        authStatusEl.innerHTML = '';
+        // Show Sign In / Sign Up buttons directly on screen if logged out
+        authStatusEl.innerHTML = `
+            <span style="color: #666; margin-right: 10px; font-weight: 500;">Login to create an inquiry list:</span>
+            <button id="mainSignInBtn" class="btn-primary" style="background-color: transparent; color: #1a1a1a; border: 2px solid #1a1a1a; padding: 6px 20px; font-size: 0.95rem;">Sign In</button>
+            <button id="mainSignUpBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 6px 20px; font-size: 0.95rem;">Sign Up</button>
+        `;
+        document.getElementById('mainSignInBtn').addEventListener('click', () => openAuthModal('login'));
+        document.getElementById('mainSignUpBtn').addEventListener('click', () => openAuthModal('signup'));
+
         openCartModalBtn.style.display = 'none';
         selectedItems.clear();
         updateSelectedUI();
@@ -304,11 +314,7 @@ modalAuthForm.addEventListener('submit', e => {
 
 modalToggleLink.addEventListener('click', e => {
     e.preventDefault();
-    isLoginMode = !isLoginMode;
-    modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
-    modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
-    modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
-    modalAuthMsg.textContent = '';
+    openAuthModal(!isLoginMode ? 'login' : 'signup');
 });
 
 openCartModalBtn.onclick = () => { slideOutCart.classList.add('open'); cartOverlay.classList.add('active'); };
@@ -327,7 +333,6 @@ closeCartModal.onclick = () => { cartModal.style.display = 'none'; };
 window.onclick = e => {
     if (e.target === signInModal) signInModal.style.display = 'none';
     if (e.target === cartModal) cartModal.style.display = 'none';
-    // Close Big Product Modal if clicked outside the content box
     if (e.target.id === 'productDetailsModal') closeProductModal();
 };
 
@@ -345,14 +350,11 @@ function scrollGallery(productId, direction) {
     }
 }
 
-/* --- BIG PRODUCT MODAL LOGIC --- */
 function openProductModal(id) {
     const product = allProducts.find(p => p.id === id);
     if (!product) return;
     
     pdCurrentProductId = id;
-    
-    // Set Images Array
     if (product.imageUrls && product.imageUrls.length > 0) {
         pdImagesArray = product.imageUrls;
     } else if (product.imageUrl) {
@@ -362,23 +364,19 @@ function openProductModal(id) {
     }
     pdCurrentIndex = 0;
     
-    // Update UI
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
     document.getElementById('pdPrevBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
     document.getElementById('pdNextBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
-    
     document.getElementById('pdCategory').textContent = product.category || 'Other';
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
     const uom = product.uom || 'meter';
     const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
     document.getElementById('pdPrice').textContent = `₹${priceStr} / ${uom}`;
-    
     document.getElementById('pdDesc').textContent = product.description || 'No additional details available for this fabric.';
     
-    // Setup the button inside modal
     const addBtn = document.getElementById('pdAddBtn');
-    addBtn.dataset.id = id; // Essential for toggleSelection to work
+    addBtn.dataset.id = id; 
     if (selectedItems.has(id)) {
         addBtn.textContent = 'Added to Inquiry ✓';
         addBtn.style.backgroundColor = '#28a745';
@@ -402,8 +400,6 @@ function changePdImage(direction) {
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
 }
 
-
-/* --- STOREFRONT RENDERING --- */
 function loadProductsFromFirestore() {
     productsSection.innerHTML = `
         <div class="category-filters" style="margin-top: 10px;">
@@ -465,7 +461,6 @@ function renderProducts(resetPage = true) {
         let imagesHtml = '';
         let hasMultipleImages = false;
 
-        // Added onclick to images so they also open the modal
         if (product.imageUrls && product.imageUrls.length > 1) {
             hasMultipleImages = true;
             imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`).join('');
@@ -477,7 +472,10 @@ function renderProducts(resetPage = true) {
             imagesHtml = `<img src="default.jpg" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
         }
         
-        // Grab UOM from database or default to meter
+        const descriptionHtml = product.description 
+            ? `<p style="font-size: 0.85rem; color: #666; margin-bottom: 12px; line-height: 1.4;">${product.description}</p>` 
+            : '';
+            
         const uom = product.uom || 'meter';
         const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
 
@@ -494,13 +492,9 @@ function renderProducts(resetPage = true) {
             </div>
             <div class="product-info">
                 <span class="product-category">${product.category || 'Other'}</span>
-                
-                <!-- Title is now clickable and opens the Big Pop-Up -->
                 <h3 class="product-title hover-link" onclick="openProductModal('${product.id}')" title="Click to view details">${product.name || 'Unnamed Product'}</h3>
-                
-                <!-- Display Price With Correct UOM -->
+                ${descriptionHtml}
                 <p class="product-price">₹${priceStr} / ${uom}</p>
-                
                 <div class="product-actions">
                     <button type="button" class="btn-add-inquiry ${selectedItems.has(product.id) ? 'added' : ''}" data-id="${product.id}">
                         ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
@@ -556,31 +550,28 @@ function generateSkeletons() {
 
 function toggleSelection(e) {
     if(!auth.currentUser) {
-        signInModal.style.display = 'block';
+        openAuthModal('login');
         return;
     }
     
-    // Works for both Grid buttons and the Big Modal button
     const id = e.target.dataset.id; 
     
     if (selectedItems.has(id)) {
         selectedItems.delete(id);
         e.target.textContent = 'Add to Inquiry';
         e.target.classList.remove('added');
-        e.target.style.backgroundColor = ''; // Reset inline style if from modal
+        e.target.style.backgroundColor = ''; 
         showToast('Removed from inquiry');
     } else {
         selectedItems.add(id);
         e.target.textContent = 'Added ✓';
         e.target.classList.add('added');
-        if(e.target.id === 'pdAddBtn') e.target.style.backgroundColor = '#28a745'; // Update modal button color
+        if(e.target.id === 'pdAddBtn') e.target.style.backgroundColor = '#28a745'; 
         showToast('Added to inquiry list!');
     }
     
     updateSelectedUI();
     document.querySelector('.inquiry-btn span').textContent = `(${selectedItems.size})`;
-    
-    // If we clicked inside the modal, we need to also visually update the Grid button in the background
     renderProducts(false); 
 }
 
@@ -677,7 +668,6 @@ modalInquiryForm.addEventListener('submit', async e => {
     }
 });
 
-// Init
 loadProductsFromFirestore();
 loadContactSettings();
 </script>
