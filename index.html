@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
+    
+    <!-- Preconnect to Cloudinary to load images even faster -->
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    
     <link rel="stylesheet" href="style.css">
     <style>
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
@@ -231,6 +235,15 @@ const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 
+// --- NEW OPTIMIZATION FUNCTION ---
+// Automatically formats images to WebP and scales them appropriately
+function optimizeImageUrl(url, width = 600) {
+    if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
+        return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+    }
+    return url;
+}
+
 function openAuthModal(mode) {
     isLoginMode = (mode === 'login');
     modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
@@ -353,10 +366,12 @@ function openProductModal(id) {
     if (!product) return;
     
     pdCurrentProductId = id;
+    
+    // Apply 1200px optimization for the large pop-up view
     if (product.imageUrls && product.imageUrls.length > 0) {
-        pdImagesArray = product.imageUrls;
+        pdImagesArray = product.imageUrls.map(url => optimizeImageUrl(url, 1200));
     } else if (product.imageUrl) {
-        pdImagesArray = [product.imageUrl];
+        pdImagesArray = [optimizeImageUrl(product.imageUrl, 1200)];
     } else {
         pdImagesArray = ['default.jpg'];
     }
@@ -366,10 +381,8 @@ function openProductModal(id) {
     document.getElementById('pdPrevBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
     document.getElementById('pdNextBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
     
-    // Format Display Category (Main Type | Sub Type)
-    const mainCat = product.mainCategory ? `<span style="color:var(--primary);">${product.mainCategory.toUpperCase()}</span> | ` : '';
+    const mainCat = product.mainCategory ? `<span style="color:var(--primary); font-weight:bold;">${product.mainCategory.toUpperCase()}</span> | ` : '';
     document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
-    
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
     const uom = product.uom || 'meter';
@@ -403,7 +416,6 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
-    // Added new Filter Pills for Main Categories and new Sub Categories
     productsSection.innerHTML = `
         <div class="category-filters" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
@@ -443,7 +455,6 @@ function renderProducts(resetPage = true) {
     let filteredProducts = allProducts.filter(product => {
         if (product.isAvailable === false) return false;
         
-        // Ensure older products containing 'suitings' are caught if searching/filtering for 'suiting'
         const c1 = product.category ? product.category.toLowerCase() : '';
         const m1 = product.mainCategory ? product.mainCategory.toLowerCase() : '';
         const searchCat = currentCategory.toLowerCase();
@@ -483,13 +494,14 @@ function renderProducts(resetPage = true) {
         let imagesHtml = '';
         let hasMultipleImages = false;
 
+        // Apply 600px optimization for the Grid layout
         if (product.imageUrls && product.imageUrls.length > 1) {
             hasMultipleImages = true;
-            imagesHtml = product.imageUrls.map(url => `<img src="${url}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`).join('');
+            imagesHtml = product.imageUrls.map(url => `<img src="${optimizeImageUrl(url, 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`).join('');
         } else if (product.imageUrls && product.imageUrls.length === 1) {
-            imagesHtml = `<img src="${product.imageUrls[0]}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
+            imagesHtml = `<img src="${optimizeImageUrl(product.imageUrls[0], 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
         } else if (product.imageUrl) {
-            imagesHtml = `<img src="${product.imageUrl}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
+            imagesHtml = `<img src="${optimizeImageUrl(product.imageUrl, 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
         } else {
             imagesHtml = `<img src="default.jpg" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
         }
