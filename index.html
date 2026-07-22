@@ -231,7 +231,6 @@ const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 
-// HELPER FUNCTION: Opens the Auth Modal in specific mode
 function openAuthModal(mode) {
     isLoginMode = (mode === 'login');
     modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
@@ -260,7 +259,6 @@ auth.onAuthStateChanged(async user => {
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
-        // Show Sign In / Sign Up buttons directly on screen if logged out
         authStatusEl.innerHTML = `
             <span style="color: #666; margin-right: 10px; font-weight: 500;">Login to create an inquiry list:</span>
             <button id="mainSignInBtn" class="btn-primary" style="background-color: transparent; color: #1a1a1a; border: 2px solid #1a1a1a; padding: 6px 20px; font-size: 0.95rem;">Sign In</button>
@@ -367,7 +365,11 @@ function openProductModal(id) {
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
     document.getElementById('pdPrevBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
     document.getElementById('pdNextBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
-    document.getElementById('pdCategory').textContent = product.category || 'Other';
+    
+    // Format Display Category (Main Type | Sub Type)
+    const mainCat = product.mainCategory ? `<span style="color:var(--primary);">${product.mainCategory.toUpperCase()}</span> | ` : '';
+    document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
+    
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
     const uom = product.uom || 'meter';
@@ -401,16 +403,16 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
+    // Added new Filter Pills for Main Categories and new Sub Categories
     productsSection.innerHTML = `
         <div class="category-filters" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
-            <button class="filter-pill" data-filter="blend">Suiting</button>
-            <button class="filter-pill" data-filter="blend">Shirting</button>
+            <button class="filter-pill" data-filter="shirting">Shirting</button>
+            <button class="filter-pill" data-filter="suiting">Suiting</button>
             <button class="filter-pill" data-filter="cotton">Cotton</button>
-            <button class="filter-pill" data-filter="silk">Silk</button>
             <button class="filter-pill" data-filter="linen">Linen</button>
-            <button class="filter-pill" data-filter="blend">Blends</button>
-            
+            <button class="filter-pill" data-filter="pv suiting">PV Suiting</button>
+            <button class="filter-pill" data-filter="tr suiting">TR Suiting</button>
         </div>
         <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
             <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
@@ -440,8 +442,25 @@ function renderProducts(resetPage = true) {
     
     let filteredProducts = allProducts.filter(product => {
         if (product.isAvailable === false) return false;
-        const matchesCategory = currentCategory === 'all' || (product.category && product.category.toLowerCase() === currentCategory.toLowerCase());
-        const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || (product.category?.toLowerCase().includes(currentSearchTerm));
+        
+        // Ensure older products containing 'suitings' are caught if searching/filtering for 'suiting'
+        const c1 = product.category ? product.category.toLowerCase() : '';
+        const m1 = product.mainCategory ? product.mainCategory.toLowerCase() : '';
+        const searchCat = currentCategory.toLowerCase();
+        
+        let matchesCategory = false;
+        if (searchCat === 'all') {
+            matchesCategory = true;
+        } else if (searchCat === 'suiting') {
+            matchesCategory = (c1.includes('suiting') || m1.includes('suiting'));
+        } else {
+            matchesCategory = (c1 === searchCat || m1 === searchCat);
+        }
+
+        const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || 
+                              (c1.includes(currentSearchTerm)) ||
+                              (m1.includes(currentSearchTerm));
+                              
         return matchesCategory && matchesSearch;
     });
 
@@ -475,9 +494,7 @@ function renderProducts(resetPage = true) {
             imagesHtml = `<img src="default.jpg" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
         }
         
-        const descriptionHtml = product.description 
-            ? `<p style="font-size: 0.85rem; color: #666; margin-bottom: 12px; line-height: 1.4;">${product.description}</p>` 
-            : '';
+        const mainCat = product.mainCategory ? `<span style="color:var(--primary); font-weight:bold;">${product.mainCategory.toUpperCase()}</span> | ` : '';
             
         const uom = product.uom || 'meter';
         const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
@@ -494,9 +511,8 @@ function renderProducts(resetPage = true) {
                 ` : ''}
             </div>
             <div class="product-info">
-                <span class="product-category">${product.category || 'Other'}</span>
+                <span class="product-category" style="text-transform: capitalize;">${mainCat}${product.category || 'Other'}</span>
                 <h3 class="product-title hover-link" onclick="openProductModal('${product.id}')" title="Click to view details">${product.name || 'Unnamed Product'}</h3>
-                ${descriptionHtml}
                 <p class="product-price">₹${priceStr} / ${uom}</p>
                 <div class="product-actions">
                     <button type="button" class="btn-add-inquiry ${selectedItems.has(product.id) ? 'added' : ''}" data-id="${product.id}">
@@ -671,6 +687,7 @@ modalInquiryForm.addEventListener('submit', async e => {
     }
 });
 
+// Init
 loadProductsFromFirestore();
 loadContactSettings();
 </script>
