@@ -3,8 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thakarshi Fab - Textile Wholesale | Ahmedabad</title>
     
+    <!-- ========================================== -->
+    <!-- START ADVANCED SEO & META TAGS SETUP       -->
+    <!-- ========================================== -->
+    <title>Thakarshi Fab - Premium Textile Wholesale | Ahmedabad</title>
+    <meta name="description" content="Leading wholesale textile supplier in Ahmedabad, Gujarat. Shop premium Shirting, Suiting, Cotton, Linen, and PV/TR fabrics in bulk. Connect with Thakarshi Fab today.">
+    <meta name="keywords" content="Textile wholesale Ahmedabad, bulk fabrics India, shirting wholesale, suiting wholesale, cotton fabric supplier, linen fabrics, PV suiting, TR suiting, Thakarshi Fab">
+    <meta name="author" content="Thakarshi Fab">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.thakarshifab.com/"> <!-- Update with your actual domain later -->
+    <meta property="og:title" content="Thakarshi Fab - Textile Wholesale in Ahmedabad">
+    <meta property="og:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
+    <!-- Replace this content URL with a link to your actual logo or a nice fabric image for the WhatsApp preview -->
+    <meta property="og:image" content="https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"> 
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Thakarshi Fab - Textile Wholesale">
+    <meta name="twitter:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
+
+    <!-- Schema.org Markup for Google Rich Results (Local Business) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WholesaleStore",
+      "name": "Thakarshi Fab",
+      "image": "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg", 
+      "description": "Leading wholesale textile and fabric supplier located in Ahmedabad, specializing in Shirting and Suiting.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "123 New Textile Market, Ring Road",
+        "addressLocality": "Ahmedabad",
+        "addressRegion": "Gujarat",
+        "postalCode": "380002",
+        "addressCountry": "IN"
+      },
+      "telephone": "+919876543210",
+      "priceRange": "₹₹"
+    }
+    </script>
+    <!-- ========================================== -->
+    <!-- END SEO SETUP                              -->
+    <!-- ========================================== -->
+
     <!-- Preconnect to Cloudinary to load images even faster -->
     <link rel="preconnect" href="https://res.cloudinary.com">
     
@@ -235,8 +280,7 @@ const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 
-// --- NEW OPTIMIZATION FUNCTION ---
-// Automatically formats images to WebP and scales them appropriately
+// --- OPTIMIZATION FUNCTION ---
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
         return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
@@ -367,7 +411,6 @@ function openProductModal(id) {
     
     pdCurrentProductId = id;
     
-    // Apply 1200px optimization for the large pop-up view
     if (product.imageUrls && product.imageUrls.length > 0) {
         pdImagesArray = product.imageUrls.map(url => optimizeImageUrl(url, 1200));
     } else if (product.imageUrl) {
@@ -494,7 +537,6 @@ function renderProducts(resetPage = true) {
         let imagesHtml = '';
         let hasMultipleImages = false;
 
-        // Apply 600px optimization for the Grid layout
         if (product.imageUrls && product.imageUrls.length > 1) {
             hasMultipleImages = true;
             imagesHtml = product.imageUrls.map(url => `<img src="${optimizeImageUrl(url, 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`).join('');
