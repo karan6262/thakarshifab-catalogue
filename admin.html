@@ -47,7 +47,6 @@
         
         .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        /* Styles for Edit Image Preview Deletion */
         .image-preview-wrapper { position: relative; display: inline-block; margin-right: 10px; margin-bottom: 10px; }
         .image-preview-wrapper img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc; }
         .remove-img-btn { 
@@ -94,16 +93,27 @@
                 
                 <div class="grid-2-col">
                     <div class="form-group">
-                        <label>Category</label>
+                        <label>Main Type</label>
+                        <select id="prodMainCategory" required>
+                            <option value="shirting">Shirting</option>
+                            <option value="suiting">Suiting</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sub Category / Fabric</label>
                         <select id="prodCategory" required>
                             <option value="cotton">Cotton</option>
                             <option value="silk">Silk</option>
                             <option value="linen">Linen</option>
                             <option value="blend">Blends</option>
-                            <option value="suitings">Suitings</option>
+                            <option value="pv suiting">PV Suiting</option>
+                            <option value="tr suiting">TR Suiting</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="grid-2-col">
                     <div class="form-group">
                         <label>Unit of Measure (UOM)</label>
                         <select id="prodUom" required>
@@ -114,12 +124,12 @@
                             <option value="set">Per Set</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="number" id="prodPrice" required placeholder="e.g., 450">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Price (₹)</label>
-                    <input type="number" id="prodPrice" required placeholder="e.g., 450">
-                </div>
                 <div class="form-group">
                     <label>Product Description</label>
                     <textarea id="prodDesc" placeholder="Enter fabric width, GSM, wash care, etc." style="min-height: 80px;"></textarea>
@@ -190,7 +200,6 @@
                     <label>Subtitle / Description</label>
                     <textarea id="setDesc" rows="2" placeholder="e.g., We supply premium textiles across India..."></textarea>
                 </div>
-                
                 <div class="settings-grid">
                     <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                         <h3 style="margin-bottom: 15px; color: var(--primary);">Head Office</h3>
@@ -198,7 +207,6 @@
                         <div class="form-group"><label>Phone Number</label><input type="text" id="setHeadPhone"></div>
                         <div class="form-group"><label>Email Address</label><input type="text" id="setHeadEmail"></div>
                     </div>
-                    
                     <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                         <h3 style="margin-bottom: 15px; color: var(--primary);">Branch Office</h3>
                         <div class="form-group"><label>Address</label><textarea id="setBranchAddr" rows="3"></textarea></div>
@@ -206,7 +214,6 @@
                         <div class="form-group"><label>Working Hours</label><input type="text" id="setBranchHours"></div>
                     </div>
                 </div>
-
                 <div style="margin-top: 25px; max-width: 300px;">
                     <button type="submit" class="submit-btn" id="saveSettingsBtn">Save Contact Details</button>
                     <div id="settingsStatusMsg" class="form-status"></div>
@@ -231,16 +238,27 @@
             
             <div class="grid-2-col">
                 <div class="form-group">
-                    <label>Category</label>
+                    <label>Main Type</label>
+                    <select id="editProdMainCategory" required>
+                        <option value="shirting">Shirting</option>
+                        <option value="suiting">Suiting</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sub Category / Fabric</label>
                     <select id="editProdCategory" required>
                         <option value="cotton">Cotton</option>
                         <option value="silk">Silk</option>
                         <option value="linen">Linen</option>
                         <option value="blend">Blends</option>
-                        <option value="suitings">Suitings</option>
+                        <option value="pv suiting">PV Suiting</option>
+                        <option value="tr suiting">TR Suiting</option>
                         <option value="other">Other</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="grid-2-col">
                 <div class="form-group">
                     <label>Unit of Measure (UOM)</label>
                     <select id="editProdUom" required>
@@ -251,20 +269,18 @@
                         <option value="set">Per Set</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="grid-2-col">
                 <div class="form-group">
                     <label>Price (₹)</label>
                     <input type="number" id="editProdPrice" required>
                 </div>
-                <div class="form-group">
-                    <label>Availability</label>
-                    <select id="editProdAvailable">
-                        <option value="true">Available</option>
-                        <option value="false">Hidden</option>
-                    </select>
-                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Availability</label>
+                <select id="editProdAvailable">
+                    <option value="true">Available</option>
+                    <option value="false">Hidden</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -272,7 +288,6 @@
                 <textarea id="editProdDesc" style="min-height: 80px;"></textarea>
             </div>
 
-            <!-- CURRENT IMAGES & ADD INPUT -->
             <div class="form-group" style="background: var(--gray-100); padding: 15px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                 <label style="margin-bottom: 8px;">Saved Images (Click X to remove)</label>
                 <div id="editCurrentImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; min-height: 60px;"></div>
@@ -294,8 +309,8 @@
 
 <script>
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";       
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
+const CLOUD_NAME = "YOUR_CLOUD_NAME";       
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -312,7 +327,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let adminProductsMap = {}; 
-let currentEditImages = []; // Stores the state of images while modal is open
+let currentEditImages = []; 
 
 auth.onAuthStateChanged(async user => {
     if (user) {
@@ -343,7 +358,6 @@ function switchTab(sectionId, btnElement) {
     btnElement.classList.add('active');
 }
 
-/* --- ADMIN SETTINGS --- */
 function fetchSettings() {
     db.collection('settings').doc('contactInfo').get().then(doc => {
         if (doc.exists) {
@@ -387,7 +401,6 @@ document.getElementById('settingsForm').addEventListener('submit', async (e) => 
     }
 });
 
-/* --- ADMIN SEARCH --- */
 document.getElementById('adminProductSearch').addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
     const tableRows = document.getElementById('productsTableBody').getElementsByTagName('tr');
@@ -425,7 +438,11 @@ function fetchAdminProducts() {
             
             const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
-            const uom = p.uom || 'meter'; // Default to meter for older products
+            const uom = p.uom || 'meter'; 
+            
+            // Format category display nicely
+            const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
+            const categoryDisplay = `${mainCat}${p.category}`;
             
             const isAvail = p.isAvailable !== false; 
             const statusHtml = isAvail 
@@ -439,7 +456,7 @@ function fetchAdminProducts() {
                 <tr>
                     <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
                     <td>
-                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(₹${p.price} / ${uom} | ${p.category})</span><br>
+                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(₹${p.price} / ${uom} | ${categoryDisplay})</span><br>
                         <small style="color:#888;">ID: ${id}</small>
                         ${descHtml}
                     </td>
@@ -463,21 +480,24 @@ async function toggleAvailability(id, currentStatus) {
     catch (err) { alert("Failed to update status: " + err.message); }
 }
 
-/* OPEN EDIT MODAL & SHOW IMAGE PREVIEWS */
 function openEditModal(id) {
     const p = adminProductsMap[id];
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = p.name;
-    document.getElementById('editProdCategory').value = p.category;
+    document.getElementById('editProdMainCategory').value = p.mainCategory || 'shirting';
+    
+    // Fix for older items that might have "suitings" instead of "suiting"
+    let subCat = p.category;
+    if (subCat === 'suitings') subCat = 'other';
+    document.getElementById('editProdCategory').value = subCat || 'cotton';
+    
     document.getElementById('editProdPrice').value = p.price;
     document.getElementById('editProdUom').value = p.uom || 'meter';
     document.getElementById('editProdDesc').value = p.description || '';
     document.getElementById('editProdAvailable').value = p.isAvailable !== false ? 'true' : 'false';
     
-    // Clear file input
     document.getElementById('editProdImages').value = '';
     
-    // Populate Image State
     currentEditImages = (p.imageUrls && p.imageUrls.length > 0) ? [...p.imageUrls] : (p.imageUrl ? [p.imageUrl] : []);
     renderEditImagePreviews();
 
@@ -494,7 +514,6 @@ function renderEditImagePreviews() {
             previewContainer.innerHTML += `
                 <div class="image-preview-wrapper">
                     <img src="${url}">
-                    <!-- type="button" prevents form submission -->
                     <button type="button" class="remove-img-btn" onclick="removeEditImage(${index})" title="Remove image">&times;</button>
                 </div>
             `;
@@ -509,7 +528,6 @@ function removeEditImage(index) {
     renderEditImagePreviews();
 }
 
-/* SAVE EDIT FORM WITH APPENDING CLOUDINARY UPLOAD */
 document.getElementById('editForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('saveEditBtn');
@@ -522,10 +540,8 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
     const newImageFiles = document.getElementById('editProdImages').files;
 
     try {
-        // Start with whatever old images were kept
         let finalImageUrls = [...currentEditImages];
 
-        // If user selected new images, upload them and append to array
         if (newImageFiles.length > 0) {
             for (let i = 0; i < newImageFiles.length; i++) {
                 btn.textContent = `Uploading Image ${i + 1} of ${newImageFiles.length}...`;
@@ -534,7 +550,6 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
             }
         }
         
-        // Validation check to ensure product has at least one image
         if (finalImageUrls.length === 0) {
             throw new Error("A product must have at least one image.");
         }
@@ -542,6 +557,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         btn.textContent = "Updating database...";
         await db.collection('products').doc(id).update({
             name: document.getElementById('editProdName').value.trim(),
+            mainCategory: document.getElementById('editProdMainCategory').value,
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
             uom: document.getElementById('editProdUom').value,
@@ -571,7 +587,6 @@ async function deleteProduct(id) {
     }
 }
 
-/* --- VIEW INQUIRIES & TRACKING --- */
 async function fetchAdminInquiries() {
     const prodSnapshot = await db.collection('products').get();
     const productMap = {};
@@ -625,7 +640,6 @@ async function updateInquiryStatus(id, selectElement) {
     } catch (err) { alert("Failed to update status: " + err.message); }
 }
 
-/* --- ADD NEW PRODUCT (CLOUDINARY UPLOAD) --- */
 const uploadForm = document.getElementById('uploadForm');
 const uploadBtn = document.getElementById('uploadBtn');
 const progressText = document.getElementById('progressText');
@@ -646,6 +660,7 @@ uploadForm.addEventListener('submit', async (e) => {
     uploadBtn.disabled = true; progressText.style.display = 'block'; statusMsg.style.display = 'none';
 
     const name = document.getElementById('prodName').value.trim();
+    const mainCategory = document.getElementById('prodMainCategory').value;
     const category = document.getElementById('prodCategory').value;
     const uom = document.getElementById('prodUom').value;
     const price = document.getElementById('prodPrice').value;
@@ -662,7 +677,7 @@ uploadForm.addEventListener('submit', async (e) => {
 
         progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
         await db.collection('products').add({
-            name: name, category: category, uom: uom, price: Number(price), description: description, imageUrls: imageUrls, 
+            name: name, mainCategory: mainCategory, category: category, uom: uom, price: Number(price), description: description, imageUrls: imageUrls, 
             isAvailable: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
