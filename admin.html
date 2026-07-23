@@ -24,11 +24,8 @@
         .data-table tr:hover { background: #fdfdfd; }
         
         .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-        
         .edit-btn { background: #1a1a1a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .edit-btn:hover { background: #333; }
         .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .delete-btn:hover { background: #c82333; }
         .toggle-btn { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: white; font-weight: bold; }
 
         .status-select { padding: 6px; border-radius: 4px; border: 1px solid var(--gray-300); font-weight: bold; cursor: pointer; }
@@ -44,18 +41,19 @@
         
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media (max-width: 768px) { .settings-grid { grid-template-columns: 1fr; } }
-        
         .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        .image-preview-wrapper { position: relative; display: inline-block; margin-right: 10px; margin-bottom: 10px; }
-        .image-preview-wrapper img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc; }
-        .remove-img-btn { 
-            position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; 
-            border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 14px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            line-height: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .remove-img-btn:hover { background: #c82333; transform: scale(1.1); }
+        /* ADVANCED IMAGE MANAGER STYLES */
+        .image-manager { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; min-height: 80px; padding: 15px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px; }
+        .img-wrap { position: relative; display: inline-flex; flex-direction: column; background: white; border: 1px solid #ddd; padding: 8px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .img-wrap img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; border: 1px solid #eee; }
+        .img-wrap .badge { position: absolute; top: -8px; left: -8px; background: #28a745; color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
+        .img-controls { display: flex; justify-content: space-between; gap: 4px; width: 100%; }
+        .img-controls button { flex: 1; border: none; background: #e0e0e0; cursor: pointer; border-radius: 4px; font-size: 0.9rem; padding: 5px 0; transition: background 0.2s; color: #333; font-weight: bold;}
+        .img-controls button:hover:not(:disabled) { background: #d0d0d0; }
+        .img-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+        .img-controls button.remove-btn { background: #dc3545; color: white; }
+        .img-controls button.remove-btn:hover { background: #c82333; }
     </style>
 </head>
 <body>
@@ -130,22 +128,27 @@
                     </div>
                 </div>
 
-                <!-- NEW FABRIC WIDTH FIELD -->
                 <div class="form-group">
                     <label>Fabric Width / Panna</label>
                     <input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches">
-                    <span class="help-text">Specify width details for bulk buyers (e.g. 58" Double Panna, 44" Shirting).</span>
                 </div>
 
                 <div class="form-group">
                     <label>Product Description</label>
                     <textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Product Images</label>
-                    <input type="file" id="prodImages" accept="image/*" multiple required>
-                    <span class="help-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple images.</span>
+                
+                <!-- NEW CUSTOM IMAGE ORDER MANAGER -->
+                <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
+                    <label style="font-size: 1.1rem; color: var(--primary);">Product Images & Display Order</label>
+                    <input type="file" id="prodImages" accept="image/*" multiple style="margin-top: 10px;">
+                    <span class="help-text">You can add multiple images. Use the Left/Right arrows below to set which image appears first!</span>
+                    
+                    <div id="uploadImagesPreview" class="image-manager">
+                        <small style="color:#888; display:flex; align-items:center; width:100%; justify-content:center;">Selected images will appear here for sorting.</small>
+                    </div>
                 </div>
+
                 <button type="submit" class="submit-btn" id="uploadBtn">Upload Product to Catalog</button>
                 <div id="progressText" class="progress-text">Initializing upload...</div>
                 <div id="statusMsg" class="form-status"></div>
@@ -295,7 +298,6 @@
                 </div>
             </div>
 
-            <!-- EDIT FABRIC WIDTH FIELD -->
             <div class="form-group">
                 <label>Fabric Width / Panna</label>
                 <input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)">
@@ -314,13 +316,12 @@
                 <textarea id="editProdDesc" style="min-height: 80px;"></textarea>
             </div>
 
-            <div class="form-group" style="background: var(--gray-100); padding: 15px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                <label style="margin-bottom: 8px;">Saved Images (Click X to remove)</label>
-                <div id="editCurrentImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; min-height: 60px;"></div>
+            <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
+                <label style="font-size: 1.1rem; color: var(--primary);">Manage Image Display Order</label>
+                <input type="file" id="editProdImages" accept="image/*" multiple style="margin-top: 10px;">
+                <span class="help-text">Add new images or use the arrows below to re-arrange existing images. The Main Image is the thumbnail.</span>
                 
-                <label style="margin-bottom: 4px; border-top: 1px solid #ccc; padding-top: 15px;">Add New Images</label>
-                <input type="file" id="editProdImages" accept="image/*" multiple>
-                <span class="help-text">Any newly selected images will be added to the saved images above.</span>
+                <div id="editCurrentImagesPreview" class="image-manager"></div>
             </div>
 
             <button type="submit" class="submit-btn" id="saveEditBtn">Save Changes</button>
@@ -335,8 +336,8 @@
 
 <script>
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";       
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
+const CLOUD_NAME = "YOUR_CLOUD_NAME";       
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -353,7 +354,10 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let adminProductsMap = {}; 
-let currentEditImages = []; 
+
+// STATE MANAGERS FOR IMAGES
+let uploadFilesArray = []; // Stores local File objects
+let editMediaArray = [];   // Stores objects { type: 'url'|'file', val: url|File, previewUrl: blob }
 
 auth.onAuthStateChanged(async user => {
     if (user) {
@@ -368,9 +372,7 @@ auth.onAuthStateChanged(async user => {
                 alert("Unauthorized Access.");
                 window.location.href = "index.html";
             }
-        } catch (error) {
-            window.location.href = "index.html";
-        }
+        } catch (error) { window.location.href = "index.html"; }
     } else {
         alert("Please log in to access the admin panel.");
         window.location.href = "index.html";
@@ -447,7 +449,7 @@ document.getElementById('adminInquirySearch').addEventListener('input', function
     });
 });
 
-/* --- MANAGE PRODUCTS --- */
+/* --- MANAGE PRODUCTS LIST --- */
 function fetchAdminProducts() {
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         const tbody = document.getElementById('productsTableBody');
@@ -468,16 +470,12 @@ function fetchAdminProducts() {
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
             const uom = p.uom || 'meter'; 
             const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
-            
             const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
             const categoryDisplay = `${mainCat}${p.category}`;
             
             const isAvail = p.isAvailable !== false; 
-            const statusHtml = isAvail 
-                ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' 
-                : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
-            
-            const toggleBtnText = isAvail ? 'Hide from Store' : 'Show in Store';
+            const statusHtml = isAvail ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
+            const toggleBtnText = isAvail ? 'Hide' : 'Show';
             const toggleBtnColor = isAvail ? '#ff9800' : '#28a745';
 
             tbody.innerHTML += `
@@ -509,6 +507,49 @@ async function toggleAvailability(id, currentStatus) {
     catch (err) { alert("Failed to update status: " + err.message); }
 }
 
+async function deleteProduct(id) {
+    if(confirm("Are you sure you want to permanently delete this fabric?")) {
+        try { await db.collection('products').doc(id).delete(); } 
+        catch (err) { alert("Error deleting product: " + err.message); }
+    }
+}
+
+/* --- DRAG, DROP, REORDER IMAGE LOGIC --- */
+
+// 1. Upload Form Array Builders
+document.getElementById('prodImages').addEventListener('change', function(e) {
+    for (let file of this.files) { uploadFilesArray.push(file); }
+    this.value = ''; // allow re-selecting same files
+    renderUploadPreviews();
+});
+
+function renderUploadPreviews() {
+    const container = document.getElementById('uploadImagesPreview');
+    container.innerHTML = '';
+    if (uploadFilesArray.length === 0) {
+        container.innerHTML = '<small style="color:#888; display:flex; align-items:center; width:100%; justify-content:center;">Selected images will appear here for sorting.</small>';
+        return;
+    }
+    
+    uploadFilesArray.forEach((file, index) => {
+        const url = URL.createObjectURL(file);
+        const badge = index === 0 ? `<div class="badge">⭐ Main Image</div>` : '';
+        
+        container.innerHTML += `
+            <div class="img-wrap">
+                ${badge}
+                <img src="${url}">
+                <div class="img-controls">
+                    <button type="button" onclick="moveImage(${index}, -1, 'upload')" ${index === 0 ? 'disabled' : ''}>◀</button>
+                    <button type="button" class="remove-btn" onclick="removeImage(${index}, 'upload')">✖</button>
+                    <button type="button" onclick="moveImage(${index}, 1, 'upload')" ${index === uploadFilesArray.length - 1 ? 'disabled' : ''}>▶</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// 2. Edit Form Array Builders
 function openEditModal(id) {
     const p = adminProductsMap[id];
     document.getElementById('editProdId').value = id;
@@ -521,101 +562,187 @@ function openEditModal(id) {
     
     document.getElementById('editProdPrice').value = p.price;
     document.getElementById('editProdUom').value = p.uom || 'meter';
-    document.getElementById('editProdWidth').value = p.fabricWidth || ''; // POPULATE WIDTH
+    document.getElementById('editProdWidth').value = p.fabricWidth || '';
     document.getElementById('editProdDesc').value = p.description || '';
     document.getElementById('editProdAvailable').value = p.isAvailable !== false ? 'true' : 'false';
     
     document.getElementById('editProdImages').value = '';
     
-    currentEditImages = (p.imageUrls && p.imageUrls.length > 0) ? [...p.imageUrls] : (p.imageUrl ? [p.imageUrl] : []);
-    renderEditImagePreviews();
-
+    // Load existing Cloudinary URLs into edit array
+    editMediaArray = [];
+    const existingImgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
+    existingImgs.forEach(url => {
+        editMediaArray.push({ type: 'url', val: url, previewUrl: url });
+    });
+    
+    renderEditPreviews();
     document.getElementById('editStatusMsg').style.display = 'none';
     document.getElementById('editModal').style.display = 'block';
 }
 
-function renderEditImagePreviews() {
-    const previewContainer = document.getElementById('editCurrentImagesPreview');
-    previewContainer.innerHTML = '';
-    
-    if (currentEditImages.length > 0) {
-        currentEditImages.forEach((url, index) => {
-            previewContainer.innerHTML += `
-                <div class="image-preview-wrapper">
-                    <img src="${url}">
-                    <button type="button" class="remove-img-btn" onclick="removeEditImage(${index})" title="Remove image">&times;</button>
-                </div>
-            `;
-        });
-    } else {
-        previewContainer.innerHTML = '<small style="color:gray;">No saved images remaining. Please add new ones below.</small>';
+document.getElementById('editProdImages').addEventListener('change', function(e) {
+    for (let file of this.files) {
+        editMediaArray.push({ type: 'file', val: file, previewUrl: URL.createObjectURL(file) });
     }
+    this.value = '';
+    renderEditPreviews();
+});
+
+function renderEditPreviews() {
+    const container = document.getElementById('editCurrentImagesPreview');
+    container.innerHTML = '';
+    if (editMediaArray.length === 0) {
+        container.innerHTML = '<small style="color:#888; display:flex; align-items:center; width:100%; justify-content:center;">No saved images remaining. Please select new ones above.</small>';
+        return;
+    }
+    
+    editMediaArray.forEach((item, index) => {
+        const badge = index === 0 ? `<div class="badge">⭐ Main Image</div>` : '';
+        
+        container.innerHTML += `
+            <div class="img-wrap">
+                ${badge}
+                <img src="${item.previewUrl}">
+                <div class="img-controls">
+                    <button type="button" onclick="moveImage(${index}, -1, 'edit')" ${index === 0 ? 'disabled' : ''}>◀</button>
+                    <button type="button" class="remove-btn" onclick="removeImage(${index}, 'edit')">✖</button>
+                    <button type="button" onclick="moveImage(${index}, 1, 'edit')" ${index === editMediaArray.length - 1 ? 'disabled' : ''}>▶</button>
+                </div>
+            </div>
+        `;
+    });
 }
 
-function removeEditImage(index) {
-    currentEditImages.splice(index, 1);
-    renderEditImagePreviews();
+// 3. Shared Array Helpers
+function moveImage(index, direction, context) {
+    const arr = (context === 'upload') ? uploadFilesArray : editMediaArray;
+    if (index + direction < 0 || index + direction >= arr.length) return;
+    
+    const temp = arr[index];
+    arr[index] = arr[index + direction];
+    arr[index + direction] = temp;
+    
+    context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
 }
+
+function removeImage(index, context) {
+    const arr = (context === 'upload') ? uploadFilesArray : editMediaArray;
+    arr.splice(index, 1);
+    context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
+}
+
+
+/* --- FORM SUBMISSIONS TO CLOUDINARY & FIREBASE --- */
+async function uploadToCloudinary(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+    if (!response.ok) throw new Error('Failed to upload media to Cloudinary');
+    const data = await response.json();
+    return data.secure_url; 
+}
+
+const uploadForm = document.getElementById('uploadForm');
+const uploadBtn = document.getElementById('uploadBtn');
+const progressText = document.getElementById('progressText');
+const statusMsg = document.getElementById('statusMsg');
+
+uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (uploadFilesArray.length === 0) {
+        alert("Please add at least one product image.");
+        return;
+    }
+
+    uploadBtn.disabled = true; progressText.style.display = 'block'; statusMsg.style.display = 'none';
+
+    try {
+        const imageUrls = [];
+        for (let i = 0; i < uploadFilesArray.length; i++) {
+            progressText.textContent = `Uploading Image ${i + 1} of ${uploadFilesArray.length}...`;
+            const url = await uploadToCloudinary(uploadFilesArray[i]);
+            imageUrls.push(url);
+        }
+
+        progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
+        await db.collection('products').add({
+            name: document.getElementById('prodName').value.trim(), 
+            mainCategory: document.getElementById('prodMainCategory').value, 
+            category: document.getElementById('prodCategory').value, 
+            uom: document.getElementById('prodUom').value, 
+            price: Number(document.getElementById('prodPrice').value), 
+            fabricWidth: document.getElementById('prodWidth').value.trim(), 
+            description: document.getElementById('prodDesc').value.trim(), 
+            imageUrls: imageUrls, 
+            isAvailable: true, 
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        statusMsg.textContent = 'Success! Product added and is now live on the website.';
+        statusMsg.className = 'form-status success'; statusMsg.style.display = 'block';
+        uploadForm.reset();
+        uploadFilesArray = [];
+        renderUploadPreviews();
+        
+        setTimeout(() => { switchTab('section-products', document.querySelectorAll('.tab-btn')[1]); }, 1500);
+
+    } catch (error) {
+        statusMsg.textContent = 'Error: ' + error.message; statusMsg.className = 'form-status error'; statusMsg.style.display = 'block';
+    } finally {
+        uploadBtn.disabled = false; progressText.style.display = 'none';
+    }
+});
 
 document.getElementById('editForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    if (editMediaArray.length === 0) {
+        alert("A product must have at least one image. Please add an image before saving.");
+        return;
+    }
+    
     const btn = document.getElementById('saveEditBtn');
     const msg = document.getElementById('editStatusMsg');
-    btn.disabled = true; 
-    btn.textContent = "Saving...";
-    
-    const id = document.getElementById('editProdId').value;
-    const isAvail = document.getElementById('editProdAvailable').value === 'true';
-    const newImageFiles = document.getElementById('editProdImages').files;
+    btn.disabled = true; btn.textContent = "Saving...";
 
     try {
-        let finalImageUrls = [...currentEditImages];
+        let finalImageUrls = [];
 
-        if (newImageFiles.length > 0) {
-            for (let i = 0; i < newImageFiles.length; i++) {
-                btn.textContent = `Uploading Image ${i + 1} of ${newImageFiles.length}...`;
-                const url = await uploadToCloudinary(newImageFiles[i]);
+        for (let i = 0; i < editMediaArray.length; i++) {
+            let item = editMediaArray[i];
+            if (item.type === 'url') {
+                finalImageUrls.push(item.val); // Already a cloudinary URL
+            } else {
+                btn.textContent = `Uploading New Image ${i + 1}...`;
+                const url = await uploadToCloudinary(item.val); // Needs upload
                 finalImageUrls.push(url);
             }
         }
-        
-        if (finalImageUrls.length === 0) {
-            throw new Error("A product must have at least one image.");
-        }
 
         btn.textContent = "Updating database...";
-        await db.collection('products').doc(id).update({
+        await db.collection('products').doc(document.getElementById('editProdId').value).update({
             name: document.getElementById('editProdName').value.trim(),
             mainCategory: document.getElementById('editProdMainCategory').value,
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
             uom: document.getElementById('editProdUom').value,
-            fabricWidth: document.getElementById('editProdWidth').value.trim(), // SAVE WIDTH
+            fabricWidth: document.getElementById('editProdWidth').value.trim(),
             description: document.getElementById('editProdDesc').value.trim(),
-            isAvailable: isAvail,
+            isAvailable: document.getElementById('editProdAvailable').value === 'true',
             imageUrls: finalImageUrls
         });
 
         msg.textContent = "Product updated successfully!";
-        msg.className = "form-status success"; 
-        msg.style.display = "block";
+        msg.className = "form-status success"; msg.style.display = "block";
         setTimeout(() => { document.getElementById('editModal').style.display = 'none'; }, 1000);
     } catch (err) {
-        msg.textContent = "Error: " + err.message; 
-        msg.className = "form-status error"; 
-        msg.style.display = "block";
+        msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
     } finally {
-        btn.disabled = false; 
-        btn.textContent = "Save Changes";
+        btn.disabled = false; btn.textContent = "Save Changes";
     }
 });
 
-async function deleteProduct(id) {
-    if(confirm("Are you sure you want to permanently delete this fabric?")) {
-        try { await db.collection('products').doc(id).delete(); } 
-        catch (err) { alert("Error deleting product: " + err.message); }
-    }
-}
 
 async function fetchAdminInquiries() {
     const prodSnapshot = await db.collection('products').get();
@@ -670,60 +797,6 @@ async function updateInquiryStatus(id, selectElement) {
     } catch (err) { alert("Failed to update status: " + err.message); }
 }
 
-const uploadForm = document.getElementById('uploadForm');
-const uploadBtn = document.getElementById('uploadBtn');
-const progressText = document.getElementById('progressText');
-const statusMsg = document.getElementById('statusMsg');
-
-async function uploadToCloudinary(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-    if (!response.ok) throw new Error('Failed to upload media to Cloudinary');
-    const data = await response.json();
-    return data.secure_url; 
-}
-
-uploadForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    uploadBtn.disabled = true; progressText.style.display = 'block'; statusMsg.style.display = 'none';
-
-    const name = document.getElementById('prodName').value.trim();
-    const mainCategory = document.getElementById('prodMainCategory').value;
-    const category = document.getElementById('prodCategory').value;
-    const uom = document.getElementById('prodUom').value;
-    const price = document.getElementById('prodPrice').value;
-    const fabricWidth = document.getElementById('prodWidth').value.trim(); // GET WIDTH
-    const description = document.getElementById('prodDesc').value.trim();
-    const imageFiles = document.getElementById('prodImages').files; 
-
-    try {
-        const imageUrls = [];
-        for (let i = 0; i < imageFiles.length; i++) {
-            progressText.textContent = `Uploading Image ${i + 1} of ${imageFiles.length}...`;
-            const url = await uploadToCloudinary(imageFiles[i]);
-            imageUrls.push(url);
-        }
-
-        progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
-        await db.collection('products').add({
-            name: name, mainCategory: mainCategory, category: category, uom: uom, price: Number(price), fabricWidth: fabricWidth, description: description, imageUrls: imageUrls, 
-            isAvailable: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        statusMsg.textContent = 'Success! Product added and is now live on the website.';
-        statusMsg.className = 'form-status success'; statusMsg.style.display = 'block';
-        uploadForm.reset();
-        
-        setTimeout(() => { switchTab('section-products', document.querySelectorAll('.tab-btn')[1]); }, 1500);
-
-    } catch (error) {
-        statusMsg.textContent = 'Error: ' + error.message; statusMsg.className = 'form-status error'; statusMsg.style.display = 'block';
-    } finally {
-        uploadBtn.disabled = false; progressText.style.display = 'none';
-    }
-});
 </script>
 </body>
 </html>
