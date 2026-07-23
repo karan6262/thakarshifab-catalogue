@@ -44,9 +44,25 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* STICKY HEADER UPDATE */
         .site-header { position: sticky; top: 0; z-index: 2000; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: all 0.3s ease; }
         
+        /* HEADER DROPDOWN STYLES */
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-btn { background: transparent; border: 2px solid #1a1a1a; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; color: #1a1a1a; transition: all 0.2s;}
+        .user-btn:hover { background: #f0f0f0; }
+        .user-btn-solid { background: #1a1a1a; color: white; border: 2px solid #1a1a1a; }
+        .user-btn-solid:hover { background: #333; border-color: #333; color: white; }
+        
+        .dropdown-content { display: none; position: absolute; right: 0; top: 115%; background-color: #fff; min-width: 220px; box-shadow: 0px 8px 24px rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden; z-index: 3000; border: 1px solid #eee; text-align: left; }
+        .dropdown-content.show { display: block; animation: fadeIn 0.2s ease-out; }
+        .dropdown-item { padding: 12px 16px; text-decoration: none; display: block; color: #333; font-size: 0.95rem; cursor: pointer; border-bottom: 1px solid #f5f5f5; text-align: left; background: none; width: 100%; border-top: none; border-left: none; border-right: none; font-family: inherit; transition: background 0.2s; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background-color: #f9f9f9; color: var(--primary); }
+        .dropdown-header { padding: 12px 16px; background-color: #fcfcfc; border-bottom: 1px solid #eaeaea; font-size: 0.85rem; color: #666; line-height: 1.4; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
         .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
@@ -63,7 +79,6 @@
         
         .pd-content { display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
         
-        /* HOVER TO ZOOM STYLES */
         .pd-gallery-section { flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); cursor: zoom-in; }
         .pd-gallery-section img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s ease-out; transform-origin: center center; }
         .pd-gallery-section:hover img { transform: scale(2.2); }
@@ -91,15 +106,13 @@
             .pd-gallery-section { flex: 0.8; border-right: none; border-bottom: 1px solid var(--gray-200); }
             .pd-info-section { flex: 1; padding: 25px; }
             .pd-close { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.8rem; }
-            .pd-gallery-section:hover img { transform: scale(1); /* Disable zoom on mobile for better touch UX */ } 
+            .pd-gallery-section:hover img { transform: scale(1); } 
         }
 
-        /* BACK TO TOP BUTTON */
         #backToTop { position: fixed; bottom: 30px; right: 30px; background: #1a1a1a; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 1500; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: background 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
         #backToTop.show-btn { opacity: 1; pointer-events: auto; }
         #backToTop:hover { background: var(--primary); transform: translateY(-4px); }
 
-        /* CART BOUNCE ANIMATION */
         @keyframes cartBump {
             0% { transform: scale(1); }
             50% { transform: scale(1.15); background-color: #25D366; color: white; border-color: #25D366; }
@@ -119,16 +132,21 @@
             <h1>Thakarshi Fab</h1>
             <p>Textile Wholesale | Ahmedabad</p>
         </div>
-        <nav class="header-nav">
-            <button class="inquiry-btn" id="openCartModal" style="display:none; transition: all 0.3s ease;">Inquiry Cart <span>(0)</span></button>
+        
+        <!-- NEW COMPACT HEADER NAVIGATION -->
+        <nav class="header-actions">
+            <button class="inquiry-btn" id="openCartModal" style="display:none; transition: all 0.3s ease;">Inquiry Cart <span id="cartCountBadge">(0)</span></button>
+            
+            <!-- User Dropdown Container -->
+            <div id="userDropdownContainer" class="user-dropdown">
+                <!-- Javascript will inject Sign In button OR My Account dropdown here -->
+            </div>
         </nav>
     </div>
 </header>
 
 <div class="container">
-    <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;"></div>
-
-    <section id="productsSection" class="catalog-section"></section>
+    <section id="productsSection" class="catalog-section" style="margin-top: 20px;"></section>
 
     <div id="loadMoreContainer" style="text-align: center; margin-top: 30px; margin-bottom: 40px; display: none;">
         <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
@@ -295,7 +313,6 @@ let pdCurrentProductId = null;
 let currentUserProfile = null; 
 window.adminWhatsappNumber = null;
 
-const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
 const openCartModalBtn = document.getElementById('openCartModal');
 const slideOutCart = document.getElementById('slideOutCart');
@@ -322,8 +339,9 @@ const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
 const updateProfileModal = document.getElementById('updateProfileModal');
 const closeUpdateProfileModal = document.getElementById('closeUpdateProfileModal');
 const updateProfileForm = document.getElementById('updateProfileForm');
+const userDropdownContainer = document.getElementById('userDropdownContainer');
 
-// UI LOGIC: Back to top button visibility
+// Back to top logic
 window.addEventListener('scroll', () => {
     const backBtn = document.getElementById('backToTop');
     if (window.scrollY > 400) { backBtn.classList.add('show-btn'); } 
@@ -334,12 +352,11 @@ function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// UI LOGIC: Hover to Zoom
+// Hover to Zoom logic
 const pdGalleryContainer = document.getElementById('pdGalleryContainer');
 const pdMainImage = document.getElementById('pdMainImage');
 
 pdGalleryContainer.addEventListener('mousemove', (e) => {
-    // Only apply zoom on non-touch devices to prevent jarring mobile behavior
     if (window.innerWidth > 768) {
         const rect = pdGalleryContainer.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -353,7 +370,6 @@ pdGalleryContainer.addEventListener('mousemove', (e) => {
 pdGalleryContainer.addEventListener('mouseleave', () => {
     pdMainImage.style.transformOrigin = 'center center';
 });
-
 
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
@@ -373,12 +389,17 @@ function openAuthModal(mode) {
     signInModal.style.display = 'block';
 }
 
+// Global Dropdown Toggler
+window.toggleDropdown = function() {
+    document.getElementById('myDropdown').classList.toggle('show');
+}
+
 auth.onAuthStateChanged(async user => {
     if (user) {
         let adminButtonHtml = '';
         try {
             const adminDoc = await db.collection('admins').doc(user.email).get();
-            if (adminDoc.exists) { adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`; }
+            if (adminDoc.exists) { adminButtonHtml = `<a href="admin.html" class="dropdown-item" style="color: var(--primary); font-weight: bold;">Admin Panel</a>`; }
         } catch (error) {}
         
         try {
@@ -393,11 +414,15 @@ auth.onAuthStateChanged(async user => {
         
         document.getElementById('modalEmail2').value = user.email || '';
 
-        authStatusEl.innerHTML = `
-            <span>Signed in as <strong>${user.email}</strong></span>
-            ${adminButtonHtml}
-            <button id="updateProfileBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #444; border:none;">Update Profile</button>
-            <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem;">Sign out</button>
+        // Inject the neat Dropdown
+        userDropdownContainer.innerHTML = `
+            <button class="user-btn" onclick="toggleDropdown()">My Account ▼</button>
+            <div class="dropdown-content" id="myDropdown">
+                <div class="dropdown-header">Signed in as:<br><strong style="color:#1a1a1a; font-size: 0.9rem;">${user.email}</strong></div>
+                ${adminButtonHtml}
+                <button class="dropdown-item" id="updateProfileBtn">Update Profile</button>
+                <button class="dropdown-item" id="signOutBtn" style="color: #dc3545; font-weight:bold;">Sign Out</button>
+            </div>
         `;
         
         document.getElementById('updateProfileBtn').addEventListener('click', () => {
@@ -405,6 +430,7 @@ auth.onAuthStateChanged(async user => {
             document.getElementById('profPhone').value = currentUserProfile?.phone || '';
             document.getElementById('profCity').value = currentUserProfile?.city || '';
             document.getElementById('profMsg').textContent = '';
+            document.getElementById('myDropdown').classList.remove('show');
             updateProfileModal.style.display = 'block';
         });
 
@@ -418,13 +444,10 @@ auth.onAuthStateChanged(async user => {
         document.getElementById('modalCity').value = '';
         document.getElementById('modalEmail2').value = '';
 
-        authStatusEl.innerHTML = `
-            <span style="color: #666; margin-right: 10px; font-weight: 500;">Login to create an inquiry list:</span>
-            <button id="mainSignInBtn" class="btn-primary" style="background-color: transparent; color: #1a1a1a; border: 2px solid #1a1a1a; padding: 6px 20px; font-size: 0.95rem;">Sign In</button>
-            <button id="mainSignUpBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 6px 20px; font-size: 0.95rem;">Sign Up</button>
+        userDropdownContainer.innerHTML = `
+            <button id="mainSignInBtn" class="user-btn user-btn-solid">Sign In / Sign Up</button>
         `;
         document.getElementById('mainSignInBtn').addEventListener('click', () => openAuthModal('login'));
-        document.getElementById('mainSignUpBtn').addEventListener('click', () => openAuthModal('signup'));
 
         openCartModalBtn.style.display = 'none';
         selectedItems.clear();
@@ -538,11 +561,22 @@ closeSignInModal.onclick = () => { signInModal.style.display = 'none'; };
 closeUpdateProfileModal.onclick = () => { updateProfileModal.style.display = 'none'; };
 closeCartModal.onclick = () => { cartModal.style.display = 'none'; };
 
+// Close Dropdowns & Modals when clicking outside
 window.onclick = e => {
     if (e.target === signInModal) signInModal.style.display = 'none';
     if (e.target === cartModal) cartModal.style.display = 'none';
     if (e.target === updateProfileModal) updateProfileModal.style.display = 'none';
     if (e.target.id === 'productDetailsModal') closeProductModal();
+    
+    if (!e.target.matches('.user-btn')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
 };
 
 function showToast(message) {
@@ -628,6 +662,7 @@ function openProductModal(id) {
 function closeProductModal() {
     document.getElementById('productDetailsModal').classList.remove('show-modal');
     pdCurrentProductId = null;
+    pdMainImage.style.transformOrigin = 'center center'; // Reset zoom
 }
 
 function changePdImage(direction) {
@@ -814,15 +849,15 @@ function toggleSelection(e) {
         if(e.target.id === 'pdAddBtn') e.target.style.backgroundColor = '#28a745'; 
         showToast('Added to inquiry list!');
         
-        // UI BOUNCE ANIMATION
-        const cartBtn = document.getElementById('openCartModal');
-        cartBtn.classList.remove('cart-bump');
-        void cartBtn.offsetWidth; // Trigger DOM reflow to restart animation
-        cartBtn.classList.add('cart-bump');
+        // Cart Bounce Animation Trigger
+        const cartCountBadge = document.getElementById('cartCountBadge');
+        cartCountBadge.classList.remove('cart-bump');
+        void cartCountBadge.offsetWidth; 
+        cartCountBadge.classList.add('cart-bump');
     }
     
     updateSelectedUI();
-    document.querySelector('.inquiry-btn span').textContent = `(${selectedItems.size})`;
+    document.getElementById('cartCountBadge').textContent = `(${selectedItems.size})`;
     renderProducts(false); 
 }
 
@@ -894,7 +929,7 @@ modalWhatsappBtn.addEventListener('click', async () => {
 
     selectedItems.clear();
     updateSelectedUI();
-    document.querySelector('.inquiry-btn span').textContent = `(0)`;
+    document.getElementById('cartCountBadge').textContent = `(0)`;
     cartModal.style.display = 'none';
     renderProducts(false); 
     
@@ -941,7 +976,7 @@ modalInquiryForm.addEventListener('submit', async e => {
         modalInquiryForm.reset();
         selectedItems.clear();
         updateSelectedUI();
-        document.querySelector('.inquiry-btn span').textContent = `(0)`;
+        document.getElementById('cartCountBadge').textContent = `(0)`;
         
         renderProducts(false); 
         
