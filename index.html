@@ -125,13 +125,11 @@
         <span class="close-btn" id="closeSignInModal">&times;</span>
         <h2 id="authModalTitle">Sign In</h2>
         <form id="modalAuthForm">
-            
             <div id="signupFields" style="display:none;">
                 <div class="form-group"><input type="text" id="authName" placeholder="Full Name / Business Name"></div>
                 <div class="form-group"><input type="tel" id="authPhone" placeholder="Phone Number"></div>
                 <div class="form-group"><input type="text" id="authCity" placeholder="City"></div>
             </div>
-
             <div class="form-group"><input type="email" id="modalEmail" placeholder="Email Address" required></div>
             <div class="form-group"><input type="password" id="modalPassword" placeholder="Password" required></div>
             
@@ -141,6 +139,23 @@
             Don’t have an account? <a id="modalToggleLink" href="#">Create one</a>
         </p>
         <div id="modalAuthMsg" style="margin-top:1rem; color: red; text-align: center;"></div>
+    </div>
+</div>
+
+<!-- Update User Profile Modal -->
+<div id="updateProfileModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeUpdateProfileModal">&times;</span>
+        <h2>Update My Details</h2>
+        <p style="text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 15px;">These details will be used for your future wholesale inquiries.</p>
+        <form id="updateProfileForm">
+            <div class="form-group"><label>Full Name / Business Name</label><input type="text" id="profName" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="profPhone" required></div>
+            <div class="form-group"><label>City</label><input type="text" id="profCity" required></div>
+            
+            <button type="submit" class="submit-btn" id="profSubmitBtn">Save Details</button>
+            <div id="profMsg" style="margin-top:1rem; text-align: center; font-weight: bold;"></div>
+        </form>
     </div>
 </div>
 
@@ -255,6 +270,7 @@ let pdImagesArray = [];
 let pdCurrentIndex = 0;
 let pdCurrentProductId = null;
 
+let currentUserProfile = null; // Store user details globally
 window.adminWhatsappNumber = null;
 
 const authStatusEl = document.getElementById('authStatus');
@@ -281,6 +297,10 @@ const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
+
+const updateProfileModal = document.getElementById('updateProfileModal');
+const closeUpdateProfileModal = document.getElementById('closeUpdateProfileModal');
+const updateProfileForm = document.getElementById('updateProfileForm');
 
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
@@ -312,14 +332,13 @@ auth.onAuthStateChanged(async user => {
             }
         } catch (error) {}
         
-        // PULL USER DATA FOR PRE-FILL ON LOGIN/REFRESH
         try {
             const userDoc = await db.collection('users').doc(user.uid).get();
             if (userDoc.exists) {
-                const profile = userDoc.data();
-                document.getElementById('modalName').value = profile.name || '';
-                document.getElementById('modalPhone').value = profile.phone || '';
-                document.getElementById('modalCity').value = profile.city || '';
+                currentUserProfile = userDoc.data();
+                document.getElementById('modalName').value = currentUserProfile.name || '';
+                document.getElementById('modalPhone').value = currentUserProfile.phone || '';
+                document.getElementById('modalCity').value = currentUserProfile.city || '';
             }
         } catch (error) { console.error("Error fetching profile:", error); }
         
@@ -328,12 +347,23 @@ auth.onAuthStateChanged(async user => {
         authStatusEl.innerHTML = `
             <span>Signed in as <strong>${user.email}</strong></span>
             ${adminButtonHtml}
+            <button id="updateProfileBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #444; border:none;">Update Profile</button>
             <button id="signOutBtn" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem;">Sign out</button>
         `;
+        
+        document.getElementById('updateProfileBtn').addEventListener('click', () => {
+            document.getElementById('profName').value = currentUserProfile?.name || '';
+            document.getElementById('profPhone').value = currentUserProfile?.phone || '';
+            document.getElementById('profCity').value = currentUserProfile?.city || '';
+            document.getElementById('profMsg').textContent = '';
+            updateProfileModal.style.display = 'block';
+        });
+
         openCartModalBtn.style.display = 'inline-block';
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
+        currentUserProfile = null;
         document.getElementById('modalName').value = '';
         document.getElementById('modalPhone').value = '';
         document.getElementById('modalCity').value = '';
@@ -350,6 +380,53 @@ auth.onAuthStateChanged(async user => {
         openCartModalBtn.style.display = 'none';
         selectedItems.clear();
         updateSelectedUI();
+    }
+});
+
+// UPDATE PROFILE LOGIC
+updateProfileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('profSubmitBtn');
+    const msg = document.getElementById('profMsg');
+    
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    
+    const newName = document.getElementById('profName').value.trim();
+    const newPhone = document.getElementById('profPhone').value.trim();
+    const newCity = document.getElementById('profCity').value.trim();
+    
+    try {
+        await db.collection('users').doc(auth.currentUser.uid).set({
+            name: newName,
+            phone: newPhone,
+            city: newCity
+        }, { merge: true });
+        
+        // Update local state instantly so cart is correct
+        if (!currentUserProfile) currentUserProfile = {};
+        currentUserProfile.name = newName;
+        currentUserProfile.phone = newPhone;
+        currentUserProfile.city = newCity;
+        
+        document.getElementById('modalName').value = newName;
+        document.getElementById('modalPhone').value = newPhone;
+        document.getElementById('modalCity').value = newCity;
+        
+        msg.style.color = 'green';
+        msg.textContent = 'Profile updated successfully!';
+        
+        setTimeout(() => {
+            updateProfileModal.style.display = 'none';
+            msg.textContent = '';
+        }, 1500);
+        
+    } catch (err) {
+        msg.style.color = 'red';
+        msg.textContent = err.message;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Details';
     }
 });
 
@@ -404,11 +481,12 @@ modalAuthForm.addEventListener('submit', async e => {
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // INSTANT PRE-FILL RIGHT AFTER SUCCESSFUL SIGNUP
             document.getElementById('modalName').value = name;
             document.getElementById('modalPhone').value = phone;
             document.getElementById('modalCity').value = city;
             document.getElementById('modalEmail2').value = email;
+            
+            currentUserProfile = { name, phone, city, email };
         }
     } catch (err) {
         modalAuthMsg.textContent = err.message;
@@ -434,10 +512,13 @@ proceedToInquiryBtn.onclick = () => {
 };
 
 closeSignInModal.onclick = () => { signInModal.style.display = 'none'; };
+closeUpdateProfileModal.onclick = () => { updateProfileModal.style.display = 'none'; };
 closeCartModal.onclick = () => { cartModal.style.display = 'none'; };
+
 window.onclick = e => {
     if (e.target === signInModal) signInModal.style.display = 'none';
     if (e.target === cartModal) cartModal.style.display = 'none';
+    if (e.target === updateProfileModal) updateProfileModal.style.display = 'none';
     if (e.target.id === 'productDetailsModal') closeProductModal();
 };
 
