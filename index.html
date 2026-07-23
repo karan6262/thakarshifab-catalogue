@@ -44,6 +44,9 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
+        /* STICKY HEADER UPDATE */
+        .site-header { position: sticky; top: 0; z-index: 2000; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: all 0.3s ease; }
+        
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
         .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
@@ -60,8 +63,10 @@
         
         .pd-content { display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
         
-        .pd-gallery-section { flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); }
-        .pd-gallery-section img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        /* HOVER TO ZOOM STYLES */
+        .pd-gallery-section { flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); cursor: zoom-in; }
+        .pd-gallery-section img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s ease-out; transform-origin: center center; }
+        .pd-gallery-section:hover img { transform: scale(2.2); }
         
         .pd-info-section { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; background: var(--white); }
         
@@ -86,10 +91,27 @@
             .pd-gallery-section { flex: 0.8; border-right: none; border-bottom: 1px solid var(--gray-200); }
             .pd-info-section { flex: 1; padding: 25px; }
             .pd-close { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.8rem; }
+            .pd-gallery-section:hover img { transform: scale(1); /* Disable zoom on mobile for better touch UX */ } 
         }
+
+        /* BACK TO TOP BUTTON */
+        #backToTop { position: fixed; bottom: 30px; right: 30px; background: #1a1a1a; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 1500; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: background 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+        #backToTop.show-btn { opacity: 1; pointer-events: auto; }
+        #backToTop:hover { background: var(--primary); transform: translateY(-4px); }
+
+        /* CART BOUNCE ANIMATION */
+        @keyframes cartBump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background-color: #25D366; color: white; border-color: #25D366; }
+            100% { transform: scale(1); }
+        }
+        .cart-bump { animation: cartBump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body>
+
+<!-- Floating Back To Top -->
+<button id="backToTop" onclick="scrollToTop()" title="Go to top">↑</button>
 
 <header class="site-header">
     <div class="header-container">
@@ -98,7 +120,7 @@
             <p>Textile Wholesale | Ahmedabad</p>
         </div>
         <nav class="header-nav">
-            <button class="inquiry-btn" id="openCartModal" style="display:none;">Inquiry Cart <span>(0)</span></button>
+            <button class="inquiry-btn" id="openCartModal" style="display:none; transition: all 0.3s ease;">Inquiry Cart <span>(0)</span></button>
         </nav>
     </div>
 </header>
@@ -164,7 +186,7 @@
     <div class="pd-content">
         <span class="pd-close" onclick="closeProductModal()">&times;</span>
         
-        <div class="pd-gallery-section">
+        <div class="pd-gallery-section" id="pdGalleryContainer">
             <img id="pdMainImage" src="" alt="Product view">
             <button class="pd-arrow pd-arrow-left" id="pdPrevBtn" onclick="changePdImage(-1)">&#10094;</button>
             <button class="pd-arrow pd-arrow-right" id="pdNextBtn" onclick="changePdImage(1)">&#10095;</button>
@@ -270,7 +292,7 @@ let pdImagesArray = [];
 let pdCurrentIndex = 0;
 let pdCurrentProductId = null;
 
-let currentUserProfile = null; // Store user details globally
+let currentUserProfile = null; 
 window.adminWhatsappNumber = null;
 
 const authStatusEl = document.getElementById('authStatus');
@@ -297,10 +319,41 @@ const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
 const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
-
 const updateProfileModal = document.getElementById('updateProfileModal');
 const closeUpdateProfileModal = document.getElementById('closeUpdateProfileModal');
 const updateProfileForm = document.getElementById('updateProfileForm');
+
+// UI LOGIC: Back to top button visibility
+window.addEventListener('scroll', () => {
+    const backBtn = document.getElementById('backToTop');
+    if (window.scrollY > 400) { backBtn.classList.add('show-btn'); } 
+    else { backBtn.classList.remove('show-btn'); }
+});
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// UI LOGIC: Hover to Zoom
+const pdGalleryContainer = document.getElementById('pdGalleryContainer');
+const pdMainImage = document.getElementById('pdMainImage');
+
+pdGalleryContainer.addEventListener('mousemove', (e) => {
+    // Only apply zoom on non-touch devices to prevent jarring mobile behavior
+    if (window.innerWidth > 768) {
+        const rect = pdGalleryContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+        pdMainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+    }
+});
+
+pdGalleryContainer.addEventListener('mouseleave', () => {
+    pdMainImage.style.transformOrigin = 'center center';
+});
+
 
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
@@ -315,9 +368,7 @@ function openAuthModal(mode) {
     modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
     modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
     modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
-    
     document.getElementById('signupFields').style.display = isLoginMode ? 'none' : 'block';
-    
     modalAuthMsg.textContent = '';
     signInModal.style.display = 'block';
 }
@@ -327,9 +378,7 @@ auth.onAuthStateChanged(async user => {
         let adminButtonHtml = '';
         try {
             const adminDoc = await db.collection('admins').doc(user.email).get();
-            if (adminDoc.exists) {
-                adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
-            }
+            if (adminDoc.exists) { adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`; }
         } catch (error) {}
         
         try {
@@ -383,7 +432,6 @@ auth.onAuthStateChanged(async user => {
     }
 });
 
-// UPDATE PROFILE LOGIC
 updateProfileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('profSubmitBtn');
@@ -398,12 +446,9 @@ updateProfileForm.addEventListener('submit', async (e) => {
     
     try {
         await db.collection('users').doc(auth.currentUser.uid).set({
-            name: newName,
-            phone: newPhone,
-            city: newCity
+            name: newName, phone: newPhone, city: newCity
         }, { merge: true });
         
-        // Update local state instantly so cart is correct
         if (!currentUserProfile) currentUserProfile = {};
         currentUserProfile.name = newName;
         currentUserProfile.phone = newPhone;
@@ -415,12 +460,7 @@ updateProfileForm.addEventListener('submit', async (e) => {
         
         msg.style.color = 'green';
         msg.textContent = 'Profile updated successfully!';
-        
-        setTimeout(() => {
-            updateProfileModal.style.display = 'none';
-            msg.textContent = '';
-        }, 1500);
-        
+        setTimeout(() => { updateProfileModal.style.display = 'none'; msg.textContent = ''; }, 1500);
     } catch (err) {
         msg.style.color = 'red';
         msg.textContent = err.message;
@@ -438,12 +478,8 @@ function loadContactSettings() {
             document.getElementById('connectSection').style.display = 'block';
             document.getElementById('connectDesc').textContent = data.desc || 'We supply premium textiles across India.';
             let gridHtml = '';
-            if (data.headAddress || data.headPhone || data.headEmail) {
-                gridHtml += `<div class="contact-card"><h3>🏢 Head Office</h3>${data.headAddress ? `<p><strong>📍 Address:</strong> ${data.headAddress}</p>` : ''}${data.headPhone ? `<p><strong>📞 Phone:</strong> ${data.headPhone}</p>` : ''}${data.headEmail ? `<p><strong>✉️ Email:</strong> ${data.headEmail}</p>` : ''}</div>`;
-            }
-            if (data.branchAddress || data.branchPhone || data.branchHours) {
-                gridHtml += `<div class="contact-card"><h3>🏭 Branch Office</h3>${data.branchAddress ? `<p><strong>📍 Address:</strong> ${data.branchAddress}</p>` : ''}${data.branchPhone ? `<p><strong>📞 Phone:</strong> ${data.branchPhone}</p>` : ''}${data.branchHours ? `<p><strong>🕒 Hours:</strong> ${data.branchHours}</p>` : ''}</div>`;
-            }
+            if (data.headAddress || data.headPhone || data.headEmail) { gridHtml += `<div class="contact-card"><h3>🏢 Head Office</h3>${data.headAddress ? `<p><strong>📍 Address:</strong> ${data.headAddress}</p>` : ''}${data.headPhone ? `<p><strong>📞 Phone:</strong> ${data.headPhone}</p>` : ''}${data.headEmail ? `<p><strong>✉️ Email:</strong> ${data.headEmail}</p>` : ''}</div>`; }
+            if (data.branchAddress || data.branchPhone || data.branchHours) { gridHtml += `<div class="contact-card"><h3>🏭 Branch Office</h3>${data.branchAddress ? `<p><strong>📍 Address:</strong> ${data.branchAddress}</p>` : ''}${data.branchPhone ? `<p><strong>📞 Phone:</strong> ${data.branchPhone}</p>` : ''}${data.branchHours ? `<p><strong>🕒 Hours:</strong> ${data.branchHours}</p>` : ''}</div>`; }
             document.getElementById('contactGrid').innerHTML = gridHtml;
         } else {
             document.getElementById('connectSection').style.display = 'none';
@@ -467,38 +503,25 @@ modalAuthForm.addEventListener('submit', async e => {
             const phone = document.getElementById('authPhone').value.trim();
             const city = document.getElementById('authCity').value.trim();
             
-            if (!name || !phone || !city) {
-                throw new Error("Please fill in your Name, Phone, and City for wholesale registration.");
-            }
+            if (!name || !phone || !city) { throw new Error("Please fill in your Name, Phone, and City for wholesale registration."); }
 
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             
             await db.collection('users').doc(userCredential.user.uid).set({
-                name: name,
-                phone: phone,
-                city: city,
-                email: email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                name: name, phone: phone, city: city, email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
             document.getElementById('modalName').value = name;
             document.getElementById('modalPhone').value = phone;
             document.getElementById('modalCity').value = city;
             document.getElementById('modalEmail2').value = email;
-            
             currentUserProfile = { name, phone, city, email };
         }
-    } catch (err) {
-        modalAuthMsg.textContent = err.message;
-    } finally {
-        modalAuthSubmit.disabled = false;
-    }
+    } catch (err) { modalAuthMsg.textContent = err.message; } 
+    finally { modalAuthSubmit.disabled = false; }
 });
 
-modalToggleLink.addEventListener('click', e => {
-    e.preventDefault();
-    openAuthModal(!isLoginMode ? 'login' : 'signup');
-});
+modalToggleLink.addEventListener('click', e => { e.preventDefault(); openAuthModal(!isLoginMode ? 'login' : 'signup'); });
 
 openCartModalBtn.onclick = () => { slideOutCart.classList.add('open'); cartOverlay.classList.add('active'); };
 function closeCartDrawer() { slideOutCart.classList.remove('open'); cartOverlay.classList.remove('active'); }
@@ -545,12 +568,8 @@ function shareProductWhatsapp() {
     
     let msg = `Check out this fabric from Thakarshi Fab!\n\n`;
     msg += `*${p.name}*\n`;
-    if (p.mainCategory || p.category) {
-        msg += `Category: ${p.mainCategory ? p.mainCategory.toUpperCase() : ''} | ${p.category || ''}\n`;
-    }
-    if (p.fabricWidth) {
-        msg += `Width: ${p.fabricWidth}\n`;
-    }
+    if (p.mainCategory || p.category) { msg += `Category: ${p.mainCategory ? p.mainCategory.toUpperCase() : ''} | ${p.category || ''}\n`; }
+    if (p.fabricWidth) { msg += `Width: ${p.fabricWidth}\n`; }
     const priceStr = p.price ? parseFloat(p.price).toLocaleString() : 'Request Price';
     msg += `Price: ₹${priceStr} / ${p.uom || 'meter'}\n\n`;
     msg += `View catalog here: ${baseUrl}`;
@@ -589,9 +608,7 @@ function openProductModal(id) {
     if (product.fabricWidth) {
         widthContainer.style.display = 'block';
         widthContainer.innerHTML = `📐 Fabric Width / Panna: <span>${product.fabricWidth}</span>`;
-    } else {
-        widthContainer.style.display = 'none';
-    }
+    } else { widthContainer.style.display = 'none'; }
 
     document.getElementById('pdDesc').textContent = product.description || 'No additional details available for this fabric.';
     
@@ -666,18 +683,12 @@ function renderProducts(resetPage = true) {
         const searchCat = currentCategory.toLowerCase();
         
         let matchesCategory = false;
-        if (searchCat === 'all') {
-            matchesCategory = true;
-        } else if (searchCat === 'suiting') {
-            matchesCategory = (c1.includes('suiting') || m1.includes('suiting'));
-        } else {
-            matchesCategory = (c1 === searchCat || m1 === searchCat);
-        }
+        if (searchCat === 'all') { matchesCategory = true; } 
+        else if (searchCat === 'suiting') { matchesCategory = (c1.includes('suiting') || m1.includes('suiting')); } 
+        else { matchesCategory = (c1 === searchCat || m1 === searchCat); }
 
         const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || 
-                              (c1.includes(currentSearchTerm)) ||
-                              (m1.includes(currentSearchTerm)) ||
-                              (w1.includes(currentSearchTerm));
+                              (c1.includes(currentSearchTerm)) || (m1.includes(currentSearchTerm)) || (w1.includes(currentSearchTerm));
                               
         return matchesCategory && matchesSearch;
     });
@@ -748,11 +759,8 @@ function renderProducts(resetPage = true) {
         btn.addEventListener('click', toggleSelection);
     });
 
-    if (filteredProducts.length > endIndex) {
-        loadMoreContainer.style.display = 'block';
-    } else {
-        loadMoreContainer.style.display = 'none';
-    }
+    if (filteredProducts.length > endIndex) { loadMoreContainer.style.display = 'block'; } 
+    else { loadMoreContainer.style.display = 'none'; }
 }
 
 function setupFilterListeners() {
@@ -780,8 +788,7 @@ function setupFilterListeners() {
 function generateSkeletons() {
     let skeletons = '';
     for(let i=0; i<8; i++) {
-        skeletons += `
-        <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-info"><div class="skeleton-text short"></div><div class="skeleton-text medium"></div><div class="skeleton-button"></div></div></div>`;
+        skeletons += `<div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-info"><div class="skeleton-text short"></div><div class="skeleton-text medium"></div><div class="skeleton-button"></div></div></div>`;
     }
     return skeletons;
 }
@@ -806,6 +813,12 @@ function toggleSelection(e) {
         e.target.classList.add('added');
         if(e.target.id === 'pdAddBtn') e.target.style.backgroundColor = '#28a745'; 
         showToast('Added to inquiry list!');
+        
+        // UI BOUNCE ANIMATION
+        const cartBtn = document.getElementById('openCartModal');
+        cartBtn.classList.remove('cart-bump');
+        void cartBtn.offsetWidth; // Trigger DOM reflow to restart animation
+        cartBtn.classList.add('cart-bump');
     }
     
     updateSelectedUI();
@@ -847,10 +860,7 @@ modalWhatsappBtn.addEventListener('click', async () => {
     }
 
     const customerName = document.getElementById('modalName').value.trim();
-    if (!customerName) {
-        alert("Please enter your Full Name before sending the inquiry.");
-        return;
-    }
+    if (!customerName) { alert("Please enter your Full Name before sending the inquiry."); return; }
 
     const customerEmail = document.getElementById('modalEmail2').value.trim() || 'N/A';
     const customerPhone = document.getElementById('modalPhone').value.trim();
@@ -860,19 +870,10 @@ modalWhatsappBtn.addEventListener('click', async () => {
 
     try {
         await db.collection('inquiries').add({
-            uid: auth.currentUser.uid,
-            name: customerName,
-            email: customerEmail,
-            phone: customerPhone,
-            city: customerCity,
-            message: customerMessage,
-            selectedProducts: selectedArray,
-            status: 'New (WhatsApp)', 
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            uid: auth.currentUser.uid, name: customerName, email: customerEmail, phone: customerPhone, city: customerCity,
+            message: customerMessage, selectedProducts: selectedArray, status: 'New (WhatsApp)', timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-    } catch (error) {
-        console.warn("Could not save to Firebase, routing to WhatsApp anyway.", error);
-    }
+    } catch (error) { console.warn("Could not save to Firebase, routing to WhatsApp anyway.", error); }
 
     let msg = `Hello Thakarshi Fab, I am *${customerName}*`;
     if (customerCity) msg += ` from ${customerCity}`;
@@ -914,15 +915,8 @@ modalInquiryForm.addEventListener('submit', async e => {
     const selectedArray = Array.from(selectedItems);
 
     const formData = {
-        uid: auth.currentUser.uid,
-        name: customerName,
-        email: customerEmail,
-        phone: customerPhone,
-        city: customerCity,
-        message: customerMessage,
-        selectedProducts: selectedArray,
-        status: 'New', 
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        uid: auth.currentUser.uid, name: customerName, email: customerEmail, phone: customerPhone, city: customerCity,
+        message: customerMessage, selectedProducts: selectedArray, status: 'New', timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     try {
@@ -934,12 +928,7 @@ modalInquiryForm.addEventListener('submit', async e => {
         }).join(", ");
 
         const emailParams = {
-            from_name: customerName,
-            from_email: customerEmail,
-            phone: customerPhone,
-            city: customerCity,
-            message: customerMessage,
-            products: productNames
+            from_name: customerName, from_email: customerEmail, phone: customerPhone, city: customerCity, message: customerMessage, products: productNames
         };
         
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
