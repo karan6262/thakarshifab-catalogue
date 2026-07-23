@@ -4,29 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- ========================================== -->
-    <!-- START ADVANCED SEO & META TAGS SETUP       -->
-    <!-- ========================================== -->
     <title>Thakarshi Fab - Premium Textile Wholesale | Ahmedabad</title>
     <meta name="description" content="Leading wholesale textile supplier in Ahmedabad, Gujarat. Shop premium Shirting, Suiting, Cotton, Linen, and PV/TR fabrics in bulk. Connect with Thakarshi Fab today.">
     <meta name="keywords" content="Textile wholesale Ahmedabad, bulk fabrics India, shirting wholesale, suiting wholesale, cotton fabric supplier, linen fabrics, PV suiting, TR suiting, Thakarshi Fab">
     <meta name="author" content="Thakarshi Fab">
     <meta name="robots" content="index, follow">
     
-    <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.thakarshifab.com/"> <!-- Update with your actual domain later -->
+    <meta property="og:url" content="https://www.thakarshifab.com/">
     <meta property="og:title" content="Thakarshi Fab - Textile Wholesale in Ahmedabad">
     <meta property="og:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
-    <!-- Replace this content URL with a link to your actual logo or a nice fabric image for the WhatsApp preview -->
     <meta property="og:image" content="https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"> 
 
-    <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Thakarshi Fab - Textile Wholesale">
     <meta name="twitter:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
 
-    <!-- Schema.org Markup for Google Rich Results (Local Business) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -46,14 +39,10 @@
       "priceRange": "₹₹"
     }
     </script>
-    <!-- ========================================== -->
-    <!-- END SEO SETUP                              -->
-    <!-- ========================================== -->
 
-    <!-- Preconnect to Cloudinary to load images even faster -->
     <link rel="preconnect" href="https://res.cloudinary.com">
-    
     <link rel="stylesheet" href="style.css">
+    
     <style>
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
@@ -69,36 +58,26 @@
         #productDetailsModal { display: none; }
         #productDetailsModal.show-modal { display: flex !important; align-items: center; justify-content: center; }
         
-        .pd-content {
-            display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; 
-            border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg);
-        }
+        .pd-content { display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
         
-        .pd-gallery-section {
-            flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; 
-            position: relative; overflow: hidden; border-right: 1px solid var(--gray-200);
-        }
+        .pd-gallery-section { flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); }
         .pd-gallery-section img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .pd-info-section {
-            flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; background: var(--white);
-        }
+        .pd-info-section { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; background: var(--white); }
         
-        .pd-close {
-            position: absolute; top: 15px; right: 20px; font-size: 2.2rem; cursor: pointer; color: #333; 
-            z-index: 10; background: rgba(255,255,255,0.9); border-radius: 50%; width: 45px; height: 45px; 
-            display: flex; align-items: center; justify-content: center; line-height: 1; box-shadow: var(--shadow-sm);
-        }
+        .pd-close { position: absolute; top: 15px; right: 20px; font-size: 2.2rem; cursor: pointer; color: #333; z-index: 10; background: rgba(255,255,255,0.9); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; line-height: 1; box-shadow: var(--shadow-sm); }
         .pd-close:hover { background: #eee; }
         
-        .pd-arrow {
-            position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white;
-            border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem; 
-            display: flex; align-items: center; justify-content: center; z-index: 5; transition: background 0.2s;
-        }
+        .pd-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 5; transition: background 0.2s; }
         .pd-arrow:hover { background: rgba(0,0,0,0.8); }
         .pd-arrow-left { left: 15px; }
         .pd-arrow-right { right: 15px; }
+
+        .wa-share-btn { display: inline-flex; align-items: center; gap: 8px; color: #25D366; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-decoration: none; transition: all 0.2s; margin-top: 10px; }
+        .wa-share-btn:hover { background: rgba(37, 211, 102, 0.2); }
+
+        .form-actions { display: flex; gap: 10px; flex-direction: column; }
+        @media (min-width: 600px) { .form-actions { flex-direction: row; } }
 
         @media (max-width: 768px) {
             .pd-content { flex-direction: column; height: 90vh; }
@@ -129,7 +108,6 @@
         <!-- JS will inject filters, search, skeletons, and products here -->
     </section>
 
-    <!-- Load More Button -->
     <div id="loadMoreContainer" style="text-align: center; margin-top: 30px; margin-bottom: 40px; display: none;">
         <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
     </div>
@@ -172,9 +150,16 @@
         
         <div class="pd-info-section">
             <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold;"></span>
-            <h2 id="pdName" style="margin: 8px 0 15px 0; font-size: 2rem; color: var(--gray-900);"></h2>
             
-            <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid var(--primary);">
+            <h2 id="pdName" style="margin: 8px 0 5px 0; font-size: 2rem; color: var(--gray-900);"></h2>
+            
+            <!-- NEW WHATSAPP SHARE BUTTON -->
+            <button class="wa-share-btn" onclick="shareProductWhatsapp()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                Share on WhatsApp
+            </button>
+            
+            <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; margin-bottom: 25px; margin-top: 25px; border-left: 4px solid var(--primary);">
                 <h3 id="pdPrice" style="color: var(--primary); margin: 0; font-size: 1.6rem;"></h3>
             </div>
             
@@ -202,7 +187,16 @@
             <div class="form-group" style="margin-bottom: 1rem;"><label>Phone Number</label><input type="tel" id="modalPhone"></div>
             <div class="form-group" style="margin-bottom: 1rem;"><label>City</label><input type="text" id="modalCity"></div>
             <div class="form-group" style="margin-bottom: 1rem;"><label>Additional Message / Requirements</label><textarea id="modalMessage" style="min-height: 80px;"></textarea></div>
-            <button type="submit" class="submit-btn" id="modalSubmitBtn">Send Inquiry</button>
+            
+            <!-- NEW FORM ACTIONS (Email OR WhatsApp) -->
+            <div class="form-actions">
+                <button type="submit" class="submit-btn" id="modalSubmitBtn" style="flex: 1;">Send via Email</button>
+                <button type="button" class="submit-btn" id="modalWhatsappBtn" style="flex: 1; background-color: #25D366; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Send via WhatsApp
+                </button>
+            </div>
+
             <div class="form-status" id="modalFormStatus"></div>
         </form>
     </div>
@@ -256,6 +250,9 @@ let pdImagesArray = [];
 let pdCurrentIndex = 0;
 let pdCurrentProductId = null;
 
+// GLOBAL VARIABLE TO STORE ADMIN WHATSAPP NUMBER
+window.adminWhatsappNumber = null;
+
 const authStatusEl = document.getElementById('authStatus');
 const productsSection = document.getElementById('productsSection');
 const openCartModalBtn = document.getElementById('openCartModal');
@@ -279,8 +276,8 @@ const modalAuthMsg = document.getElementById('modalAuthMsg');
 const modalInquiryForm = document.getElementById('modalInquiryForm');
 const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 const modalFormStatus = document.getElementById('modalFormStatus');
+const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
 
-// --- OPTIMIZATION FUNCTION ---
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
         return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
@@ -334,6 +331,10 @@ function loadContactSettings() {
     db.collection('settings').doc('contactInfo').onSnapshot(doc => {
         if (doc.exists) {
             const data = doc.data();
+            
+            // Store WhatsApp number globally for checkout routing
+            if(data.whatsapp) { window.adminWhatsappNumber = data.whatsapp; }
+            
             document.getElementById('connectSection').style.display = 'block';
             document.getElementById('connectDesc').textContent = data.desc || 'We supply premium textiles across India.';
             let gridHtml = '';
@@ -403,6 +404,28 @@ function scrollGallery(productId, direction) {
         const scrollAmount = gallery.offsetWidth;
         gallery.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
     }
+}
+
+/* --- WHATSAPP SHARE PRODUCT LOGIC --- */
+function shareProductWhatsapp() {
+    if (!pdCurrentProductId) return;
+    const p = allProducts.find(prod => prod.id === pdCurrentProductId);
+    if (!p) return;
+    
+    // Create a clean URL (Remove any query params)
+    const baseUrl = window.location.href.split('?')[0]; 
+    
+    let msg = `Check out this fabric from Thakarshi Fab!\n\n`;
+    msg += `*${p.name}*\n`;
+    if (p.mainCategory || p.category) {
+        msg += `Category: ${p.mainCategory ? p.mainCategory.toUpperCase() : ''} | ${p.category || ''}\n`;
+    }
+    const priceStr = p.price ? parseFloat(p.price).toLocaleString() : 'Request Price';
+    msg += `Price: ₹${priceStr} / ${p.uom || 'meter'}\n\n`;
+    msg += `View catalog here: ${baseUrl}`;
+    
+    // Open in WhatsApp
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function openProductModal(id) {
@@ -674,6 +697,73 @@ function updateSelectedUI() {
     });
 }
 
+// --- WHATSAPP CART SUBMISSION LOGIC ---
+modalWhatsappBtn.addEventListener('click', async () => {
+    // 1. Verify WhatsApp Number Exists
+    if (!window.adminWhatsappNumber) {
+        alert("The admin has not configured a WhatsApp number yet. Please use the 'Send via Email' option.");
+        return;
+    }
+
+    // 2. Validate essential fields (Optional, but good UX)
+    const customerName = document.getElementById('modalName').value.trim();
+    if (!customerName) {
+        alert("Please enter your Full Name before sending the inquiry.");
+        return;
+    }
+
+    // 3. Save to Firebase so Admin still has a record
+    const customerEmail = document.getElementById('modalEmail2').value.trim() || 'N/A';
+    const customerPhone = document.getElementById('modalPhone').value.trim();
+    const customerCity = document.getElementById('modalCity').value.trim();
+    const customerMessage = document.getElementById('modalMessage').value.trim();
+    const selectedArray = Array.from(selectedItems);
+
+    try {
+        await db.collection('inquiries').add({
+            uid: auth.currentUser.uid,
+            name: customerName,
+            email: customerEmail,
+            phone: customerPhone,
+            city: customerCity,
+            message: customerMessage,
+            selectedProducts: selectedArray,
+            status: 'New (WhatsApp)', 
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) {
+        console.warn("Could not save to Firebase, but routing to WhatsApp anyway.", error);
+    }
+
+    // 4. Construct the WhatsApp Message
+    let msg = `Hello Thakarshi Fab, I am *${customerName}*`;
+    if (customerCity) msg += ` from ${customerCity}`;
+    msg += `.\n\nI want to inquire about the following fabrics:\n\n`;
+
+    let counter = 1;
+    selectedArray.forEach(id => {
+        const p = allProducts.find(prod => prod.id === id);
+        if(p) {
+            msg += `${counter}. *${p.name}* (₹${p.price}/${p.uom || 'meter'})\n`;
+            counter++;
+        }
+    });
+
+    if (customerPhone) { msg += `\n*My Contact No:* ${customerPhone}`; }
+    if (customerMessage) { msg += `\n*Requirements/Notes:* ${customerMessage}`; }
+
+    // 5. Clean up UI & Redirect
+    selectedItems.clear();
+    updateSelectedUI();
+    document.querySelector('.inquiry-btn span').textContent = `(0)`;
+    cartModal.style.display = 'none';
+    renderProducts(false); 
+    
+    // 6. Open WhatsApp
+    window.open(`https://wa.me/${window.adminWhatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+});
+
+// --- EXISTING EMAIL SUBMISSION LOGIC ---
 modalInquiryForm.addEventListener('submit', async e => {
     e.preventDefault();
     modalSubmitBtn.disabled = true;
@@ -720,7 +810,7 @@ modalInquiryForm.addEventListener('submit', async e => {
             .then(() => console.log('Email sent successfully'))
             .catch((err) => console.error('Email failed to send', err));
 
-        modalFormStatus.textContent = 'Inquiry sent successfully! We will contact you soon.';
+        modalFormStatus.textContent = 'Inquiry sent successfully via Email! We will contact you soon.';
         modalFormStatus.className = 'form-status success';
         modalFormStatus.style.display = 'block';
         modalInquiryForm.reset();
@@ -737,7 +827,7 @@ modalInquiryForm.addEventListener('submit', async e => {
         modalFormStatus.style.display = 'block';
     } finally {
         modalSubmitBtn.disabled = false;
-        modalSubmitBtn.textContent = 'Send Inquiry';
+        modalSubmitBtn.textContent = 'Send via Email';
     }
 });
 
