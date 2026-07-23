@@ -76,7 +76,6 @@
         .wa-share-btn { display: inline-flex; align-items: center; gap: 8px; color: #25D366; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-decoration: none; transition: all 0.2s; margin-top: 10px; width: fit-content; }
         .wa-share-btn:hover { background: rgba(37, 211, 102, 0.2); }
 
-        /* Fabric Spec Tag Badge */
         .width-badge { display: inline-block; background: #eef2ff; color: #1e40af; font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; margin-top: 6px; border: 1px solid #c7d2fe; }
 
         .form-actions { display: flex; gap: 10px; flex-direction: column; }
@@ -107,15 +106,12 @@
 <div class="container">
     <div id="authStatus" class="user-info" style="text-align: center; margin-bottom: 20px; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;"></div>
 
-    <section id="productsSection" class="catalog-section">
-        <!-- JS will inject filters, search, skeletons, and products here -->
-    </section>
+    <section id="productsSection" class="catalog-section"></section>
 
     <div id="loadMoreContainer" style="text-align: center; margin-top: 30px; margin-bottom: 40px; display: none;">
         <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
     </div>
 
-    <!-- DYNAMIC CONNECT WITH US SECTION -->
     <section class="connect-section" id="connectSection" style="display: none;">
         <h2>Connect With Us</h2>
         <p id="connectDesc" style="font-size: 1.1rem; opacity: 0.9;">Loading details...</p>
@@ -123,14 +119,29 @@
     </section>
 </div>
 
-<!-- Sign In Modal -->
+<!-- Sign In / Sign Up Modal -->
 <div id="signInModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeSignInModal">&times;</span>
-        <h2>Sign In</h2>
+        <h2 id="authModalTitle">Sign In</h2>
         <form id="modalAuthForm">
-            <div class="form-group"><input type="email" id="modalEmail" placeholder="Email" required></div>
+            
+            <!-- EXTRA FIELDS FOR SIGN UP (Hidden during Sign In) -->
+            <div id="signupFields" style="display:none;">
+                <div class="form-group">
+                    <input type="text" id="authName" placeholder="Full Name / Business Name">
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="authPhone" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="authCity" placeholder="City">
+                </div>
+            </div>
+
+            <div class="form-group"><input type="email" id="modalEmail" placeholder="Email Address" required></div>
             <div class="form-group"><input type="password" id="modalPassword" placeholder="Password" required></div>
+            
             <button type="submit" class="submit-btn" id="modalAuthSubmit">Sign In</button>
         </form>
         <p class="auth-switch" id="modalAuthSwitch" style="text-align: center; margin-top: 15px;">
@@ -153,7 +164,6 @@
         
         <div class="pd-info-section">
             <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold;"></span>
-            
             <h2 id="pdName" style="margin: 8px 0 5px 0; font-size: 2rem; color: var(--gray-900);"></h2>
             
             <button class="wa-share-btn" onclick="shareProductWhatsapp()">
@@ -185,7 +195,7 @@
         <h2 style="margin-bottom: 15px;">Send Inquiry</h2>
         <form id="modalInquiryForm" style="overflow-y: auto; padding-right: 5px; flex-grow: 1;">
             <input type="hidden" id="modalSelectedProducts" name="selectedProducts" value="">
-            <div class="form-group" style="margin-bottom: 1rem;"><label>Full Name *</label><input type="text" id="modalName" required></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Full Name / Business Name *</label><input type="text" id="modalName" required></div>
             <div class="form-group" style="margin-bottom: 1rem;"><label>Email Address *</label><input type="email" id="modalEmail2" required></div>
             <div class="form-group" style="margin-bottom: 1rem;"><label>Phone Number</label><input type="tel" id="modalPhone"></div>
             <div class="form-group" style="margin-bottom: 1rem;"><label>City</label><input type="text" id="modalCity"></div>
@@ -288,15 +298,21 @@ function optimizeImageUrl(url, width = 600) {
 
 function openAuthModal(mode) {
     isLoginMode = (mode === 'login');
+    document.getElementById('authModalTitle').textContent = isLoginMode ? 'Sign In' : 'Create Account';
     modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
     modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
     modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
+    
+    // Toggle Extra Fields
+    document.getElementById('signupFields').style.display = isLoginMode ? 'none' : 'block';
+    
     modalAuthMsg.textContent = '';
     signInModal.style.display = 'block';
 }
 
 auth.onAuthStateChanged(async user => {
     if (user) {
+        // Fetch Admin status
         let adminButtonHtml = '';
         try {
             const adminDoc = await db.collection('admins').doc(user.email).get();
@@ -304,6 +320,19 @@ auth.onAuthStateChanged(async user => {
                 adminButtonHtml = `<a href="admin.html" class="btn-primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: #1a1a1a;">Admin Panel</a>`;
             }
         } catch (error) {}
+        
+        // Fetch User Profile Data for pre-filling form
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                const profile = userDoc.data();
+                document.getElementById('modalName').value = profile.name || '';
+                document.getElementById('modalPhone').value = profile.phone || '';
+                document.getElementById('modalCity').value = profile.city || '';
+            }
+        } catch (error) { console.error("Error fetching profile:", error); }
+        
+        document.getElementById('modalEmail2').value = user.email || '';
 
         authStatusEl.innerHTML = `
             <span>Signed in as <strong>${user.email}</strong></span>
@@ -314,6 +343,12 @@ auth.onAuthStateChanged(async user => {
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
+        // Clear pre-filled data on logout
+        document.getElementById('modalName').value = '';
+        document.getElementById('modalPhone').value = '';
+        document.getElementById('modalCity').value = '';
+        document.getElementById('modalEmail2').value = '';
+
         authStatusEl.innerHTML = `
             <span style="color: #666; margin-right: 10px; font-weight: 500;">Login to create an inquiry list:</span>
             <button id="mainSignInBtn" class="btn-primary" style="background-color: transparent; color: #1a1a1a; border: 2px solid #1a1a1a; padding: 6px 20px; font-size: 0.95rem;">Sign In</button>
@@ -349,21 +384,45 @@ function loadContactSettings() {
     });
 }
 
-modalAuthForm.addEventListener('submit', e => {
+// SIGN IN & SIGN UP LOGIC
+modalAuthForm.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('modalEmail').value.trim();
     const password = document.getElementById('modalPassword').value.trim();
+    
     modalAuthMsg.textContent = '';
     modalAuthSubmit.disabled = true;
 
-    const authPromise = isLoginMode 
-        ? auth.signInWithEmailAndPassword(email, password)
-        : auth.createUserWithEmailAndPassword(email, password);
+    try {
+        if (isLoginMode) {
+            await auth.signInWithEmailAndPassword(email, password);
+        } else {
+            // Registration Mode - Grab Extra Fields
+            const name = document.getElementById('authName').value.trim();
+            const phone = document.getElementById('authPhone').value.trim();
+            const city = document.getElementById('authCity').value.trim();
+            
+            if (!name || !phone || !city) {
+                throw new Error("Please fill in your Name, Phone, and City for wholesale registration.");
+            }
 
-    authPromise.catch(err => {
+            // Create Auth User
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            
+            // Save Profile to Firestore
+            await db.collection('users').doc(userCredential.user.uid).set({
+                name: name,
+                phone: phone,
+                city: city,
+                email: email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+    } catch (err) {
         modalAuthMsg.textContent = err.message;
+    } finally {
         modalAuthSubmit.disabled = false;
-    });
+    }
 });
 
 modalToggleLink.addEventListener('click', e => {
@@ -453,7 +512,6 @@ function openProductModal(id) {
     const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
     document.getElementById('pdPrice').textContent = `₹${priceStr} / ${uom}`;
     
-    // RENDER FABRIC WIDTH IN POPUP
     const widthContainer = document.getElementById('pdWidthSpec');
     if (product.fabricWidth) {
         widthContainer.style.display = 'block';
