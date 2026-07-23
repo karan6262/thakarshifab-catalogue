@@ -126,17 +126,10 @@
         <h2 id="authModalTitle">Sign In</h2>
         <form id="modalAuthForm">
             
-            <!-- EXTRA FIELDS FOR SIGN UP (Hidden during Sign In) -->
             <div id="signupFields" style="display:none;">
-                <div class="form-group">
-                    <input type="text" id="authName" placeholder="Full Name / Business Name">
-                </div>
-                <div class="form-group">
-                    <input type="tel" id="authPhone" placeholder="Phone Number">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="authCity" placeholder="City">
-                </div>
+                <div class="form-group"><input type="text" id="authName" placeholder="Full Name / Business Name"></div>
+                <div class="form-group"><input type="tel" id="authPhone" placeholder="Phone Number"></div>
+                <div class="form-group"><input type="text" id="authCity" placeholder="City"></div>
             </div>
 
             <div class="form-group"><input type="email" id="modalEmail" placeholder="Email Address" required></div>
@@ -303,7 +296,6 @@ function openAuthModal(mode) {
     modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
     modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
     
-    // Toggle Extra Fields
     document.getElementById('signupFields').style.display = isLoginMode ? 'none' : 'block';
     
     modalAuthMsg.textContent = '';
@@ -312,7 +304,6 @@ function openAuthModal(mode) {
 
 auth.onAuthStateChanged(async user => {
     if (user) {
-        // Fetch Admin status
         let adminButtonHtml = '';
         try {
             const adminDoc = await db.collection('admins').doc(user.email).get();
@@ -321,7 +312,7 @@ auth.onAuthStateChanged(async user => {
             }
         } catch (error) {}
         
-        // Fetch User Profile Data for pre-filling form
+        // PULL USER DATA FOR PRE-FILL ON LOGIN/REFRESH
         try {
             const userDoc = await db.collection('users').doc(user.uid).get();
             if (userDoc.exists) {
@@ -343,7 +334,6 @@ auth.onAuthStateChanged(async user => {
         signInModal.style.display = 'none';
         document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
-        // Clear pre-filled data on logout
         document.getElementById('modalName').value = '';
         document.getElementById('modalPhone').value = '';
         document.getElementById('modalCity').value = '';
@@ -384,7 +374,6 @@ function loadContactSettings() {
     });
 }
 
-// SIGN IN & SIGN UP LOGIC
 modalAuthForm.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('modalEmail').value.trim();
@@ -397,7 +386,6 @@ modalAuthForm.addEventListener('submit', async e => {
         if (isLoginMode) {
             await auth.signInWithEmailAndPassword(email, password);
         } else {
-            // Registration Mode - Grab Extra Fields
             const name = document.getElementById('authName').value.trim();
             const phone = document.getElementById('authPhone').value.trim();
             const city = document.getElementById('authCity').value.trim();
@@ -406,10 +394,8 @@ modalAuthForm.addEventListener('submit', async e => {
                 throw new Error("Please fill in your Name, Phone, and City for wholesale registration.");
             }
 
-            // Create Auth User
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             
-            // Save Profile to Firestore
             await db.collection('users').doc(userCredential.user.uid).set({
                 name: name,
                 phone: phone,
@@ -417,6 +403,12 @@ modalAuthForm.addEventListener('submit', async e => {
                 email: email,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+
+            // INSTANT PRE-FILL RIGHT AFTER SUCCESSFUL SIGNUP
+            document.getElementById('modalName').value = name;
+            document.getElementById('modalPhone').value = phone;
+            document.getElementById('modalCity').value = city;
+            document.getElementById('modalEmail2').value = email;
         }
     } catch (err) {
         modalAuthMsg.textContent = err.message;
