@@ -47,6 +47,7 @@
         .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
         .contact-card { flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: var(--radius); text-align: left; font-size: 1.05rem; border: 1px solid rgba(255, 255, 255, 0.15); }
         .contact-card h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); color: #f1dfc8; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .contact-card p { margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
         
         .hover-link { cursor: pointer; transition: color 0.2s; }
         .hover-link:hover { color: var(--primary); }
@@ -181,16 +182,16 @@
         
         <div class="pd-info-section">
             
-            <!-- SMART LOGO INJECTION WITH FALLBACK -->
+            <!-- SMART DYNAMIC LOGO HEADER -->
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                 <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold; margin-top: 5px;"></span>
                 
-                <!-- Bulletproof Mill Display -->
+                <!-- Dynamic Mill Display -->
                 <div id="pdMillContainer" style="display: none; text-align: right;">
-                    <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;"> By</div>
+                    <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Manufactured By</div>
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-                        <span id="pdMillText" style="font-weight: 900; font-size: 1.15rem; color: #1a1a1a; letter-spacing: 0.5px;"></span>
-                        <img id="pdMillLogo" src="" alt="Mill Brand" style="height: 25px; max-width: 90px; object-fit: contain; display: none;" onerror="this.style.display='none'">
+                        <span id="pdMillText" style="font-weight: 900; font-size: 1.15rem; color: #1a1a1a; letter-spacing: 0.5px; display: none;"></span>
+                        <img id="pdMillLogo" src="" alt="Mill Brand" style="height: 30px; max-width: 100px; object-fit: contain; display: none;">
                     </div>
                 </div>
             </div>
@@ -295,6 +296,7 @@ let pdCurrentProductId = null;
 
 let currentUserProfile = null; 
 window.adminWhatsappNumber = null;
+let activeMillsMap = {}; // Will hold dynamic mill data
 
 const productsSection = document.getElementById('productsSection');
 const openCartModalBtn = document.getElementById('openCartModal');
@@ -324,12 +326,6 @@ const closeUpdateProfileModal = document.getElementById('closeUpdateProfileModal
 const updateProfileForm = document.getElementById('updateProfileForm');
 const userDropdownContainer = document.getElementById('userDropdownContainer');
 
-// DIRECT WIKIMEDIA LOGOS (Bypasses Clearbit blocking)
-const officialMillLogos = {
-    'raymond': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Raymond_logo.svg/320px-Raymond_logo.svg.png',
-    'arvind': 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d8/Arvind_Mills_Logo.svg/200px-Arvind_Mills_Logo.svg.png',
-    'siyarams': 'https://upload.wikimedia.org/wikipedia/en/2/23/Siyaram_logo.png'
-};
 
 window.addEventListener('scroll', () => {
     const backBtn = document.getElementById('backToTop');
@@ -553,7 +549,10 @@ function shareProductWhatsapp() {
     const baseUrl = window.location.href.split('?')[0]; 
     let msg = `Check out this fabric from Thakarshi Fab!\n\n`;
     msg += `*${p.name}*\n`;
-    if (p.mill && p.mill !== 'generic') { msg += `Mill: ${p.mill.toUpperCase()}\n`; }
+    
+    const millObj = activeMillsMap[p.mill];
+    if (p.mill && p.mill !== 'generic' && millObj) { msg += `Mill: ${millObj.name.toUpperCase()}\n`; }
+    
     if (p.mainCategory || p.category) { msg += `Category: ${p.mainCategory ? p.mainCategory.toUpperCase() : ''} | ${p.category || ''}\n`; }
     if (p.fabricWidth) { msg += `Width: ${p.fabricWidth}\n`; }
     const priceStr = p.price ? parseFloat(p.price).toLocaleString() : 'Request Price';
@@ -584,24 +583,23 @@ function openProductModal(id) {
     document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
-    // --- BULLETPROOF MILL DISPLAY ---
+    // --- DYNAMIC MILL DISPLAY ---
     const millContainer = document.getElementById('pdMillContainer');
     const logoImg = document.getElementById('pdMillLogo');
     const millText = document.getElementById('pdMillText');
+    const millObj = activeMillsMap[product.mill];
 
-    if (product.mill && product.mill !== 'generic') {
+    if (product.mill && product.mill !== 'generic' && millObj) {
         millContainer.style.display = 'block';
+        millText.textContent = millObj.name.toUpperCase();
         
-        let formatName = product.mill;
-        if(formatName === 'siyarams') formatName = "SIYARAM'S";
-        if(formatName === 'linenclub') formatName = "LINEN CLUB";
-        millText.textContent = formatName;
-        
-        if (officialMillLogos[product.mill]) {
-            logoImg.src = officialMillLogos[product.mill];
+        if (millObj.logoUrl) {
+            logoImg.src = millObj.logoUrl;
             logoImg.style.display = 'block';
+            millText.style.display = 'none';
         } else {
             logoImg.style.display = 'none';
+            millText.style.display = 'block';
         }
     } else {
         millContainer.style.display = 'none';
@@ -644,16 +642,16 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
+    // We render the fixed buttons here, then inject dynamic Mill buttons via JS
     productsSection.innerHTML = `
-        <div class="category-filters" style="margin-top: 10px;">
+        <div class="category-filters" id="dynamicFiltersContainer" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
-            <button class="filter-pill" data-filter="raymond" style="border-color:#1a1a1a;">Raymond</button>
-            <button class="filter-pill" data-filter="arvind" style="border-color:#003366;">Arvind</button>
-            <button class="filter-pill" data-filter="siyarams" style="border-color:#d32f2f;">Siyaram's</button>
             <button class="filter-pill" data-filter="shirting">Shirting</button>
             <button class="filter-pill" data-filter="suiting">Suiting</button>
             <button class="filter-pill" data-filter="cotton">Cotton</button>
             <button class="filter-pill" data-filter="linen">Linen</button>
+            <button class="filter-pill" data-filter="pv suiting">PV Suiting</button>
+            <button class="filter-pill" data-filter="tr suiting">TR Suiting</button>
         </div>
         <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
             <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
@@ -663,6 +661,30 @@ function loadProductsFromFirestore() {
         </div>
     `;
 
+    // Fetch Dynamic Mills FIRST
+    db.collection('mills').orderBy('name').onSnapshot(millSnap => {
+        activeMillsMap = {};
+        document.querySelectorAll('.dynamic-mill').forEach(e => e.remove());
+        const filterContainer = document.getElementById('dynamicFiltersContainer');
+        
+        millSnap.forEach(doc => {
+            const m = doc.data();
+            activeMillsMap[doc.id] = m;
+            
+            const btn = document.createElement('button');
+            btn.className = 'filter-pill dynamic-mill';
+            btn.dataset.filter = doc.id;
+            btn.textContent = m.name;
+            btn.style.borderColor = '#1a1a1a';
+            // Insert it right after the "All Fabrics" button
+            filterContainer.insertBefore(btn, filterContainer.children[1]);
+        });
+        
+        setupFilterListeners();
+        if(allProducts.length > 0) renderProducts(true); 
+    });
+
+    // Fetch Products
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         allProducts = [];
         snapshot.forEach(doc => { allProducts.push({ id: doc.id, ...doc.data() }); });
@@ -686,17 +708,19 @@ function renderProducts(resetPage = true) {
         
         const c1 = product.category ? product.category.toLowerCase() : '';
         const m1 = product.mainCategory ? product.mainCategory.toLowerCase() : '';
-        const mill1 = product.mill ? product.mill.toLowerCase() : '';
         const searchCat = currentCategory.toLowerCase();
         
         let matchesCategory = false;
         if (searchCat === 'all') { matchesCategory = true; } 
         else if (searchCat === 'suiting') { matchesCategory = (c1.includes('suiting') || m1.includes('suiting')); } 
-        else { matchesCategory = (c1 === searchCat || m1 === searchCat || mill1 === searchCat); }
+        else { matchesCategory = (c1 === searchCat || m1 === searchCat || product.mill === searchCat); }
 
         const w1 = product.fabricWidth ? product.fabricWidth.toLowerCase() : '';
+        const millObj = activeMillsMap[product.mill];
+        const millSearchName = millObj ? millObj.name.toLowerCase() : '';
+        
         const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || 
-                              (c1.includes(currentSearchTerm)) || (m1.includes(currentSearchTerm)) || (w1.includes(currentSearchTerm)) || (mill1.includes(currentSearchTerm));
+                              (c1.includes(currentSearchTerm)) || (m1.includes(currentSearchTerm)) || (w1.includes(currentSearchTerm)) || (millSearchName.includes(currentSearchTerm));
                               
         return matchesCategory && matchesSearch;
     });
@@ -732,7 +756,10 @@ function renderProducts(resetPage = true) {
         }
         
         const mainCat = product.mainCategory ? `<span style="color:var(--primary); font-weight:bold;">${product.mainCategory.toUpperCase()}</span> | ` : '';
-        const millName = (product.mill && product.mill !== 'generic') ? `<b style="color:var(--primary);">${product.mill.toUpperCase()}</b> • ` : '';
+        
+        const millObj = activeMillsMap[product.mill];
+        const millName = (product.mill && product.mill !== 'generic' && millObj) ? `<b style="color:var(--primary);">${millObj.name.toUpperCase()}</b> • ` : '';
+        
         const uom = product.uom || 'meter';
         const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
         const widthBadgeHtml = product.fabricWidth ? `<div class="width-badge">📐 Width: ${product.fabricWidth}</div>` : '';
