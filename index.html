@@ -182,18 +182,19 @@
         
         <div class="pd-info-section">
             
-            <!-- SMART DYNAMIC LOGO HEADER -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold; margin-top: 5px;"></span>
+            <!-- SMART DYNAMIC LOGO HEADER (Now positioned on top left) -->
+            <div style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                 
                 <!-- Dynamic Mill Display -->
-                <div id="pdMillContainer" style="display: none; text-align: right;">
-                    <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Manufactured By</div>
-                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <div id="pdMillContainer" style="display: none; margin-bottom: 8px;">
+                    <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Manufactured By</div>
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 10px;">
+                        <img id="pdMillLogo" src="" alt="Mill Brand" style="height: 35px; max-width: 120px; object-fit: contain; display: none;">
                         <span id="pdMillText" style="font-weight: 900; font-size: 1.15rem; color: #1a1a1a; letter-spacing: 0.5px; display: none;"></span>
-                        <img id="pdMillLogo" src="" alt="Mill Brand" style="height: 30px; max-width: 100px; object-fit: contain; display: none;">
                     </div>
                 </div>
+
+                <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold; display: block;"></span>
             </div>
 
             <h2 id="pdName" style="margin: 0 0 5px 0; font-size: 2rem; color: var(--gray-900);"></h2>
@@ -583,7 +584,7 @@ function openProductModal(id) {
     document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
-    // --- DYNAMIC MILL DISPLAY ---
+    // --- DYNAMIC MILL DISPLAY (NOW POSITIONED AT THE TOP LEFT) ---
     const millContainer = document.getElementById('pdMillContainer');
     const logoImg = document.getElementById('pdMillLogo');
     const millText = document.getElementById('pdMillText');
