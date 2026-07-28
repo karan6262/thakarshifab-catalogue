@@ -43,7 +43,6 @@
         @media (max-width: 768px) { .settings-grid { grid-template-columns: 1fr; } }
         .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        /* ADVANCED IMAGE MANAGER STYLES */
         .image-manager { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; min-height: 80px; padding: 15px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px; }
         .img-wrap { position: relative; display: inline-flex; flex-direction: column; background: white; border: 1px solid #ddd; padding: 8px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
         .img-wrap img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; border: 1px solid #eee; }
@@ -84,9 +83,24 @@
         <div id="section-add" class="admin-section active">
             <h2 style="margin-bottom: 25px; color: var(--primary);">Upload New Product</h2>
             <form id="uploadForm">
-                <div class="form-group">
-                    <label>Product Name</label>
-                    <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
+                
+                <div class="grid-2-col">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
+                    </div>
+                    <!-- NEW MILL FIELD -->
+                    <div class="form-group">
+                        <label>Manufacturing Mill</label>
+                        <select id="prodMill" required>
+                            <option value="generic">Generic / Unbranded</option>
+                            <option value="raymond">Raymond</option>
+                            <option value="arvind">Arvind</option>
+                            <option value="siyarams">Siyaram's</option>
+                            <option value="donear">Donear</option>
+                            <option value="linenclub">Linen Club</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="grid-2-col">
@@ -138,7 +152,6 @@
                     <textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea>
                 </div>
                 
-                <!-- NEW CUSTOM IMAGE ORDER MANAGER -->
                 <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                     <label style="font-size: 1.1rem; color: var(--primary);">Product Images & Display Order</label>
                     <input type="file" id="prodImages" accept="image/*" multiple style="margin-top: 10px;">
@@ -254,9 +267,24 @@
         <h2 style="margin-bottom: 15px;">Edit Product</h2>
         <form id="editForm">
             <input type="hidden" id="editProdId">
-            <div class="form-group">
-                <label>Fabric Name</label>
-                <input type="text" id="editProdName" required>
+            
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label>Fabric Name</label>
+                    <input type="text" id="editProdName" required>
+                </div>
+                <!-- EDIT MILL FIELD -->
+                <div class="form-group">
+                    <label>Manufacturing Mill</label>
+                    <select id="editProdMill" required>
+                        <option value="generic">Generic / Unbranded</option>
+                        <option value="raymond">Raymond</option>
+                        <option value="arvind">Arvind</option>
+                        <option value="siyarams">Siyaram's</option>
+                        <option value="donear">Donear</option>
+                        <option value="linenclub">Linen Club</option>
+                    </select>
+                </div>
             </div>
             
             <div class="grid-2-col">
@@ -355,9 +383,8 @@ const db = firebase.firestore();
 
 let adminProductsMap = {}; 
 
-// STATE MANAGERS FOR IMAGES
-let uploadFilesArray = []; // Stores local File objects
-let editMediaArray = [];   // Stores objects { type: 'url'|'file', val: url|File, previewUrl: blob }
+let uploadFilesArray = []; 
+let editMediaArray = [];   
 
 auth.onAuthStateChanged(async user => {
     if (user) {
@@ -470,8 +497,11 @@ function fetchAdminProducts() {
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
             const uom = p.uom || 'meter'; 
             const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
+            
             const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
-            const categoryDisplay = `${mainCat}${p.category}`;
+            // Display Mill Name beautifully in the table
+            const millName = (p.mill && p.mill !== 'generic') ? `<b style="color:var(--primary);">${p.mill.toUpperCase()}</b> • ` : '';
+            const categoryDisplay = `${millName}${mainCat}${p.category}`;
             
             const isAvail = p.isAvailable !== false; 
             const statusHtml = isAvail ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
@@ -515,11 +545,9 @@ async function deleteProduct(id) {
 }
 
 /* --- DRAG, DROP, REORDER IMAGE LOGIC --- */
-
-// 1. Upload Form Array Builders
 document.getElementById('prodImages').addEventListener('change', function(e) {
     for (let file of this.files) { uploadFilesArray.push(file); }
-    this.value = ''; // allow re-selecting same files
+    this.value = ''; 
     renderUploadPreviews();
 });
 
@@ -549,11 +577,11 @@ function renderUploadPreviews() {
     });
 }
 
-// 2. Edit Form Array Builders
 function openEditModal(id) {
     const p = adminProductsMap[id];
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = p.name;
+    document.getElementById('editProdMill').value = p.mill || 'generic'; // LOAD MILL
     document.getElementById('editProdMainCategory').value = p.mainCategory || 'shirting';
     
     let subCat = p.category;
@@ -568,7 +596,6 @@ function openEditModal(id) {
     
     document.getElementById('editProdImages').value = '';
     
-    // Load existing Cloudinary URLs into edit array
     editMediaArray = [];
     const existingImgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
     existingImgs.forEach(url => {
@@ -613,7 +640,6 @@ function renderEditPreviews() {
     });
 }
 
-// 3. Shared Array Helpers
 function moveImage(index, direction, context) {
     const arr = (context === 'upload') ? uploadFilesArray : editMediaArray;
     if (index + direction < 0 || index + direction >= arr.length) return;
@@ -630,7 +656,6 @@ function removeImage(index, context) {
     arr.splice(index, 1);
     context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
 }
-
 
 /* --- FORM SUBMISSIONS TO CLOUDINARY & FIREBASE --- */
 async function uploadToCloudinary(file) {
@@ -650,10 +675,7 @@ const statusMsg = document.getElementById('statusMsg');
 
 uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (uploadFilesArray.length === 0) {
-        alert("Please add at least one product image.");
-        return;
-    }
+    if (uploadFilesArray.length === 0) { alert("Please add at least one product image."); return; }
 
     uploadBtn.disabled = true; progressText.style.display = 'block'; statusMsg.style.display = 'none';
 
@@ -668,6 +690,7 @@ uploadForm.addEventListener('submit', async (e) => {
         progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
         await db.collection('products').add({
             name: document.getElementById('prodName').value.trim(), 
+            mill: document.getElementById('prodMill').value, // SAVE MILL
             mainCategory: document.getElementById('prodMainCategory').value, 
             category: document.getElementById('prodCategory').value, 
             uom: document.getElementById('prodUom').value, 
@@ -697,10 +720,7 @@ uploadForm.addEventListener('submit', async (e) => {
 document.getElementById('editForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    if (editMediaArray.length === 0) {
-        alert("A product must have at least one image. Please add an image before saving.");
-        return;
-    }
+    if (editMediaArray.length === 0) { alert("A product must have at least one image."); return; }
     
     const btn = document.getElementById('saveEditBtn');
     const msg = document.getElementById('editStatusMsg');
@@ -712,10 +732,10 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         for (let i = 0; i < editMediaArray.length; i++) {
             let item = editMediaArray[i];
             if (item.type === 'url') {
-                finalImageUrls.push(item.val); // Already a cloudinary URL
+                finalImageUrls.push(item.val); 
             } else {
                 btn.textContent = `Uploading New Image ${i + 1}...`;
-                const url = await uploadToCloudinary(item.val); // Needs upload
+                const url = await uploadToCloudinary(item.val); 
                 finalImageUrls.push(url);
             }
         }
@@ -723,6 +743,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         btn.textContent = "Updating database...";
         await db.collection('products').doc(document.getElementById('editProdId').value).update({
             name: document.getElementById('editProdName').value.trim(),
+            mill: document.getElementById('editProdMill').value, // UPDATE MILL
             mainCategory: document.getElementById('editProdMainCategory').value,
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
@@ -742,7 +763,6 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         btn.disabled = false; btn.textContent = "Save Changes";
     }
 });
-
 
 async function fetchAdminInquiries() {
     const prodSnapshot = await db.collection('products').get();
