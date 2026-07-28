@@ -75,6 +75,7 @@
         <div class="admin-tabs">
             <button class="tab-btn active" onclick="switchTab('section-add', this)">Add New Fabric</button>
             <button class="tab-btn" onclick="switchTab('section-products', this)">Manage Products</button>
+            <button class="tab-btn" onclick="switchTab('section-mills', this)">Manage Mills</button>
             <button class="tab-btn" onclick="switchTab('section-inquiries', this)">View Inquiries</button>
             <button class="tab-btn" onclick="switchTab('section-settings', this)">Settings</button>
         </div>
@@ -89,16 +90,12 @@
                         <label>Product Name</label>
                         <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
                     </div>
-                    <!-- NEW MILL FIELD -->
+                    <!-- DYNAMIC MILL FIELD -->
                     <div class="form-group">
                         <label>Manufacturing Mill</label>
                         <select id="prodMill" required>
                             <option value="generic">Generic / Unbranded</option>
-                            <option value="raymond">Raymond</option>
-                            <option value="arvind">Arvind</option>
-                            <option value="siyarams">Siyaram's</option>
-                            <option value="donear">Donear</option>
-                            <option value="linenclub">Linen Club</option>
+                            <!-- JS Will Inject Mills Here -->
                         </select>
                     </div>
                 </div>
@@ -190,8 +187,46 @@
                 </table>
             </div>
         </div>
+        
+        <!-- 3. NEW: MANAGE MILLS SECTION -->
+        <div id="section-mills" class="admin-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Manage Manufacturing Mills</h2>
+            </div>
+            
+            <form id="millForm" style="background: var(--gray-100); padding: 25px; border-radius: var(--radius); border: 1px solid var(--gray-300); margin-bottom: 30px;">
+                <div class="grid-2-col">
+                    <div class="form-group">
+                        <label>Mill / Brand Name</label>
+                        <input type="text" id="millName" required placeholder="e.g., Raymond, Arvind...">
+                    </div>
+                    <div class="form-group">
+                        <label>Mill Official Logo</label>
+                        <input type="file" id="millLogo" accept="image/*" required>
+                        <span class="help-text">A transparent PNG or clean JPG works best.</span>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="saveMillBtn" style="max-width: 250px;">Add New Mill Brand</button>
+                <div id="millStatusMsg" class="form-status"></div>
+            </form>
+            
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mill Logo</th>
+                            <th>Brand Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="millsTableBody">
+                        <tr><td colspan="3">Loading mills...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        <!-- 3. VIEW INQUIRIES SECTION -->
+        <!-- 4. VIEW INQUIRIES SECTION -->
         <div id="section-inquiries" class="admin-section">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Customer Inquiries</h2>
@@ -215,7 +250,7 @@
             </div>
         </div>
 
-        <!-- 4. SETTINGS SECTION -->
+        <!-- 5. SETTINGS SECTION -->
         <div id="section-settings" class="admin-section">
             <h2 style="margin-bottom: 20px;">Contact Information & Offices</h2>
             <form id="settingsForm">
@@ -273,16 +308,12 @@
                     <label>Fabric Name</label>
                     <input type="text" id="editProdName" required>
                 </div>
-                <!-- EDIT MILL FIELD -->
+                <!-- DYNAMIC EDIT MILL FIELD -->
                 <div class="form-group">
                     <label>Manufacturing Mill</label>
                     <select id="editProdMill" required>
                         <option value="generic">Generic / Unbranded</option>
-                        <option value="raymond">Raymond</option>
-                        <option value="arvind">Arvind</option>
-                        <option value="siyarams">Siyaram's</option>
-                        <option value="donear">Donear</option>
-                        <option value="linenclub">Linen Club</option>
+                        <!-- JS Will Inject Mills Here -->
                     </select>
                 </div>
             </div>
@@ -364,7 +395,7 @@
 
 <script>
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";       
+const CLOUD_NAME = "ubqtf5go";
 const UPLOAD_PRESET = "thakarshi_product_upload"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
@@ -382,6 +413,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let adminProductsMap = {}; 
+let activeMillsMap = {};
 
 let uploadFilesArray = []; 
 let editMediaArray = [];   
@@ -392,6 +424,7 @@ auth.onAuthStateChanged(async user => {
             const adminDoc = await db.collection('admins').doc(user.email).get();
             if (adminDoc.exists) {
                 document.getElementById('adminContent').style.display = 'block';
+                fetchMills(); // Fetch Mills to populate dropdowns
                 fetchAdminProducts();
                 fetchAdminInquiries();
                 fetchSettings();
@@ -412,6 +445,85 @@ function switchTab(sectionId, btnElement) {
     document.getElementById(sectionId).classList.add('active');
     btnElement.classList.add('active');
 }
+
+/* --- DYNAMIC MILLS MANAGER --- */
+function fetchMills() {
+    db.collection('mills').orderBy('name').onSnapshot(snapshot => {
+        const tbody = document.getElementById('millsTableBody');
+        const addSelect = document.getElementById('prodMill');
+        const editSelect = document.getElementById('editProdMill');
+        
+        tbody.innerHTML = '';
+        let optionsHtml = '<option value="generic">Generic / Unbranded</option>';
+        activeMillsMap = {};
+
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="3">No mill brands added yet.</td></tr>';
+        } else {
+            snapshot.forEach(doc => {
+                const m = doc.data();
+                activeMillsMap[doc.id] = m;
+                optionsHtml += `<option value="${doc.id}">${m.name}</option>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${m.logoUrl}" style="height:40px; max-width:80px; object-fit:contain; border-radius:4px; border:1px solid #eee; padding:2px; background:white;"></td>
+                        <td><strong>${m.name}</strong></td>
+                        <td><button class="delete-btn" onclick="deleteMill('${doc.id}')">Delete</button></td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // Preserve current selections if admin is actively editing
+        const currentAddVal = addSelect.value;
+        const currentEditVal = editSelect.value;
+        
+        addSelect.innerHTML = optionsHtml;
+        editSelect.innerHTML = optionsHtml;
+        
+        if(currentAddVal) addSelect.value = currentAddVal;
+        if(currentEditVal) editSelect.value = currentEditVal;
+    });
+}
+
+document.getElementById('millForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('saveMillBtn');
+    const msg = document.getElementById('millStatusMsg');
+    const fileInput = document.getElementById('millLogo');
+    const nameInput = document.getElementById('millName').value.trim();
+    
+    if (fileInput.files.length === 0) { alert('Please select a logo image.'); return; }
+    
+    btn.disabled = true; btn.textContent = "Uploading Logo...";
+
+    try {
+        const logoUrl = await uploadToCloudinary(fileInput.files[0]);
+        btn.textContent = "Saving to Database...";
+        await db.collection('mills').add({
+            name: nameInput,
+            logoUrl: logoUrl,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        msg.textContent = "Mill Brand added successfully!";
+        msg.className = "form-status success"; msg.style.display = "block";
+        document.getElementById('millForm').reset();
+        setTimeout(() => { msg.style.display = 'none'; }, 2000);
+    } catch (err) {
+        msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
+    } finally {
+        btn.disabled = false; btn.textContent = "Add New Mill Brand";
+    }
+});
+
+async function deleteMill(id) {
+    if(confirm("Are you sure you want to delete this Mill Brand? (Products using this brand will safely default to Generic)")) {
+        try { await db.collection('mills').doc(id).delete(); } 
+        catch (err) { alert("Error: " + err.message); }
+    }
+}
+
 
 function fetchSettings() {
     db.collection('settings').doc('contactInfo').get().then(doc => {
@@ -499,9 +611,14 @@ function fetchAdminProducts() {
             const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
             
             const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
-            // Display Mill Name beautifully in the table
-            const millName = (p.mill && p.mill !== 'generic') ? `<b style="color:var(--primary);">${p.mill.toUpperCase()}</b> • ` : '';
-            const categoryDisplay = `${millName}${mainCat}${p.category}`;
+            
+            // DYNAMIC MILL RESOLUTION FOR TABLE
+            let millNameDisplay = '';
+            if (p.mill && p.mill !== 'generic' && activeMillsMap[p.mill]) {
+                millNameDisplay = `<b style="color:var(--primary);">${activeMillsMap[p.mill].name.toUpperCase()}</b> • `;
+            }
+            
+            const categoryDisplay = `${millNameDisplay}${mainCat}${p.category}`;
             
             const isAvail = p.isAvailable !== false; 
             const statusHtml = isAvail ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
@@ -690,7 +807,7 @@ uploadForm.addEventListener('submit', async (e) => {
         progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
         await db.collection('products').add({
             name: document.getElementById('prodName').value.trim(), 
-            mill: document.getElementById('prodMill').value, // SAVE MILL
+            mill: document.getElementById('prodMill').value, // SAVE MILL ID
             mainCategory: document.getElementById('prodMainCategory').value, 
             category: document.getElementById('prodCategory').value, 
             uom: document.getElementById('prodUom').value, 
@@ -743,7 +860,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         btn.textContent = "Updating database...";
         await db.collection('products').doc(document.getElementById('editProdId').value).update({
             name: document.getElementById('editProdName').value.trim(),
-            mill: document.getElementById('editProdMill').value, // UPDATE MILL
+            mill: document.getElementById('editProdMill').value, // UPDATE MILL ID
             mainCategory: document.getElementById('editProdMainCategory').value,
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
