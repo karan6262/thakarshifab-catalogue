@@ -20,26 +20,6 @@
     <meta name="twitter:title" content="Thakarshi Fab - Textile Wholesale">
     <meta name="twitter:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WholesaleStore",
-      "name": "Thakarshi Fab",
-      "image": "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg", 
-      "description": "Leading wholesale textile and fabric supplier located in Ahmedabad, specializing in Shirting and Suiting.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "123 New Textile Market, Ring Road",
-        "addressLocality": "Ahmedabad",
-        "addressRegion": "Gujarat",
-        "postalCode": "380002",
-        "addressCountry": "IN"
-      },
-      "telephone": "+919876543210",
-      "priceRange": "₹₹"
-    }
-    </script>
-
     <link rel="preconnect" href="https://res.cloudinary.com">
     <link rel="stylesheet" href="style.css">
     
@@ -67,7 +47,6 @@
         .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
         .contact-card { flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: var(--radius); text-align: left; font-size: 1.05rem; border: 1px solid rgba(255, 255, 255, 0.15); }
         .contact-card h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); color: #f1dfc8; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
-        .contact-card p { margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
         
         .hover-link { cursor: pointer; transition: color 0.2s; }
         .hover-link:hover { color: var(--primary); }
@@ -179,7 +158,6 @@
     <div class="modal-content">
         <span class="close-btn" id="closeUpdateProfileModal">&times;</span>
         <h2>Update My Details</h2>
-        <p style="text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 15px;">These details will be used for your future wholesale inquiries.</p>
         <form id="updateProfileForm">
             <div class="form-group"><label>Full Name / Business Name</label><input type="text" id="profName" required></div>
             <div class="form-group"><label>Phone Number</label><input type="tel" id="profPhone" required></div>
@@ -190,7 +168,7 @@
     </div>
 </div>
 
-<!-- BIG PRODUCT DETAILS MODAL WITH MILL LOGO -->
+<!-- BIG PRODUCT DETAILS MODAL -->
 <div id="productDetailsModal" class="modal" style="z-index: 2500;">
     <div class="pd-content">
         <span class="pd-close" onclick="closeProductModal()">&times;</span>
@@ -203,12 +181,18 @@
         
         <div class="pd-info-section">
             
-            <!-- CATEGORY AND GENUINE MILL LOGO HEADER -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold;"></span>
+            <!-- SMART LOGO INJECTION WITH FALLBACK -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold; margin-top: 5px;"></span>
                 
-                <!-- This image will display the official Mill Logo -->
-                <img id="pdMillLogo" src="" alt="Mill Brand Logo" style="height: 35px; max-width: 120px; object-fit: contain; display: none;" onerror="this.style.display='none'">
+                <!-- Bulletproof Mill Display -->
+                <div id="pdMillContainer" style="display: none; text-align: right;">
+                    <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;"> By</div>
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                        <span id="pdMillText" style="font-weight: 900; font-size: 1.15rem; color: #1a1a1a; letter-spacing: 0.5px;"></span>
+                        <img id="pdMillLogo" src="" alt="Mill Brand" style="height: 25px; max-width: 90px; object-fit: contain; display: none;" onerror="this.style.display='none'">
+                    </div>
+                </div>
             </div>
 
             <h2 id="pdName" style="margin: 0 0 5px 0; font-size: 2rem; color: var(--gray-900);"></h2>
@@ -340,13 +324,11 @@ const closeUpdateProfileModal = document.getElementById('closeUpdateProfileModal
 const updateProfileForm = document.getElementById('updateProfileForm');
 const userDropdownContainer = document.getElementById('userDropdownContainer');
 
-// MILL BRAND LOGO DATABASE (Direct verified image links)
+// DIRECT WIKIMEDIA LOGOS (Bypasses Clearbit blocking)
 const officialMillLogos = {
-    'raymond': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Raymond_logo.svg/512px-Raymond_logo.svg.png',
-    'arvind': 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d8/Arvind_Mills_Logo.svg/512px-Arvind_Mills_Logo.svg.png',
-    'siyarams': 'https://upload.wikimedia.org/wikipedia/en/2/23/Siyaram_logo.png',
-    'donear': 'https://logo.clearbit.com/donear.com',
-    'linenclub': 'https://logo.clearbit.com/linenclub.com'
+    'raymond': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Raymond_logo.svg/320px-Raymond_logo.svg.png',
+    'arvind': 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d8/Arvind_Mills_Logo.svg/200px-Arvind_Mills_Logo.svg.png',
+    'siyarams': 'https://upload.wikimedia.org/wikipedia/en/2/23/Siyaram_logo.png'
 };
 
 window.addEventListener('scroll', () => {
@@ -602,13 +584,27 @@ function openProductModal(id) {
     document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
-    // RENDER THE BRAND LOGO
+    // --- BULLETPROOF MILL DISPLAY ---
+    const millContainer = document.getElementById('pdMillContainer');
     const logoImg = document.getElementById('pdMillLogo');
-    if (product.mill && officialMillLogos[product.mill]) {
-        logoImg.src = officialMillLogos[product.mill];
-        logoImg.style.display = 'block';
+    const millText = document.getElementById('pdMillText');
+
+    if (product.mill && product.mill !== 'generic') {
+        millContainer.style.display = 'block';
+        
+        let formatName = product.mill;
+        if(formatName === 'siyarams') formatName = "SIYARAM'S";
+        if(formatName === 'linenclub') formatName = "LINEN CLUB";
+        millText.textContent = formatName;
+        
+        if (officialMillLogos[product.mill]) {
+            logoImg.src = officialMillLogos[product.mill];
+            logoImg.style.display = 'block';
+        } else {
+            logoImg.style.display = 'none';
+        }
     } else {
-        logoImg.style.display = 'none';
+        millContainer.style.display = 'none';
     }
     
     const uom = product.uom || 'meter';
@@ -648,7 +644,6 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
-    // ADDED MILLS TO FILTER PILLS
     productsSection.innerHTML = `
         <div class="category-filters" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
