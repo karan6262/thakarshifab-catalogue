@@ -182,10 +182,7 @@
         
         <div class="pd-info-section">
             
-            <!-- SMART DYNAMIC LOGO HEADER (Now positioned on top left) -->
             <div style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                
-                <!-- Dynamic Mill Display -->
                 <div id="pdMillContainer" style="display: none; margin-bottom: 8px;">
                     <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Manufactured By</div>
                     <div style="display: flex; align-items: center; justify-content: flex-start; gap: 10px;">
@@ -205,7 +202,8 @@
             </button>
             
             <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; margin-bottom: 20px; margin-top: 20px; border-left: 4px solid var(--primary);">
-                <h3 id="pdPrice" style="color: var(--primary); margin: 0; font-size: 1.6rem;"></h3>
+                <!-- MODIFIED TO SUPPORT MRP DYNAMICALLY -->
+                <div id="pdPrice"></div>
                 <div id="pdWidthSpec" style="margin-top: 6px; font-weight: 600; color: #333; font-size: 0.95rem;"></div>
             </div>
             
@@ -556,8 +554,10 @@ function shareProductWhatsapp() {
     
     if (p.mainCategory || p.category) { msg += `Category: ${p.mainCategory ? p.mainCategory.toUpperCase() : ''} | ${p.category || ''}\n`; }
     if (p.fabricWidth) { msg += `Width: ${p.fabricWidth}\n`; }
+    
+    if (p.mrp) { msg += `MRP: ₹${p.mrp}\n`; }
     const priceStr = p.price ? parseFloat(p.price).toLocaleString() : 'Request Price';
-    msg += `Price: ₹${priceStr} / ${p.uom || 'meter'}\n\n`;
+    msg += `Wholesale Price: ₹${priceStr} / ${p.uom || 'meter'}\n\n`;
     msg += `View catalog here: ${baseUrl}`;
     
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
@@ -584,7 +584,6 @@ function openProductModal(id) {
     document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
     document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
     
-    // --- DYNAMIC MILL DISPLAY (NOW POSITIONED AT THE TOP LEFT) ---
     const millContainer = document.getElementById('pdMillContainer');
     const logoImg = document.getElementById('pdMillLogo');
     const millText = document.getElementById('pdMillText');
@@ -607,8 +606,11 @@ function openProductModal(id) {
     }
     
     const uom = product.uom || 'meter';
-    const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
-    document.getElementById('pdPrice').textContent = `₹${priceStr} / ${uom}`;
+    
+    // FORMATTING MRP AND PRICE FOR MODAL (No Strikethrough)
+    const mrpHtmlModal = product.mrp ? `<div style="font-size: 1.1rem; color: #1a1a1a; margin-bottom: 4px; font-weight: 700;">MRP: ₹${parseFloat(product.mrp).toLocaleString()}</div>` : '';
+    const priceStrModal = product.price ? `₹${parseFloat(product.price).toLocaleString()} / ${uom}` : `Request Price / ${uom}`;
+    document.getElementById('pdPrice').innerHTML = `${mrpHtmlModal}<div style="color: var(--primary); font-size: 1.6rem;">${priceStrModal}</div>`;
     
     const widthContainer = document.getElementById('pdWidthSpec');
     if (product.fabricWidth) {
@@ -643,7 +645,6 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
-    // We render the fixed buttons here, then inject dynamic Mill buttons via JS
     productsSection.innerHTML = `
         <div class="category-filters" id="dynamicFiltersContainer" style="margin-top: 10px;">
             <button class="filter-pill active" data-filter="all">All Fabrics</button>
@@ -662,7 +663,6 @@ function loadProductsFromFirestore() {
         </div>
     `;
 
-    // Fetch Dynamic Mills FIRST
     db.collection('mills').orderBy('name').onSnapshot(millSnap => {
         activeMillsMap = {};
         document.querySelectorAll('.dynamic-mill').forEach(e => e.remove());
@@ -677,7 +677,6 @@ function loadProductsFromFirestore() {
             btn.dataset.filter = doc.id;
             btn.textContent = m.name;
             btn.style.borderColor = '#1a1a1a';
-            // Insert it right after the "All Fabrics" button
             filterContainer.insertBefore(btn, filterContainer.children[1]);
         });
         
@@ -685,7 +684,6 @@ function loadProductsFromFirestore() {
         if(allProducts.length > 0) renderProducts(true); 
     });
 
-    // Fetch Products
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         allProducts = [];
         snapshot.forEach(doc => { allProducts.push({ id: doc.id, ...doc.data() }); });
@@ -762,8 +760,11 @@ function renderProducts(resetPage = true) {
         const millName = (product.mill && product.mill !== 'generic' && millObj) ? `<b style="color:var(--primary);">${millObj.name.toUpperCase()}</b> • ` : '';
         
         const uom = product.uom || 'meter';
-        const priceStr = product.price ? parseFloat(product.price).toLocaleString() : 'Request Price';
         const widthBadgeHtml = product.fabricWidth ? `<div class="width-badge">📐 Width: ${product.fabricWidth}</div>` : '';
+
+        // FORMATTING MRP AND PRICE FOR GRID CARD (No Strikethrough)
+        const mrpHtml = product.mrp ? `<div style="font-size: 0.9rem; color: #1a1a1a; font-weight: 700; margin-bottom: 2px;">MRP: ₹${product.mrp}</div>` : '';
+        const priceStr = product.price ? `₹${product.price} / ${uom}` : `Request Price / ${uom}`;
 
         card.innerHTML = `
             <div class="product-media">
@@ -780,7 +781,10 @@ function renderProducts(resetPage = true) {
                 <span class="product-category" style="text-transform: capitalize;">${millName}${mainCat}${product.category || 'Other'}</span>
                 <h3 class="product-title hover-link" onclick="openProductModal('${product.id}')" title="Click to view details">${product.name || 'Unnamed Product'}</h3>
                 ${widthBadgeHtml}
-                <p class="product-price" style="margin-top: 8px;">₹${priceStr} / ${uom}</p>
+                <p class="product-price" style="margin-top: 8px; line-height: 1.4;">
+                    ${mrpHtml}
+                    <span style="${product.mrp ? 'color: var(--primary); font-size: 1.1rem;' : ''}">${priceStr}</span>
+                </p>
                 <div class="product-actions">
                     <button type="button" class="btn-add-inquiry ${selectedItems.has(product.id) ? 'added' : ''}" data-id="${product.id}">
                         ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
@@ -877,11 +881,12 @@ function updateSelectedUI() {
         if (product) {
             const uom = product.uom || 'meter';
             const widthText = product.fabricWidth ? ` | ${product.fabricWidth}` : '';
+            const priceText = product.price ? `₹${product.price}` : 'Request Price';
             const li = document.createElement('li');
             li.innerHTML = `
                 <div style="flex-grow: 1;">
                     <span style="font-weight: 600; display: block; margin-bottom: 4px;">${product.name || 'Unnamed Product'}</span>
-                    <span style="font-size: 0.8rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">₹${product.price} / ${uom}${widthText}</span>
+                    <span style="font-size: 0.8rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">${priceText} / ${uom}${widthText}</span>
                 </div>
             `;
             selectedList.appendChild(li);
@@ -917,7 +922,8 @@ modalWhatsappBtn.addEventListener('click', async () => {
         const p = allProducts.find(prod => prod.id === id);
         if(p) {
             const widthInfo = p.fabricWidth ? ` (Width: ${p.fabricWidth})` : '';
-            msg += `${counter}. *${p.name}* - ₹${p.price}/${p.uom || 'meter'}${widthInfo}\n`;
+            const priceText = p.price ? `₹${p.price}` : 'Request Price';
+            msg += `${counter}. *${p.name}* - ${priceText}/${p.uom || 'meter'}${widthInfo}\n`;
             counter++;
         }
     });
