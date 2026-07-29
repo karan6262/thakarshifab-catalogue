@@ -28,7 +28,6 @@
         .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .toggle-btn { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: white; font-weight: bold; }
         
-        /* POSTER BUTTON STYLE */
         .poster-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
         .poster-btn:hover { background: #1ebd55; }
 
@@ -88,20 +87,10 @@
         <div id="section-add" class="admin-section active">
             <h2 style="margin-bottom: 25px; color: var(--primary);">Upload New Product</h2>
             <form id="uploadForm">
-                
                 <div class="grid-2-col">
-                    <div class="form-group">
-                        <label>Product Name</label>
-                        <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
-                    </div>
-                    <div class="form-group">
-                        <label>Manufacturing Mill</label>
-                        <select id="prodMill" required>
-                            <option value="generic">Generic / Unbranded</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting"></div>
+                    <div class="form-group"><label>Manufacturing Mill</label><select id="prodMill" required><option value="generic">Generic / Unbranded</option></select></div>
                 </div>
-                
                 <div class="grid-2-col">
                     <div class="form-group">
                         <label>Main Type</label>
@@ -113,54 +102,32 @@
                     <div class="form-group">
                         <label>Sub Category / Fabric</label>
                         <select id="prodCategory" required>
-                            <option value="cotton">Cotton</option>
-                            <option value="silk">Silk</option>
-                            <option value="linen">Linen</option>
-                            <option value="blend">Blends</option>
-                            <option value="pv suiting">PV Suiting</option>
-                            <option value="tr suiting">TR Suiting</option>
+                            <option value="cotton">Cotton</option><option value="silk">Silk</option>
+                            <option value="linen">Linen</option><option value="blend">Blends</option>
+                            <option value="pv suiting">PV Suiting</option><option value="tr suiting">TR Suiting</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
                 </div>
-
                 <div class="grid-2-col">
                     <div class="form-group">
                         <label>Unit of Measure (UOM)</label>
                         <select id="prodUom" required>
-                            <option value="meter">Per Meter</option>
-                            <option value="pcs">Per Piece (Pcs)</option>
-                            <option value="roll">Per Roll</option>
-                            <option value="kg">Per Kg</option>
-                            <option value="set">Per Set</option>
+                            <option value="meter">Per Meter</option><option value="pcs">Per Piece (Pcs)</option>
+                            <option value="roll">Per Roll</option><option value="kg">Per Kg</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Price (₹)</label>
-                        <input type="number" id="prodPrice" required placeholder="e.g., 450">
-                    </div>
+                    <div class="form-group"><label>Price (₹)</label><input type="number" id="prodPrice" required placeholder="e.g., 450"></div>
                 </div>
-
-                <div class="form-group">
-                    <label>Fabric Width / Panna</label>
-                    <input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches">
-                </div>
-
-                <div class="form-group">
-                    <label>Product Description</label>
-                    <textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea>
-                </div>
+                <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches"></div>
+                <div class="form-group"><label>Product Description</label><textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea></div>
                 
                 <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                     <label style="font-size: 1.1rem; color: var(--primary);">Product Images & Display Order</label>
                     <input type="file" id="prodImages" accept="image/*" multiple style="margin-top: 10px;">
-                    <span class="help-text">You can add multiple images. Use the Left/Right arrows below to set which image appears first!</span>
-                    
-                    <div id="uploadImagesPreview" class="image-manager">
-                        <small style="color:#888; display:flex; align-items:center; width:100%; justify-content:center;">Selected images will appear here for sorting.</small>
-                    </div>
+                    <span class="help-text">Use the Left/Right arrows below to set which image appears first!</span>
+                    <div id="uploadImagesPreview" class="image-manager"><small style="color:#888; display:flex; width:100%; justify-content:center;">Images will appear here.</small></div>
                 </div>
-
                 <button type="submit" class="submit-btn" id="uploadBtn">Upload Product to Catalog</button>
                 <div id="progressText" class="progress-text">Initializing upload...</div>
                 <div id="statusMsg" class="form-status"></div>
@@ -175,17 +142,8 @@
             </div>
             <div style="overflow-x: auto;">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Details</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody">
-                        <tr><td colspan="4">Loading products...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Image</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="productsTableBody"><tr><td colspan="4">Loading products...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -195,35 +153,18 @@
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Manage Manufacturing Mills</h2>
             </div>
-            
             <form id="millForm" style="background: var(--gray-100); padding: 25px; border-radius: var(--radius); border: 1px solid var(--gray-300); margin-bottom: 30px;">
                 <div class="grid-2-col">
-                    <div class="form-group">
-                        <label>Mill / Brand Name</label>
-                        <input type="text" id="millName" required placeholder="e.g., Raymond, Arvind...">
-                    </div>
-                    <div class="form-group">
-                        <label>Mill Official Logo</label>
-                        <input type="file" id="millLogo" accept="image/*" required>
-                        <span class="help-text">A transparent PNG or clean JPG works best.</span>
-                    </div>
+                    <div class="form-group"><label>Mill / Brand Name</label><input type="text" id="millName" required placeholder="e.g., Raymond, Arvind..."></div>
+                    <div class="form-group"><label>Mill Official Logo</label><input type="file" id="millLogo" accept="image/*" required><span class="help-text">Transparent PNG or clean JPG.</span></div>
                 </div>
                 <button type="submit" class="submit-btn" id="saveMillBtn" style="max-width: 250px;">Add New Mill Brand</button>
                 <div id="millStatusMsg" class="form-status"></div>
             </form>
-            
             <div style="overflow-x: auto;">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Mill Logo</th>
-                            <th>Brand Name</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="millsTableBody">
-                        <tr><td colspan="3">Loading mills...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Mill Logo</th><th>Brand Name</th><th>Actions</th></tr></thead>
+                    <tbody id="millsTableBody"><tr><td colspan="3">Loading mills...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -236,18 +177,8 @@
             </div>
             <div style="overflow-x: auto;">
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Customer Details</th>
-                            <th>Message & Requirements</th>
-                            <th>Selected Fabrics</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inquiriesTableBody">
-                        <tr><td colspan="5">Loading inquiries...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Status</th><th>Date</th><th>Customer Details</th><th>Message & Requirements</th><th>Selected Fabrics</th></tr></thead>
+                    <tbody id="inquiriesTableBody"><tr><td colspan="5">Loading inquiries...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -257,22 +188,13 @@
             <h2 style="margin-bottom: 20px;">Contact Information & Offices</h2>
             <form id="settingsForm">
                 <div style="background: #e8f5e9; padding: 20px; border-radius: var(--radius); border: 1px solid #c8e6c9; margin-bottom: 20px; max-width: 600px;">
-                    <h3 style="margin-bottom: 15px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        WhatsApp Orders Configuration
-                    </h3>
+                    <h3 style="margin-bottom: 15px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">WhatsApp Configuration</h3>
                     <div class="form-group" style="margin-bottom: 0;">
                         <label>WhatsApp Sales Number (No '+' or spaces)</label>
                         <input type="text" id="setWhatsapp" placeholder="e.g., 919876543210">
-                        <span class="help-text" style="color:#2e7d32;">This number will receive instant orders directly from the customer's cart.</span>
                     </div>
                 </div>
-
-                <div class="form-group" style="max-width: 600px;">
-                    <label>Subtitle / Description</label>
-                    <textarea id="setDesc" rows="2" placeholder="e.g., We supply premium textiles across India..."></textarea>
-                </div>
-                
+                <div class="form-group" style="max-width: 600px;"><label>Subtitle / Description</label><textarea id="setDesc" rows="2"></textarea></div>
                 <div class="settings-grid">
                     <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                         <h3 style="margin-bottom: 15px; color: var(--primary);">Head Office</h3>
@@ -304,101 +226,43 @@
         <h2 style="margin-bottom: 15px;">Edit Product</h2>
         <form id="editForm">
             <input type="hidden" id="editProdId">
-            
             <div class="grid-2-col">
-                <div class="form-group">
-                    <label>Fabric Name</label>
-                    <input type="text" id="editProdName" required>
-                </div>
-                <div class="form-group">
-                    <label>Manufacturing Mill</label>
-                    <select id="editProdMill" required>
-                        <option value="generic">Generic / Unbranded</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Fabric Name</label><input type="text" id="editProdName" required></div>
+                <div class="form-group"><label>Manufacturing Mill</label><select id="editProdMill" required><option value="generic">Generic / Unbranded</option></select></div>
             </div>
-            
             <div class="grid-2-col">
-                <div class="form-group">
-                    <label>Main Type</label>
-                    <select id="editProdMainCategory" required>
-                        <option value="shirting">Shirting</option>
-                        <option value="suiting">Suiting</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Sub Category / Fabric</label>
-                    <select id="editProdCategory" required>
-                        <option value="cotton">Cotton</option>
-                        <option value="silk">Silk</option>
-                        <option value="linen">Linen</option>
-                        <option value="blend">Blends</option>
-                        <option value="pv suiting">PV Suiting</option>
-                        <option value="tr suiting">TR Suiting</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Main Type</label><select id="editProdMainCategory" required><option value="shirting">Shirting</option><option value="suiting">Suiting</option></select></div>
+                <div class="form-group"><label>Sub Category / Fabric</label><select id="editProdCategory" required><option value="cotton">Cotton</option><option value="silk">Silk</option><option value="linen">Linen</option><option value="blend">Blends</option><option value="pv suiting">PV Suiting</option><option value="tr suiting">TR Suiting</option><option value="other">Other</option></select></div>
             </div>
-
             <div class="grid-2-col">
-                <div class="form-group">
-                    <label>Unit of Measure (UOM)</label>
-                    <select id="editProdUom" required>
-                        <option value="meter">Per Meter</option>
-                        <option value="pcs">Per Piece (Pcs)</option>
-                        <option value="roll">Per Roll</option>
-                        <option value="kg">Per Kg</option>
-                        <option value="set">Per Set</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Price (₹)</label>
-                    <input type="number" id="editProdPrice" required>
-                </div>
+                <div class="form-group"><label>Unit of Measure (UOM)</label><select id="editProdUom" required><option value="meter">Per Meter</option><option value="pcs">Per Piece (Pcs)</option><option value="roll">Per Roll</option><option value="kg">Per Kg</option><option value="set">Per Set</option></select></div>
+                <div class="form-group"><label>Price (₹)</label><input type="number" id="editProdPrice" required></div>
             </div>
-
-            <div class="form-group">
-                <label>Fabric Width / Panna</label>
-                <input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)">
-            </div>
-
-            <div class="form-group">
-                <label>Availability</label>
-                <select id="editProdAvailable">
-                    <option value="true">Available</option>
-                    <option value="false">Hidden</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Product Description</label>
-                <textarea id="editProdDesc" style="min-height: 80px;"></textarea>
-            </div>
-
+            <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
+            <div class="form-group"><label>Availability</label><select id="editProdAvailable"><option value="true">Available</option><option value="false">Hidden</option></select></div>
+            <div class="form-group"><label>Product Description</label><textarea id="editProdDesc" style="min-height: 80px;"></textarea></div>
             <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                 <label style="font-size: 1.1rem; color: var(--primary);">Manage Image Display Order</label>
                 <input type="file" id="editProdImages" accept="image/*" multiple style="margin-top: 10px;">
-                <span class="help-text">Add new images or use the arrows below to re-arrange existing images. The Main Image is the thumbnail.</span>
-                
                 <div id="editCurrentImagesPreview" class="image-manager"></div>
             </div>
-
             <button type="submit" class="submit-btn" id="saveEditBtn">Save Changes</button>
             <div id="editStatusMsg" class="form-status"></div>
         </form>
     </div>
 </div>
 
-<!-- NEW: PROMO POSTER MODAL -->
+<!-- NEW PREMIUM PROMO POSTER MODAL -->
 <div id="posterModal" class="modal">
-    <div class="modal-content" style="max-width: 500px; text-align: center;">
+    <div class="modal-content" style="max-width: 600px; text-align: center;">
         <span class="close-btn" onclick="document.getElementById('posterModal').style.display='none'">&times;</span>
         <h2 style="margin-bottom: 5px;">Promo Poster Studio</h2>
-        <p style="color:gray; font-size:0.9rem; margin-bottom: 20px;">1080x1080px (Ready for WhatsApp Status & Instagram)</p>
+        <p style="color:gray; font-size:0.9rem; margin-bottom: 20px;">Generating High-Resolution 1080x1080 Post</p>
         
-        <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); position: relative;">
+        <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-lg); position: relative;">
+            <!-- Canvas is 1080x1080 internally, scaled down visually -->
             <canvas id="posterCanvas" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
-            <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666;">Generating Canvas...</div>
+            <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666; font-size: 1.2rem;">Painting Canvas...</div>
         </div>
         
         <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px;">Download Poster (PNG)</button>
@@ -410,11 +274,26 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+// Polyfill for roundRect to ensure Canvas works perfectly on all browsers
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    this.beginPath();
+    this.moveTo(x+r, y);
+    this.arcTo(x+w, y, x+w, y+h, r);
+    this.arcTo(x+w, y+h, x, y+h, r);
+    this.arcTo(x, y+h, x, y, r);
+    this.arcTo(x, y, x+w, y, r);
+    this.closePath();
+    return this;
+  }
+}
+
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
 const CLOUD_NAME = "ubqtf5go";
 const UPLOAD_PRESET = "thakarshi_product_upload"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
-
 
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
@@ -431,6 +310,7 @@ const db = firebase.firestore();
 
 let adminProductsMap = {}; 
 let activeMillsMap = {};
+
 let uploadFilesArray = []; 
 let editMediaArray = [];   
 
@@ -513,7 +393,11 @@ document.getElementById('millForm').addEventListener('submit', async (e) => {
     try {
         const logoUrl = await uploadToCloudinary(fileInput.files[0]);
         btn.textContent = "Saving to Database...";
-        await db.collection('mills').add({ name: nameInput, logoUrl: logoUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        await db.collection('mills').add({
+            name: nameInput,
+            logoUrl: logoUrl,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
         
         msg.textContent = "Mill Brand added successfully!";
         msg.className = "form-status success"; msg.style.display = "block";
@@ -527,11 +411,12 @@ document.getElementById('millForm').addEventListener('submit', async (e) => {
 });
 
 async function deleteMill(id) {
-    if(confirm("Are you sure you want to delete this Mill Brand?")) {
+    if(confirm("Are you sure you want to delete this Mill Brand? (Products using this brand will safely default to Generic)")) {
         try { await db.collection('mills').doc(id).delete(); } 
         catch (err) { alert("Error: " + err.message); }
     }
 }
+
 
 function fetchSettings() {
     db.collection('settings').doc('contactInfo').get().then(doc => {
@@ -587,6 +472,15 @@ document.getElementById('adminProductSearch').addEventListener('input', function
     });
 });
 
+document.getElementById('adminInquirySearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const tableRows = document.getElementById('inquiriesTableBody').getElementsByTagName('tr');
+    Array.from(tableRows).forEach(row => {
+        if (row.cells.length <= 1) return;
+        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
+    });
+});
+
 /* --- MANAGE PRODUCTS LIST --- */
 function fetchAdminProducts() {
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
@@ -622,7 +516,6 @@ function fetchAdminProducts() {
             const toggleBtnText = isAvail ? 'Hide' : 'Show';
             const toggleBtnColor = isAvail ? '#ff9800' : '#28a745';
 
-            // ADDED PROMO POSTER BUTTON
             tbody.innerHTML += `
                 <tr>
                     <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
@@ -637,7 +530,7 @@ function fetchAdminProducts() {
                         <div class="action-btns">
                             <button class="toggle-btn" style="background-color: ${toggleBtnColor};" onclick="toggleAvailability('${id}', ${isAvail})">${toggleBtnText}</button>
                             <button class="edit-btn" onclick="openEditModal('${id}')">Edit</button>
-                            <button class="poster-btn" onclick="openPosterModal('${id}')">🖼️ Poster</button>
+                            <button class="poster-btn" onclick="openPremiumPosterModal('${id}')">🖼️ Poster</button>
                             <button class="delete-btn" onclick="deleteProduct('${id}')">Delete</button>
                         </div>
                     </td>
@@ -648,8 +541,9 @@ function fetchAdminProducts() {
     });
 }
 
-/* --- POSTER GENERATOR ENGINE --- */
-async function openPosterModal(id) {
+
+/* --- PREMIUM POSTER GENERATOR ENGINE (V2) --- */
+async function openPremiumPosterModal(id) {
     const modal = document.getElementById('posterModal');
     modal.style.display = 'block';
     
@@ -659,12 +553,13 @@ async function openPosterModal(id) {
     const loader = document.getElementById('posterLoadingText');
     
     btn.disabled = true;
-    btn.textContent = "Generating Canvas...";
+    btn.textContent = "Painting Canvas...";
     loader.style.display = 'block';
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = 1080;
-    canvas.height = 1080;
+    const canvasSize = 1080;
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
     
     const p = adminProductsMap[id];
     const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
@@ -672,80 +567,112 @@ async function openPosterModal(id) {
     const millLogoUrl = millObj ? millObj.logoUrl : null;
     
     let phone = document.getElementById('setWhatsapp').value || 'Contact Us';
-    if(phone.length >= 10 && !phone.startsWith('+')) phone = '+' + phone;
+    if(phone.length >= 10 && !phone.startsWith('+')) phone = '+91 ' + phone;
 
     try {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 1080, 1080);
-        
-        // 1. Draw Main Fabric Image
+        // 1. Draw Full-Bleed Main Fabric Image (Cover logic)
         if(imgUrl) {
             const mainImg = await loadImage(imgUrl);
-            const scale = Math.max(1080 / mainImg.width, 850 / mainImg.height);
+            const scale = Math.max(canvasSize / mainImg.width, canvasSize / mainImg.height);
             const w = mainImg.width * scale;
             const h = mainImg.height * scale;
-            const x = (1080 - w) / 2;
-            const y = (850 - h) / 2;
-            
-            ctx.save();
-            ctx.beginPath();
-            ctx.rect(0, 0, 1080, 850);
-            ctx.clip();
+            const x = (canvasSize - w) / 2;
+            const y = (canvasSize - h) / 2;
             ctx.drawImage(mainImg, x, y, w, h);
-            ctx.restore();
+        } else {
+            ctx.fillStyle = '#eeeeee';
+            ctx.fillRect(0, 0, canvasSize, canvasSize);
         }
 
-        // 2. Draw Official Mill Logo
+        // 2. Draw Subtle Top Gradient (For Logo & Branding)
+        const topGrd = ctx.createLinearGradient(0, 0, 0, 300);
+        topGrd.addColorStop(0, "rgba(0,0,0,0.6)");
+        topGrd.addColorStop(1, "transparent");
+        ctx.fillStyle = topGrd;
+        ctx.fillRect(0, 0, canvasSize, 300);
+
+        // 3. Draw Heavy Bottom Gradient (For Text & Call to Action)
+        const btmGrd = ctx.createLinearGradient(0, 500, 0, canvasSize);
+        btmGrd.addColorStop(0, "transparent");
+        btmGrd.addColorStop(1, "rgba(0,0,0,0.95)");
+        ctx.fillStyle = btmGrd;
+        ctx.fillRect(0, 0, canvasSize, canvasSize);
+
+        // 4. Branding Watermark (Top Left)
+        ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+        ctx.font = "bold 38px -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("THAKARSHI FAB", 60, 80);
+        ctx.font = "24px -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+        ctx.fillText("Premium Textile Wholesale", 60, 115);
+
+        // 5. Modern Mill Logo Pill (Top Right)
         if(millLogoUrl) {
             try {
                 const logoImg = await loadImage(millLogoUrl);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
                 
-                // Polyfill for roundRect just in case
-                if(!ctx.roundRect) {
-                    ctx.fillRect(1080 - 280, 40, 240, 120);
-                } else {
-                    ctx.beginPath();
-                    ctx.roundRect(1080 - 280, 40, 240, 120, 15);
-                    ctx.fill();
-                }
+                // Draw rounded pill with shadow
+                ctx.save();
+                ctx.shadowColor = "rgba(0,0,0,0.4)";
+                ctx.shadowBlur = 25;
+                ctx.shadowOffsetY = 5;
+                ctx.fillStyle = "#ffffff";
                 
-                const lScale = Math.min(200 / logoImg.width, 90 / logoImg.height);
-                const lx = (1080 - 280) + (240 - logoImg.width*lScale)/2;
-                const ly = 40 + (120 - logoImg.height*lScale)/2;
-                ctx.drawImage(logoImg, lx, ly, logoImg.width*lScale, logoImg.height*lScale);
+                const boxWidth = 260;
+                const boxHeight = 110;
+                const boxX = canvasSize - boxWidth - 60;
+                const boxY = 40;
+                
+                ctx.beginPath();
+                ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 20);
+                ctx.fill();
+                ctx.restore();
+                
+                // Draw Image Inside Pill
+                const lScale = Math.min((boxWidth - 40) / logoImg.width, (boxHeight - 40) / logoImg.height);
+                const lW = logoImg.width * lScale;
+                const lH = logoImg.height * lScale;
+                const lx = boxX + (boxWidth - lW) / 2;
+                const ly = boxY + (boxHeight - lH) / 2;
+                
+                ctx.drawImage(logoImg, lx, ly, lW, lH);
             } catch(e) { console.warn("Could not load mill logo for poster", e); }
         }
 
-        // 3. Draw Bottom Black Banner
-        ctx.fillStyle = '#1a1a1a';
-        ctx.fillRect(0, 850, 1080, 230);
+        // 6. Premium Product Information (Bottom Left)
+        ctx.textAlign = "left";
+        let specsText = `${(p.mainCategory || 'FABRIC').toUpperCase()}  •  ${(p.fabricWidth || 'PREMIUM QUALITY').toUpperCase()}`;
         
-        // 4. Product Details
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 55px Arial';
-        ctx.textAlign = 'left';
-        let safeName = p.name.toUpperCase();
-        if(safeName.length > 22) safeName = safeName.substring(0, 22) + '...';
-        ctx.fillText(safeName, 50, 930); 
+        ctx.fillStyle = "#d4af37"; // Luxury Gold
+        ctx.font = "bold 30px -apple-system, 'Segoe UI', Roboto, sans-serif";
+        ctx.letterSpacing = "2px"; // supported in modern canvas, degrades gracefully
+        ctx.fillText(specsText, 60, 880);
+        ctx.letterSpacing = "0px";
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 75px -apple-system, 'Segoe UI', Roboto, sans-serif";
+        let safeName = p.name;
+        if(safeName.length > 20) safeName = safeName.substring(0, 20) + '...';
+        ctx.fillText(safeName, 60, 960);
+
+        // 7. WhatsApp Call To Action Button (Bottom Right)
+        const btnWidth = 380;
+        const btnHeight = 85;
+        const btnX = canvasSize - btnWidth - 60;
+        const btnY = 890;
+
+        ctx.fillStyle = "#25D366"; // WhatsApp Green
+        ctx.beginPath();
+        ctx.roundRect(btnX, btnY, btnWidth, btnHeight, 45); // highly rounded pill
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.font = "bold 32px -apple-system, 'Segoe UI', Roboto, sans-serif";
+        ctx.fillText(`📞  ${phone}`, btnX + (btnWidth/2), btnY + 55);
         
-        let specs = [];
-        if (p.mainCategory) specs.push(p.mainCategory.toUpperCase());
-        if (p.fabricWidth) specs.push(p.fabricWidth);
-        ctx.fillStyle = '#cccccc';
-        ctx.font = '35px Arial';
-        ctx.fillText(specs.join(' | ').substring(0, 35), 50, 1000);
-        
-        // 5. WhatsApp Contact Block
-        ctx.fillStyle = '#25D366';
-        ctx.font = 'bold 35px Arial';
-        ctx.textAlign = 'right';
-        ctx.fillText('WhatsApp to Order', 1030, 930);
-        
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 50px Arial';
-        ctx.fillText(phone, 1030, 1000);
-        
+        // Finalize
         loader.style.display = 'none';
         btn.disabled = false;
         btn.textContent = "Download Poster (PNG)";
@@ -773,6 +700,7 @@ function loadImage(url) {
         img.src = url + (url.includes('?') ? '&' : '?') + 'notaint=' + new Date().getTime(); 
     });
 }
+
 
 async function toggleAvailability(id, currentStatus) {
     try { await db.collection('products').doc(id).update({ isAvailable: !currentStatus }); } 
