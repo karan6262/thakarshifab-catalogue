@@ -257,19 +257,19 @@
     </div>
 </div>
 
-<!-- NEW PREMIUM PROMO POSTER MODAL -->
+<!-- NEW PREMIUM PROMO POSTER MODAL (SCROLLABLE & RESPONSIVE) -->
 <div id="posterModal" class="modal">
-    <div class="modal-content" style="max-width: 600px; text-align: center;">
+    <!-- Added max-height and overflow-y auto here to fix the scrolling issue! -->
+    <div class="modal-content" style="max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto;">
         <span class="close-btn" onclick="document.getElementById('posterModal').style.display='none'">&times;</span>
         <h2 style="margin-bottom: 5px;">Promo Poster Studio</h2>
         
-        <!-- EXPERT FEATURE: Select Which Image To Use -->
-        <div id="posterImageSelector" style="display:none; margin-bottom: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-            <p style="color:#333; font-size:0.95rem; margin-bottom: 12px; font-weight: bold; text-align: left;">Step 1: Select a Fabric Image</p>
-            <div id="posterThumbnails" style="display: flex; gap: 10px; justify-content: flex-start; flex-wrap: wrap;"></div>
+        <div id="posterImageSelector" style="display:none; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
+            <p style="color:#333; font-size:0.85rem; margin-bottom: 8px; font-weight: bold; text-align: left;">Select a Fabric Image:</p>
+            <div id="posterThumbnails" style="display: flex; gap: 8px; justify-content: flex-start; flex-wrap: wrap;"></div>
         </div>
 
-        <p style="color:gray; font-size:0.9rem; margin-bottom: 15px; text-align: left; font-weight: bold;">Step 2: Preview & Download (1080x1080)</p>
+        <p style="color:gray; font-size:0.85rem; margin-bottom: 10px; text-align: left; font-weight: bold;">Preview & Download (Generates 1080x1080)</p>
         
         <!-- Canvas Wrapper -->
         <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-lg); position: relative;">
@@ -277,7 +277,7 @@
             <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666; font-size: 1.2rem;">Painting Canvas...</div>
         </div>
         
-        <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px;">Download Poster (PNG)</button>
+        <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px; margin-bottom: 10px;">Download Poster (PNG)</button>
     </div>
 </div>
 
@@ -286,7 +286,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-// Polyfill for roundRect to ensure Canvas works perfectly on all browsers
 if (!CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
     if (w < 2 * r) r = w / 2;
@@ -429,7 +428,6 @@ async function deleteMill(id) {
     }
 }
 
-
 function fetchSettings() {
     db.collection('settings').doc('contactInfo').get().then(doc => {
         if (doc.exists) {
@@ -560,7 +558,7 @@ function optimizeImageUrl(url, width = 600) {
     return url;
 }
 
-/* --- PREMIUM POSTER GENERATOR ENGINE (V3 - NO CROPPING + MULTI-IMAGE) --- */
+/* --- PREMIUM POSTER GENERATOR ENGINE --- */
 let currentPosterProduct = null;
 
 async function openPremiumPosterModal(id) {
@@ -570,22 +568,19 @@ async function openPremiumPosterModal(id) {
     const p = adminProductsMap[id];
     currentPosterProduct = p;
     
-    // Determine all available images for this product
     const imgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
     
     const selector = document.getElementById('posterImageSelector');
     const thumbsContainer = document.getElementById('posterThumbnails');
     thumbsContainer.innerHTML = '';
     
-    // If multiple images exist, show the thumbnail selector
     if (imgs.length > 1) {
         selector.style.display = 'block';
         imgs.forEach((url, idx) => {
             const imgEl = document.createElement('img');
-            imgEl.src = optimizeImageUrl(url, 150); // Fetch small version for UI
+            imgEl.src = optimizeImageUrl(url, 150); 
             imgEl.className = 'poster-thumb' + (idx === 0 ? ' active' : '');
             
-            // When user clicks a thumbnail, regenerate poster with that specific image
             imgEl.onclick = () => {
                 document.querySelectorAll('.poster-thumb').forEach(el => el.classList.remove('active'));
                 imgEl.classList.add('active');
@@ -597,7 +592,6 @@ async function openPremiumPosterModal(id) {
         selector.style.display = 'none';
     }
     
-    // Automatically generate the initial canvas using the first image
     if(imgs.length > 0) {
         generatePosterCanvas(imgs[0], p);
     } else {
@@ -616,7 +610,6 @@ async function generatePosterCanvas(imgUrl, p) {
     btn.textContent = "Painting Canvas...";
     loader.style.display = 'block';
 
-    // Reset Canvas completely
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const canvasSize = 1080;
     canvas.width = canvasSize;
@@ -635,8 +628,7 @@ async function generatePosterCanvas(imgUrl, p) {
         if(imgUrl) {
             const mainImg = await loadImage(imgUrl);
             
-            // EXPERT DESIGN TRICK 1: Draw a heavily blurred, scaled-up version of the image as the background.
-            // This prevents harsh white borders and fills the empty space with matching colors.
+            // BACKGROUND BLURRED COVER
             const coverScale = Math.max(canvasSize / mainImg.width, canvasSize / mainImg.height);
             const cw = mainImg.width * coverScale;
             const ch = mainImg.height * coverScale;
@@ -644,18 +636,16 @@ async function generatePosterCanvas(imgUrl, p) {
             ctx.drawImage(mainImg, (canvasSize - cw) / 2, (canvasSize - ch) / 2, cw, ch);
             ctx.filter = 'none';
             
-            // Add a subtle white tint over the blur so it doesn't overpower the main image
             ctx.fillStyle = 'rgba(255,255,255,0.2)';
             ctx.fillRect(0,0, canvasSize, canvasSize);
 
-            // EXPERT DESIGN TRICK 2: Draw the ACTUAL image perfectly fitted (Contain) with NO CROPPING
+            // MAIN IMAGE - FIT TO BOX NO CROPPING
             const fitScale = Math.min(canvasSize / mainImg.width, canvasSize / mainImg.height);
             const w = mainImg.width * fitScale;
             const h = mainImg.height * fitScale;
             const x = (canvasSize - w) / 2;
-            const y = (canvasSize - h) / 2; // Centers it vertically and horizontally
+            const y = (canvasSize - h) / 2; 
             
-            // Add a beautiful drop shadow behind the main image to separate it from the blurred background
             ctx.save();
             ctx.shadowColor = "rgba(0,0,0,0.4)";
             ctx.shadowBlur = 40;
@@ -664,21 +654,20 @@ async function generatePosterCanvas(imgUrl, p) {
             ctx.restore();
         }
 
-        // 3. Draw Subtle Top Gradient (For Logo & Branding text visibility)
+        // Top & Bottom Gradients
         const topGrd = ctx.createLinearGradient(0, 0, 0, 300);
         topGrd.addColorStop(0, "rgba(0,0,0,0.6)");
         topGrd.addColorStop(1, "transparent");
         ctx.fillStyle = topGrd;
         ctx.fillRect(0, 0, canvasSize, 300);
 
-        // 4. Draw Heavy Bottom Gradient (For Details & WhatsApp Button visibility)
         const btmGrd = ctx.createLinearGradient(0, 500, 0, canvasSize);
         btmGrd.addColorStop(0, "transparent");
         btmGrd.addColorStop(1, "rgba(0,0,0,0.95)");
         ctx.fillStyle = btmGrd;
         ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-        // 5. Branding Watermark (Top Left)
+        // Watermark
         ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
         ctx.font = "bold 38px -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif";
         ctx.textAlign = "left";
@@ -687,11 +676,10 @@ async function generatePosterCanvas(imgUrl, p) {
         ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
         ctx.fillText("Premium Textile Wholesale", 60, 115);
 
-        // 6. Modern Mill Logo Pill (Top Right)
+        // Mill Logo Pill
         if(millLogoUrl) {
             try {
                 const logoImg = await loadImage(millLogoUrl);
-                
                 ctx.save();
                 ctx.shadowColor = "rgba(0,0,0,0.4)";
                 ctx.shadowBlur = 25;
@@ -718,11 +706,11 @@ async function generatePosterCanvas(imgUrl, p) {
             } catch(e) { console.warn("Could not load mill logo for poster", e); }
         }
 
-        // 7. Premium Product Information (Bottom Left)
+        // Product Specs
         ctx.textAlign = "left";
         let specsText = `${(p.mainCategory || 'FABRIC').toUpperCase()}  •  ${(p.fabricWidth || 'PREMIUM QUALITY').toUpperCase()}`;
         
-        ctx.fillStyle = "#d4af37"; // Luxury Gold
+        ctx.fillStyle = "#d4af37";
         ctx.font = "bold 30px -apple-system, 'Segoe UI', Roboto, sans-serif";
         ctx.fillText(specsText, 60, 880);
 
@@ -732,15 +720,15 @@ async function generatePosterCanvas(imgUrl, p) {
         if(safeName.length > 20) safeName = safeName.substring(0, 20) + '...';
         ctx.fillText(safeName, 60, 960);
 
-        // 8. WhatsApp Call To Action Button (Bottom Right)
+        // WhatsApp Button
         const btnWidth = 380;
         const btnHeight = 85;
         const btnX = canvasSize - btnWidth - 60;
         const btnY = 890;
 
-        ctx.fillStyle = "#25D366"; // WhatsApp Green
+        ctx.fillStyle = "#25D366";
         ctx.beginPath();
-        ctx.roundRect(btnX, btnY, btnWidth, btnHeight, 45); // pill shape
+        ctx.roundRect(btnX, btnY, btnWidth, btnHeight, 45); 
         ctx.fill();
 
         ctx.fillStyle = "#ffffff";
@@ -748,7 +736,6 @@ async function generatePosterCanvas(imgUrl, p) {
         ctx.font = "bold 32px -apple-system, 'Segoe UI', Roboto, sans-serif";
         ctx.fillText(`📞  ${phone}`, btnX + (btnWidth/2), btnY + 55);
         
-        // Finalize
         loader.style.display = 'none';
         btn.disabled = false;
         btn.textContent = "Download Poster (PNG)";
@@ -767,7 +754,6 @@ async function generatePosterCanvas(imgUrl, p) {
     }
 }
 
-// Custom Image Loader to prevent Canvas Taint (CORS)
 function loadImage(url) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -777,8 +763,6 @@ function loadImage(url) {
         img.src = url + (url.includes('?') ? '&' : '?') + 'notaint=' + new Date().getTime(); 
     });
 }
-
-// Keep existing event listeners and Firebase upload functions exactly the same below...
 
 document.getElementById('prodImages').addEventListener('change', function(e) {
     for (let file of this.files) { uploadFilesArray.push(file); }
