@@ -122,9 +122,15 @@
                             <option value="roll">Per Roll</option><option value="kg">Per Kg</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>Price (₹)</label><input type="number" id="prodPrice" required placeholder="e.g., 450"></div>
+                    <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodPrice" placeholder="Leave empty for 'Request Price'"></div>
                 </div>
-                <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches"></div>
+                
+                <!-- ADDED MRP FIELD HERE -->
+                <div class="grid-2-col">
+                    <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodMrp" placeholder="e.g., 1200"></div>
+                    <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches"></div>
+                </div>
+                
                 <div class="form-group"><label>Product Description</label><textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea></div>
                 
                 <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
@@ -241,9 +247,15 @@
             </div>
             <div class="grid-2-col">
                 <div class="form-group"><label>Unit of Measure (UOM)</label><select id="editProdUom" required><option value="meter">Per Meter</option><option value="pcs">Per Piece (Pcs)</option><option value="roll">Per Roll</option><option value="kg">Per Kg</option><option value="set">Per Set</option></select></div>
-                <div class="form-group"><label>Price (₹)</label><input type="number" id="editProdPrice" required></div>
+                <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdPrice" placeholder="Leave empty for 'Request Price'"></div>
             </div>
-            <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
+            
+            <!-- ADDED MRP FIELD HERE -->
+            <div class="grid-2-col">
+                <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdMrp" placeholder="e.g., 1200"></div>
+                <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
+            </div>
+            
             <div class="form-group"><label>Availability</label><select id="editProdAvailable"><option value="true">Available</option><option value="false">Hidden</option></select></div>
             <div class="form-group"><label>Product Description</label><textarea id="editProdDesc" style="min-height: 80px;"></textarea></div>
             <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
@@ -257,9 +269,8 @@
     </div>
 </div>
 
-<!-- NEW PREMIUM PROMO POSTER MODAL (SCROLLABLE & RESPONSIVE) -->
+<!-- PREMIUM PROMO POSTER MODAL -->
 <div id="posterModal" class="modal">
-    <!-- Added max-height and overflow-y auto here to fix the scrolling issue! -->
     <div class="modal-content" style="max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto;">
         <span class="close-btn" onclick="document.getElementById('posterModal').style.display='none'">&times;</span>
         <h2 style="margin-bottom: 5px;">Promo Poster Studio</h2>
@@ -271,7 +282,6 @@
 
         <p style="color:gray; font-size:0.85rem; margin-bottom: 10px; text-align: left; font-weight: bold;">Preview & Download (Generates 1080x1080)</p>
         
-        <!-- Canvas Wrapper -->
         <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-lg); position: relative;">
             <canvas id="posterCanvas" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
             <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666; font-size: 1.2rem;">Painting Canvas...</div>
@@ -305,7 +315,6 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 const CLOUD_NAME = "ubqtf5go";
 const UPLOAD_PRESET = "thakarshi_product_upload"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
-
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -510,7 +519,11 @@ function fetchAdminProducts() {
             
             const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
+            
+            const mrpStr = p.mrp ? `MRP: ₹${p.mrp} | ` : '';
+            const priceStr = p.price ? `₹${p.price}` : 'Request Price';
             const uom = p.uom || 'meter'; 
+            
             const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
             const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
             
@@ -530,7 +543,7 @@ function fetchAdminProducts() {
                 <tr>
                     <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
                     <td>
-                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(₹${p.price} / ${uom} | ${categoryDisplay})</span>
+                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(${mrpStr}${priceStr} / ${uom} | ${categoryDisplay})</span>
                         ${widthStr}
                         <br><small style="color:#888;">ID: ${id}</small>
                         ${descHtml}
@@ -628,7 +641,6 @@ async function generatePosterCanvas(imgUrl, p) {
         if(imgUrl) {
             const mainImg = await loadImage(imgUrl);
             
-            // BACKGROUND BLURRED COVER
             const coverScale = Math.max(canvasSize / mainImg.width, canvasSize / mainImg.height);
             const cw = mainImg.width * coverScale;
             const ch = mainImg.height * coverScale;
@@ -639,7 +651,6 @@ async function generatePosterCanvas(imgUrl, p) {
             ctx.fillStyle = 'rgba(255,255,255,0.2)';
             ctx.fillRect(0,0, canvasSize, canvasSize);
 
-            // MAIN IMAGE - FIT TO BOX NO CROPPING
             const fitScale = Math.min(canvasSize / mainImg.width, canvasSize / mainImg.height);
             const w = mainImg.width * fitScale;
             const h = mainImg.height * fitScale;
@@ -654,7 +665,6 @@ async function generatePosterCanvas(imgUrl, p) {
             ctx.restore();
         }
 
-        // Top & Bottom Gradients
         const topGrd = ctx.createLinearGradient(0, 0, 0, 300);
         topGrd.addColorStop(0, "rgba(0,0,0,0.6)");
         topGrd.addColorStop(1, "transparent");
@@ -667,7 +677,6 @@ async function generatePosterCanvas(imgUrl, p) {
         ctx.fillStyle = btmGrd;
         ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-        // Watermark
         ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
         ctx.font = "bold 38px -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif";
         ctx.textAlign = "left";
@@ -676,7 +685,6 @@ async function generatePosterCanvas(imgUrl, p) {
         ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
         ctx.fillText("Premium Textile Wholesale", 60, 115);
 
-        // Mill Logo Pill
         if(millLogoUrl) {
             try {
                 const logoImg = await loadImage(millLogoUrl);
@@ -706,11 +714,10 @@ async function generatePosterCanvas(imgUrl, p) {
             } catch(e) { console.warn("Could not load mill logo for poster", e); }
         }
 
-        // Product Specs
         ctx.textAlign = "left";
         let specsText = `${(p.mainCategory || 'FABRIC').toUpperCase()}  •  ${(p.fabricWidth || 'PREMIUM QUALITY').toUpperCase()}`;
         
-        ctx.fillStyle = "#d4af37";
+        ctx.fillStyle = "#d4af37"; 
         ctx.font = "bold 30px -apple-system, 'Segoe UI', Roboto, sans-serif";
         ctx.fillText(specsText, 60, 880);
 
@@ -720,7 +727,6 @@ async function generatePosterCanvas(imgUrl, p) {
         if(safeName.length > 20) safeName = safeName.substring(0, 20) + '...';
         ctx.fillText(safeName, 60, 960);
 
-        // WhatsApp Button
         const btnWidth = 380;
         const btnHeight = 85;
         const btnX = canvasSize - btnWidth - 60;
@@ -807,7 +813,11 @@ function openEditModal(id) {
     if (subCat === 'suitings') subCat = 'other';
     document.getElementById('editProdCategory').value = subCat || 'cotton';
     
-    document.getElementById('editProdPrice').value = p.price;
+    document.getElementById('editProdPrice').value = p.price || '';
+    
+    // LOAD MRP VALUE
+    document.getElementById('editProdMrp').value = p.mrp || '';
+    
     document.getElementById('editProdUom').value = p.uom || 'meter';
     document.getElementById('editProdWidth').value = p.fabricWidth || '';
     document.getElementById('editProdDesc').value = p.description || '';
@@ -897,13 +907,22 @@ uploadForm.addEventListener('submit', async (e) => {
         }
 
         progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
+        
+        const priceInput = document.getElementById('prodPrice').value;
+        const priceToSave = priceInput ? Number(priceInput) : null;
+        
+        // SAVE MRP VALUE
+        const mrpInput = document.getElementById('prodMrp').value;
+        const mrpToSave = mrpInput ? Number(mrpInput) : null;
+
         await db.collection('products').add({
             name: document.getElementById('prodName').value.trim(), 
             mill: document.getElementById('prodMill').value, 
             mainCategory: document.getElementById('prodMainCategory').value, 
             category: document.getElementById('prodCategory').value, 
             uom: document.getElementById('prodUom').value, 
-            price: Number(document.getElementById('prodPrice').value), 
+            price: priceToSave, 
+            mrp: mrpToSave,
             fabricWidth: document.getElementById('prodWidth').value.trim(), 
             description: document.getElementById('prodDesc').value.trim(), 
             imageUrls: imageUrls, 
@@ -942,12 +961,21 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         }
 
         btn.textContent = "Updating database...";
+        
+        const editPriceInput = document.getElementById('editProdPrice').value;
+        const editPriceToSave = editPriceInput ? Number(editPriceInput) : null;
+        
+        // UPDATE MRP VALUE
+        const editMrpInput = document.getElementById('editProdMrp').value;
+        const editMrpToSave = editMrpInput ? Number(editMrpInput) : null;
+
         await db.collection('products').doc(document.getElementById('editProdId').value).update({
             name: document.getElementById('editProdName').value.trim(),
             mill: document.getElementById('editProdMill').value, 
             mainCategory: document.getElementById('editProdMainCategory').value,
             category: document.getElementById('editProdCategory').value,
-            price: Number(document.getElementById('editProdPrice').value),
+            price: editPriceToSave,
+            mrp: editMrpToSave,
             uom: document.getElementById('editProdUom').value,
             fabricWidth: document.getElementById('editProdWidth').value.trim(),
             description: document.getElementById('editProdDesc').value.trim(),
