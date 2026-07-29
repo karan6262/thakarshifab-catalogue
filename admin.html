@@ -27,6 +27,10 @@
         .edit-btn { background: #1a1a1a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .toggle-btn { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: white; font-weight: bold; }
+        
+        /* POSTER BUTTON STYLE */
+        .poster-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+        .poster-btn:hover { background: #1ebd55; }
 
         .status-select { padding: 6px; border-radius: 4px; border: 1px solid var(--gray-300); font-weight: bold; cursor: pointer; }
         .status-new { color: #dc3545; }
@@ -90,12 +94,10 @@
                         <label>Product Name</label>
                         <input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting">
                     </div>
-                    <!-- DYNAMIC MILL FIELD -->
                     <div class="form-group">
                         <label>Manufacturing Mill</label>
                         <select id="prodMill" required>
                             <option value="generic">Generic / Unbranded</option>
-                            <!-- JS Will Inject Mills Here -->
                         </select>
                     </div>
                 </div>
@@ -188,7 +190,7 @@
             </div>
         </div>
         
-        <!-- 3. NEW: MANAGE MILLS SECTION -->
+        <!-- 3. MANAGE MILLS SECTION -->
         <div id="section-mills" class="admin-section">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Manage Manufacturing Mills</h2>
@@ -308,12 +310,10 @@
                     <label>Fabric Name</label>
                     <input type="text" id="editProdName" required>
                 </div>
-                <!-- DYNAMIC EDIT MILL FIELD -->
                 <div class="form-group">
                     <label>Manufacturing Mill</label>
                     <select id="editProdMill" required>
                         <option value="generic">Generic / Unbranded</option>
-                        <!-- JS Will Inject Mills Here -->
                     </select>
                 </div>
             </div>
@@ -389,14 +389,30 @@
     </div>
 </div>
 
+<!-- NEW: PROMO POSTER MODAL -->
+<div id="posterModal" class="modal">
+    <div class="modal-content" style="max-width: 500px; text-align: center;">
+        <span class="close-btn" onclick="document.getElementById('posterModal').style.display='none'">&times;</span>
+        <h2 style="margin-bottom: 5px;">Promo Poster Studio</h2>
+        <p style="color:gray; font-size:0.9rem; margin-bottom: 20px;">1080x1080px (Ready for WhatsApp Status & Instagram)</p>
+        
+        <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); position: relative;">
+            <canvas id="posterCanvas" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
+            <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666;">Generating Canvas...</div>
+        </div>
+        
+        <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px;">Download Poster (PNG)</button>
+    </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
+const CLOUD_NAME = "YOUR_CLOUD_NAME";       
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -414,7 +430,6 @@ const db = firebase.firestore();
 
 let adminProductsMap = {}; 
 let activeMillsMap = {};
-
 let uploadFilesArray = []; 
 let editMediaArray = [];   
 
@@ -424,7 +439,7 @@ auth.onAuthStateChanged(async user => {
             const adminDoc = await db.collection('admins').doc(user.email).get();
             if (adminDoc.exists) {
                 document.getElementById('adminContent').style.display = 'block';
-                fetchMills(); // Fetch Mills to populate dropdowns
+                fetchMills(); 
                 fetchAdminProducts();
                 fetchAdminInquiries();
                 fetchSettings();
@@ -474,13 +489,10 @@ function fetchMills() {
             });
         }
         
-        // Preserve current selections if admin is actively editing
         const currentAddVal = addSelect.value;
         const currentEditVal = editSelect.value;
-        
         addSelect.innerHTML = optionsHtml;
         editSelect.innerHTML = optionsHtml;
-        
         if(currentAddVal) addSelect.value = currentAddVal;
         if(currentEditVal) editSelect.value = currentEditVal;
     });
@@ -500,11 +512,7 @@ document.getElementById('millForm').addEventListener('submit', async (e) => {
     try {
         const logoUrl = await uploadToCloudinary(fileInput.files[0]);
         btn.textContent = "Saving to Database...";
-        await db.collection('mills').add({
-            name: nameInput,
-            logoUrl: logoUrl,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        await db.collection('mills').add({ name: nameInput, logoUrl: logoUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         
         msg.textContent = "Mill Brand added successfully!";
         msg.className = "form-status success"; msg.style.display = "block";
@@ -518,12 +526,11 @@ document.getElementById('millForm').addEventListener('submit', async (e) => {
 });
 
 async function deleteMill(id) {
-    if(confirm("Are you sure you want to delete this Mill Brand? (Products using this brand will safely default to Generic)")) {
+    if(confirm("Are you sure you want to delete this Mill Brand?")) {
         try { await db.collection('mills').doc(id).delete(); } 
         catch (err) { alert("Error: " + err.message); }
     }
 }
-
 
 function fetchSettings() {
     db.collection('settings').doc('contactInfo').get().then(doc => {
@@ -579,15 +586,6 @@ document.getElementById('adminProductSearch').addEventListener('input', function
     });
 });
 
-document.getElementById('adminInquirySearch').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const tableRows = document.getElementById('inquiriesTableBody').getElementsByTagName('tr');
-    Array.from(tableRows).forEach(row => {
-        if (row.cells.length <= 1) return;
-        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
-    });
-});
-
 /* --- MANAGE PRODUCTS LIST --- */
 function fetchAdminProducts() {
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
@@ -609,10 +607,8 @@ function fetchAdminProducts() {
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
             const uom = p.uom || 'meter'; 
             const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
-            
             const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
             
-            // DYNAMIC MILL RESOLUTION FOR TABLE
             let millNameDisplay = '';
             if (p.mill && p.mill !== 'generic' && activeMillsMap[p.mill]) {
                 millNameDisplay = `<b style="color:var(--primary);">${activeMillsMap[p.mill].name.toUpperCase()}</b> • `;
@@ -625,6 +621,7 @@ function fetchAdminProducts() {
             const toggleBtnText = isAvail ? 'Hide' : 'Show';
             const toggleBtnColor = isAvail ? '#ff9800' : '#28a745';
 
+            // ADDED PROMO POSTER BUTTON
             tbody.innerHTML += `
                 <tr>
                     <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
@@ -639,6 +636,7 @@ function fetchAdminProducts() {
                         <div class="action-btns">
                             <button class="toggle-btn" style="background-color: ${toggleBtnColor};" onclick="toggleAvailability('${id}', ${isAvail})">${toggleBtnText}</button>
                             <button class="edit-btn" onclick="openEditModal('${id}')">Edit</button>
+                            <button class="poster-btn" onclick="openPosterModal('${id}')">🖼️ Poster</button>
                             <button class="delete-btn" onclick="deleteProduct('${id}')">Delete</button>
                         </div>
                     </td>
@@ -646,6 +644,132 @@ function fetchAdminProducts() {
             `;
         });
         document.getElementById('adminProductSearch').dispatchEvent(new Event('input'));
+    });
+}
+
+/* --- POSTER GENERATOR ENGINE --- */
+async function openPosterModal(id) {
+    const modal = document.getElementById('posterModal');
+    modal.style.display = 'block';
+    
+    const canvas = document.getElementById('posterCanvas');
+    const ctx = canvas.getContext('2d');
+    const btn = document.getElementById('downloadPosterBtn');
+    const loader = document.getElementById('posterLoadingText');
+    
+    btn.disabled = true;
+    btn.textContent = "Generating Canvas...";
+    loader.style.display = 'block';
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = 1080;
+    canvas.height = 1080;
+    
+    const p = adminProductsMap[id];
+    const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
+    const millObj = activeMillsMap[p.mill];
+    const millLogoUrl = millObj ? millObj.logoUrl : null;
+    
+    let phone = document.getElementById('setWhatsapp').value || 'Contact Us';
+    if(phone.length >= 10 && !phone.startsWith('+')) phone = '+' + phone;
+
+    try {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 1080, 1080);
+        
+        // 1. Draw Main Fabric Image
+        if(imgUrl) {
+            const mainImg = await loadImage(imgUrl);
+            const scale = Math.max(1080 / mainImg.width, 850 / mainImg.height);
+            const w = mainImg.width * scale;
+            const h = mainImg.height * scale;
+            const x = (1080 - w) / 2;
+            const y = (850 - h) / 2;
+            
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(0, 0, 1080, 850);
+            ctx.clip();
+            ctx.drawImage(mainImg, x, y, w, h);
+            ctx.restore();
+        }
+
+        // 2. Draw Official Mill Logo
+        if(millLogoUrl) {
+            try {
+                const logoImg = await loadImage(millLogoUrl);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                
+                // Polyfill for roundRect just in case
+                if(!ctx.roundRect) {
+                    ctx.fillRect(1080 - 280, 40, 240, 120);
+                } else {
+                    ctx.beginPath();
+                    ctx.roundRect(1080 - 280, 40, 240, 120, 15);
+                    ctx.fill();
+                }
+                
+                const lScale = Math.min(200 / logoImg.width, 90 / logoImg.height);
+                const lx = (1080 - 280) + (240 - logoImg.width*lScale)/2;
+                const ly = 40 + (120 - logoImg.height*lScale)/2;
+                ctx.drawImage(logoImg, lx, ly, logoImg.width*lScale, logoImg.height*lScale);
+            } catch(e) { console.warn("Could not load mill logo for poster", e); }
+        }
+
+        // 3. Draw Bottom Black Banner
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(0, 850, 1080, 230);
+        
+        // 4. Product Details
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 55px Arial';
+        ctx.textAlign = 'left';
+        let safeName = p.name.toUpperCase();
+        if(safeName.length > 22) safeName = safeName.substring(0, 22) + '...';
+        ctx.fillText(safeName, 50, 930); 
+        
+        let specs = [];
+        if (p.mainCategory) specs.push(p.mainCategory.toUpperCase());
+        if (p.fabricWidth) specs.push(p.fabricWidth);
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '35px Arial';
+        ctx.fillText(specs.join(' | ').substring(0, 35), 50, 1000);
+        
+        // 5. WhatsApp Contact Block
+        ctx.fillStyle = '#25D366';
+        ctx.font = 'bold 35px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText('WhatsApp to Order', 1030, 930);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 50px Arial';
+        ctx.fillText(phone, 1030, 1000);
+        
+        loader.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = "Download Poster (PNG)";
+        btn.onclick = () => {
+            const link = document.createElement('a');
+            link.download = `${p.name.replace(/[^a-z0-9]/gi, '_')}_Promo.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+    } catch (err) {
+        alert("Error generating poster. Check console for details.");
+        console.error(err);
+        loader.textContent = "Error Generation Failed";
+        btn.textContent = "Error";
+    }
+}
+
+// Custom Image Loader to prevent Canvas Taint (CORS)
+function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = url + (url.includes('?') ? '&' : '?') + 'notaint=' + new Date().getTime(); 
     });
 }
 
@@ -661,7 +785,6 @@ async function deleteProduct(id) {
     }
 }
 
-/* --- DRAG, DROP, REORDER IMAGE LOGIC --- */
 document.getElementById('prodImages').addEventListener('change', function(e) {
     for (let file of this.files) { uploadFilesArray.push(file); }
     this.value = ''; 
@@ -698,7 +821,7 @@ function openEditModal(id) {
     const p = adminProductsMap[id];
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = p.name;
-    document.getElementById('editProdMill').value = p.mill || 'generic'; // LOAD MILL
+    document.getElementById('editProdMill').value = p.mill || 'generic';
     document.getElementById('editProdMainCategory').value = p.mainCategory || 'shirting';
     
     let subCat = p.category;
@@ -715,9 +838,7 @@ function openEditModal(id) {
     
     editMediaArray = [];
     const existingImgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
-    existingImgs.forEach(url => {
-        editMediaArray.push({ type: 'url', val: url, previewUrl: url });
-    });
+    existingImgs.forEach(url => { editMediaArray.push({ type: 'url', val: url, previewUrl: url }); });
     
     renderEditPreviews();
     document.getElementById('editStatusMsg').style.display = 'none';
@@ -725,9 +846,7 @@ function openEditModal(id) {
 }
 
 document.getElementById('editProdImages').addEventListener('change', function(e) {
-    for (let file of this.files) {
-        editMediaArray.push({ type: 'file', val: file, previewUrl: URL.createObjectURL(file) });
-    }
+    for (let file of this.files) { editMediaArray.push({ type: 'file', val: file, previewUrl: URL.createObjectURL(file) }); }
     this.value = '';
     renderEditPreviews();
 });
@@ -742,7 +861,6 @@ function renderEditPreviews() {
     
     editMediaArray.forEach((item, index) => {
         const badge = index === 0 ? `<div class="badge">⭐ Main Image</div>` : '';
-        
         container.innerHTML += `
             <div class="img-wrap">
                 ${badge}
@@ -760,11 +878,7 @@ function renderEditPreviews() {
 function moveImage(index, direction, context) {
     const arr = (context === 'upload') ? uploadFilesArray : editMediaArray;
     if (index + direction < 0 || index + direction >= arr.length) return;
-    
-    const temp = arr[index];
-    arr[index] = arr[index + direction];
-    arr[index + direction] = temp;
-    
+    const temp = arr[index]; arr[index] = arr[index + direction]; arr[index + direction] = temp;
     context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
 }
 
@@ -774,7 +888,6 @@ function removeImage(index, context) {
     context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
 }
 
-/* --- FORM SUBMISSIONS TO CLOUDINARY & FIREBASE --- */
 async function uploadToCloudinary(file) {
     const formData = new FormData();
     formData.append('file', file);
@@ -807,7 +920,7 @@ uploadForm.addEventListener('submit', async (e) => {
         progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
         await db.collection('products').add({
             name: document.getElementById('prodName').value.trim(), 
-            mill: document.getElementById('prodMill').value, // SAVE MILL ID
+            mill: document.getElementById('prodMill').value, 
             mainCategory: document.getElementById('prodMainCategory').value, 
             category: document.getElementById('prodCategory').value, 
             uom: document.getElementById('prodUom').value, 
@@ -821,22 +934,16 @@ uploadForm.addEventListener('submit', async (e) => {
 
         statusMsg.textContent = 'Success! Product added and is now live on the website.';
         statusMsg.className = 'form-status success'; statusMsg.style.display = 'block';
-        uploadForm.reset();
-        uploadFilesArray = [];
-        renderUploadPreviews();
-        
+        uploadForm.reset(); uploadFilesArray = []; renderUploadPreviews();
         setTimeout(() => { switchTab('section-products', document.querySelectorAll('.tab-btn')[1]); }, 1500);
 
     } catch (error) {
         statusMsg.textContent = 'Error: ' + error.message; statusMsg.className = 'form-status error'; statusMsg.style.display = 'block';
-    } finally {
-        uploadBtn.disabled = false; progressText.style.display = 'none';
-    }
+    } finally { uploadBtn.disabled = false; progressText.style.display = 'none'; }
 });
 
 document.getElementById('editForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     if (editMediaArray.length === 0) { alert("A product must have at least one image."); return; }
     
     const btn = document.getElementById('saveEditBtn');
@@ -845,12 +952,10 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
 
     try {
         let finalImageUrls = [];
-
         for (let i = 0; i < editMediaArray.length; i++) {
             let item = editMediaArray[i];
-            if (item.type === 'url') {
-                finalImageUrls.push(item.val); 
-            } else {
+            if (item.type === 'url') { finalImageUrls.push(item.val);  } 
+            else {
                 btn.textContent = `Uploading New Image ${i + 1}...`;
                 const url = await uploadToCloudinary(item.val); 
                 finalImageUrls.push(url);
@@ -860,7 +965,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         btn.textContent = "Updating database...";
         await db.collection('products').doc(document.getElementById('editProdId').value).update({
             name: document.getElementById('editProdName').value.trim(),
-            mill: document.getElementById('editProdMill').value, // UPDATE MILL ID
+            mill: document.getElementById('editProdMill').value, 
             mainCategory: document.getElementById('editProdMainCategory').value,
             category: document.getElementById('editProdCategory').value,
             price: Number(document.getElementById('editProdPrice').value),
@@ -876,9 +981,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         setTimeout(() => { document.getElementById('editModal').style.display = 'none'; }, 1000);
     } catch (err) {
         msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
-    } finally {
-        btn.disabled = false; btn.textContent = "Save Changes";
-    }
+    } finally { btn.disabled = false; btn.textContent = "Save Changes"; }
 });
 
 async function fetchAdminInquiries() {
@@ -933,7 +1036,6 @@ async function updateInquiryStatus(id, selectElement) {
         selectElement.className = `status-select status-${newStatus.toLowerCase()}`;
     } catch (err) { alert("Failed to update status: " + err.message); }
 }
-
 </script>
 </body>
 </html>
