@@ -125,7 +125,6 @@
                     <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodPrice" placeholder="Leave empty for 'Request Price'"></div>
                 </div>
                 
-                <!-- ADDED MRP FIELD HERE -->
                 <div class="grid-2-col">
                     <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodMrp" placeholder="e.g., 1200"></div>
                     <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches"></div>
@@ -250,7 +249,6 @@
                 <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdPrice" placeholder="Leave empty for 'Request Price'"></div>
             </div>
             
-            <!-- ADDED MRP FIELD HERE -->
             <div class="grid-2-col">
                 <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdMrp" placeholder="e.g., 1200"></div>
                 <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
@@ -315,6 +313,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 const CLOUD_NAME = "ubqtf5go";
 const UPLOAD_PRESET = "thakarshi_product_upload"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
     authDomain: "thakarshi-product-catalogue.firebaseapp.com",
@@ -521,7 +520,8 @@ function fetchAdminProducts() {
             const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
             
             const mrpStr = p.mrp ? `MRP: ₹${p.mrp} | ` : '';
-            const priceStr = p.price ? `₹${p.price}` : 'Request Price';
+            // ADDED W/S Rate TEXT HERE
+            const priceStr = p.price ? `W/S Rate: ₹${p.price}` : 'Request Price';
             const uom = p.uom || 'meter'; 
             
             const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
