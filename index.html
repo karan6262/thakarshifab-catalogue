@@ -3,316 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Thakarshi Fab</title>
+    
+    <title>Thakarshi Fab - Premium Textile Wholesale | Ahmedabad</title>
+    <meta name="description" content="Leading wholesale textile supplier in Ahmedabad, Gujarat. Shop premium Shirting, Suiting, Cotton, Linen, and PV/TR fabrics in bulk. Connect with Thakarshi Fab today.">
+    <meta name="keywords" content="Textile wholesale Ahmedabad, bulk fabrics India, shirting wholesale, suiting wholesale, cotton fabric supplier, linen fabrics, PV suiting, TR suiting, Thakarshi Fab">
+    <meta name="author" content="Thakarshi Fab">
+    <meta name="robots" content="index, follow">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.thakarshifab.com/">
+    <meta property="og:title" content="Thakarshi Fab - Textile Wholesale in Ahmedabad">
+    <meta property="og:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
+    <meta property="og:image" content="https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"> 
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Thakarshi Fab - Textile Wholesale">
+    <meta name="twitter:description" content="Browse our catalog of premium Shirting and Suiting fabrics. Bulk supply across India.">
+
+    <link rel="preconnect" href="https://res.cloudinary.com">
     <link rel="stylesheet" href="style.css">
+    
     <style>
-        #adminContent { display: none; }
+        .site-header { position: sticky; top: 0; z-index: 2000; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: all 0.3s ease; }
         
-        .admin-container { max-width: 1000px; margin: 40px auto; padding: 40px; background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
-
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid var(--gray-200); padding-bottom: 10px; }
-        .tab-btn { padding: 10px 20px; border: none; background: transparent; cursor: pointer; font-weight: bold; font-size: 1rem; color: var(--gray-600); border-radius: 8px; transition: all 0.2s; }
-        .tab-btn:hover { background: var(--gray-100); }
-        .tab-btn.active { background: #1a1a1a; color: white; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-btn { background: transparent; border: 2px solid #1a1a1a; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; color: #1a1a1a; transition: all 0.2s;}
+        .user-btn:hover { background: #f0f0f0; }
+        .user-btn-solid { background: #1a1a1a; color: white; border: 2px solid #1a1a1a; }
+        .user-btn-solid:hover { background: #333; border-color: #333; color: white; }
         
-        .admin-section { display: none; }
-        .admin-section.active { display: block; }
-
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .data-table th, .data-table td { border: 1px solid var(--gray-300); padding: 12px; text-align: left; vertical-align: top; }
-        .data-table th { background: var(--gray-100); font-weight: 600; }
-        .data-table tr:hover { background: #fdfdfd; }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 115%; background-color: #fff; min-width: 220px; box-shadow: 0px 8px 24px rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden; z-index: 3000; border: 1px solid #eee; text-align: left; }
+        .dropdown-content.show { display: block; animation: fadeIn 0.2s ease-out; }
+        .dropdown-item { padding: 12px 16px; text-decoration: none; display: block; color: #333; font-size: 0.95rem; cursor: pointer; border-bottom: 1px solid #f5f5f5; text-align: left; background: none; width: 100%; border-top: none; border-left: none; border-right: none; font-family: inherit; transition: background 0.2s; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background-color: #f9f9f9; color: var(--primary); }
+        .dropdown-header { padding: 12px 16px; background-color: #fcfcfc; border-bottom: 1px solid #eaeaea; font-size: 0.85rem; color: #666; line-height: 1.4; }
         
-        .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-        .edit-btn { background: #1a1a1a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .delete-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
-        .toggle-btn { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: white; font-weight: bold; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+        .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
+        .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+        .contact-card { flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: var(--radius); text-align: left; font-size: 1.05rem; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .contact-card h3 { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); color: #f1dfc8; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .contact-card p { margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
         
-        .poster-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
-        .poster-btn:hover { background: #1ebd55; }
+        .hover-link { cursor: pointer; transition: color 0.2s; }
+        .hover-link:hover { color: var(--primary); }
+        .product-media img { cursor: pointer; }
 
-        .status-select { padding: 6px; border-radius: 4px; border: 1px solid var(--gray-300); font-weight: bold; cursor: pointer; }
-        .status-new { color: #dc3545; }
-        .status-contacted { color: #ff9800; }
-        .status-closed { color: #28a745; }
-
-        .progress-text { display: none; margin-top: 15px; text-align: center; font-weight: 600; color: var(--accent); }
-        .help-text { display: block; font-size: 0.8rem; color: var(--gray-600); margin-top: 4px; }
+        #productDetailsModal { display: none; }
+        #productDetailsModal.show-modal { display: flex !important; align-items: center; justify-content: center; }
         
-        #uploadForm { max-width: 600px; }
-        .admin-search-bar { padding: 10px 15px; border-radius: 8px; border: 1px solid var(--gray-300); width: 100%; max-width: 300px; font-size: 0.95rem; }
+        .pd-content { display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
         
-        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 768px) { .settings-grid { grid-template-columns: 1fr; } }
-        .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .pd-gallery-section { flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); cursor: zoom-in; }
+        .pd-gallery-section img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s ease-out; transform-origin: center center; }
+        .pd-gallery-section:hover img { transform: scale(2.2); }
+        
+        .pd-info-section { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; background: var(--white); }
+        
+        .pd-close { position: absolute; top: 15px; right: 20px; font-size: 2.2rem; cursor: pointer; color: #333; z-index: 10; background: rgba(255,255,255,0.9); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; line-height: 1; box-shadow: var(--shadow-sm); }
+        .pd-close:hover { background: #eee; }
+        
+        .pd-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 5; transition: background 0.2s; }
+        .pd-arrow:hover { background: rgba(0,0,0,0.8); }
+        .pd-arrow-left { left: 15px; }
+        .pd-arrow-right { right: 15px; }
 
-        .image-manager { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; min-height: 80px; padding: 15px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px; }
-        .img-wrap { position: relative; display: inline-flex; flex-direction: column; background: white; border: 1px solid #ddd; padding: 8px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .img-wrap img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; border: 1px solid #eee; }
-        .img-wrap .badge { position: absolute; top: -8px; left: -8px; background: #28a745; color: white; font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
-        .img-controls { display: flex; justify-content: space-between; gap: 4px; width: 100%; }
-        .img-controls button { flex: 1; border: none; background: #e0e0e0; cursor: pointer; border-radius: 4px; font-size: 0.9rem; padding: 5px 0; transition: background 0.2s; color: #333; font-weight: bold;}
-        .img-controls button:hover:not(:disabled) { background: #d0d0d0; }
-        .img-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
-        .img-controls button.remove-btn { background: #dc3545; color: white; }
-        .img-controls button.remove-btn:hover { background: #c82333; }
+        .wa-share-btn { display: inline-flex; align-items: center; gap: 8px; color: #25D366; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-decoration: none; transition: all 0.2s; margin-top: 10px; width: fit-content; }
+        .wa-share-btn:hover { background: rgba(37, 211, 102, 0.2); }
 
-        /* POSTER THUMBNAILS STYLE */
-        .poster-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .poster-thumb:hover { opacity: 1; transform: translateY(-2px); }
-        .poster-thumb.active { border-color: var(--primary); opacity: 1; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .width-badge { display: inline-block; background: #eef2ff; color: #1e40af; font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; margin-top: 6px; border: 1px solid #c7d2fe; }
+
+        .form-actions { display: flex; gap: 10px; flex-direction: column; }
+        @media (min-width: 600px) { .form-actions { flex-direction: row; } }
+
+        @media (max-width: 768px) {
+            .pd-content { flex-direction: column; height: 90vh; }
+            .pd-gallery-section { flex: 0.8; border-right: none; border-bottom: 1px solid var(--gray-200); }
+            .pd-info-section { flex: 1; padding: 25px; }
+            .pd-close { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.8rem; }
+            .pd-gallery-section:hover img { transform: scale(1); } 
+        }
+
+        #backToTop { position: fixed; bottom: 30px; right: 30px; background: #1a1a1a; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 1500; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: background 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+        #backToTop.show-btn { opacity: 1; pointer-events: auto; }
+        #backToTop:hover { background: var(--primary); transform: translateY(-4px); }
+
+        @keyframes cartBump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background-color: #25D366; color: white; border-color: #25D366; }
+            100% { transform: scale(1); }
+        }
+        .cart-bump { animation: cartBump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
 <body>
 
+<button id="backToTop" onclick="scrollToTop()" title="Go to top">↑</button>
+
 <header class="site-header">
     <div class="header-container">
         <div class="logo">
-            <h1>Thakarshi Fab Admin</h1>
-            <p>Dashboard & Upload Portal</p>
+            <h1>Thakarshi Fab</h1>
+            <p>Textile Wholesale | Ahmedabad</p>
         </div>
-        <nav class="header-nav">
-            <a href="index.html" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem; background-color: #1a1a1a;">Back to Store</a>
+        
+        <nav class="header-actions">
+            <button class="inquiry-btn" id="openCartModal" style="display:none; transition: all 0.3s ease;">Inquiry Cart <span id="cartCountBadge">(0)</span></button>
+            <div id="userDropdownContainer" class="user-dropdown"></div>
         </nav>
     </div>
 </header>
 
-<div class="container" id="adminContent">
-    <div class="admin-container">
-        
-        <div class="admin-tabs">
-            <button class="tab-btn active" onclick="switchTab('section-add', this)">Add New Fabric</button>
-            <button class="tab-btn" onclick="switchTab('section-products', this)">Manage Products</button>
-            <button class="tab-btn" onclick="switchTab('section-mills', this)">Manage Mills</button>
-            <button class="tab-btn" onclick="switchTab('section-inquiries', this)">View Inquiries</button>
-            <button class="tab-btn" onclick="switchTab('section-settings', this)">Settings</button>
-        </div>
+<div class="container">
+    <section id="productsSection" class="catalog-section" style="margin-top: 20px;"></section>
 
-        <!-- 1. ADD PRODUCT SECTION -->
-        <div id="section-add" class="admin-section active">
-            <h2 style="margin-bottom: 25px; color: var(--primary);">Upload New Product</h2>
-            <form id="uploadForm">
-                <div class="grid-2-col">
-                    <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting"></div>
-                    <div class="form-group"><label>Manufacturing Mill</label><select id="prodMill" required><option value="generic">Generic / Unbranded</option></select></div>
-                </div>
-                <div class="grid-2-col">
-                    <div class="form-group">
-                        <label>Main Type</label>
-                        <select id="prodMainCategory" required>
-                            <option value="shirting">Shirting</option>
-                            <option value="suiting">Suiting</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Sub Category / Fabric</label>
-                        <select id="prodCategory" required>
-                            <option value="cotton">Cotton</option><option value="silk">Silk</option>
-                            <option value="linen">Linen</option><option value="blend">Blends</option>
-                            <option value="pv suiting">PV Suiting</option><option value="tr suiting">TR Suiting</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid-2-col">
-                    <div class="form-group">
-                        <label>Unit of Measure (UOM)</label>
-                        <select id="prodUom" required>
-                            <option value="meter">Per Meter</option><option value="pcs">Per Piece (Pcs)</option>
-                            <option value="roll">Per Roll</option><option value="kg">Per Kg</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodPrice" placeholder="Leave empty for 'Request Price'"></div>
-                </div>
-                
-                <div class="grid-2-col">
-                    <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodMrp" placeholder="e.g., 1200"></div>
-                    <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches"></div>
-                </div>
-                
-                <div class="form-group"><label>Product Description</label><textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea></div>
-                
-                <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                    <label style="font-size: 1.1rem; color: var(--primary);">Product Images & Display Order</label>
-                    <input type="file" id="prodImages" accept="image/*" multiple style="margin-top: 10px;">
-                    <span class="help-text">Use the Left/Right arrows below to set which image appears first!</span>
-                    <div id="uploadImagesPreview" class="image-manager"><small style="color:#888; display:flex; width:100%; justify-content:center;">Images will appear here.</small></div>
-                </div>
-                <button type="submit" class="submit-btn" id="uploadBtn">Upload Product to Catalog</button>
-                <div id="progressText" class="progress-text">Initializing upload...</div>
-                <div id="statusMsg" class="form-status"></div>
-            </form>
-        </div>
+    <div id="loadMoreContainer" style="text-align: center; margin-top: 30px; margin-bottom: 40px; display: none;">
+        <button id="loadMoreBtn" class="btn-primary" style="background-color: #1a1a1a; padding: 12px 30px;">Load More Fabrics</button>
+    </div>
 
-        <!-- 2. MANAGE PRODUCTS SECTION -->
-        <div id="section-products" class="admin-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-                <h2 style="margin: 0;">Live Catalog Inventory</h2>
-                <input type="text" id="adminProductSearch" class="admin-search-bar" placeholder="Search products, ID, category...">
-            </div>
-            <div style="overflow-x: auto;">
-                <table class="data-table">
-                    <thead><tr><th>Image</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead>
-                    <tbody id="productsTableBody"><tr><td colspan="4">Loading products...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- 3. MANAGE MILLS SECTION -->
-        <div id="section-mills" class="admin-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-                <h2 style="margin: 0;">Manage Manufacturing Mills</h2>
-            </div>
-            <form id="millForm" style="background: var(--gray-100); padding: 25px; border-radius: var(--radius); border: 1px solid var(--gray-300); margin-bottom: 30px;">
-                <div class="grid-2-col">
-                    <div class="form-group"><label>Mill / Brand Name</label><input type="text" id="millName" required placeholder="e.g., Raymond, Arvind..."></div>
-                    <div class="form-group"><label>Mill Official Logo</label><input type="file" id="millLogo" accept="image/*" required><span class="help-text">Transparent PNG or clean JPG.</span></div>
-                </div>
-                <button type="submit" class="submit-btn" id="saveMillBtn" style="max-width: 250px;">Add New Mill Brand</button>
-                <div id="millStatusMsg" class="form-status"></div>
-            </form>
-            <div style="overflow-x: auto;">
-                <table class="data-table">
-                    <thead><tr><th>Mill Logo</th><th>Brand Name</th><th>Actions</th></tr></thead>
-                    <tbody id="millsTableBody"><tr><td colspan="3">Loading mills...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
+    <section class="connect-section" id="connectSection" style="display: none;">
+        <h2>Connect With Us</h2>
+        <p id="connectDesc" style="font-size: 1.1rem; opacity: 0.9;">Loading details...</p>
+        <div class="contact-grid" id="contactGrid"></div>
+    </section>
+</div>
 
-        <!-- 4. VIEW INQUIRIES SECTION -->
-        <div id="section-inquiries" class="admin-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-                <h2 style="margin: 0;">Customer Inquiries</h2>
-                <input type="text" id="adminInquirySearch" class="admin-search-bar" placeholder="Search by name, city, status...">
+<!-- Sign In / Sign Up Modal -->
+<div id="signInModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeSignInModal">&times;</span>
+        <h2 id="authModalTitle">Sign In</h2>
+        <form id="modalAuthForm">
+            <div id="signupFields" style="display:none;">
+                <div class="form-group"><input type="text" id="authName" placeholder="Full Name / Business Name"></div>
+                <div class="form-group"><input type="tel" id="authPhone" placeholder="Phone Number"></div>
+                <div class="form-group"><input type="text" id="authCity" placeholder="City"></div>
             </div>
-            <div style="overflow-x: auto;">
-                <table class="data-table">
-                    <thead><tr><th>Status</th><th>Date</th><th>Customer Details</th><th>Message & Requirements</th><th>Selected Fabrics</th></tr></thead>
-                    <tbody id="inquiriesTableBody"><tr><td colspan="5">Loading inquiries...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 5. SETTINGS SECTION -->
-        <div id="section-settings" class="admin-section">
-            <h2 style="margin-bottom: 20px;">Contact Information & Offices</h2>
-            <form id="settingsForm">
-                <div style="background: #e8f5e9; padding: 20px; border-radius: var(--radius); border: 1px solid #c8e6c9; margin-bottom: 20px; max-width: 600px;">
-                    <h3 style="margin-bottom: 15px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">WhatsApp Configuration</h3>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label>WhatsApp Sales Number (No '+' or spaces)</label>
-                        <input type="text" id="setWhatsapp" placeholder="e.g., 919876543210">
-                    </div>
-                </div>
-                <div class="form-group" style="max-width: 600px;"><label>Subtitle / Description</label><textarea id="setDesc" rows="2"></textarea></div>
-                <div class="settings-grid">
-                    <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                        <h3 style="margin-bottom: 15px; color: var(--primary);">Head Office</h3>
-                        <div class="form-group"><label>Address</label><textarea id="setHeadAddr" rows="3"></textarea></div>
-                        <div class="form-group"><label>Phone Number</label><input type="text" id="setHeadPhone"></div>
-                        <div class="form-group"><label>Email Address</label><input type="text" id="setHeadEmail"></div>
-                    </div>
-                    <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                        <h3 style="margin-bottom: 15px; color: var(--primary);">Branch Office</h3>
-                        <div class="form-group"><label>Address</label><textarea id="setBranchAddr" rows="3"></textarea></div>
-                        <div class="form-group"><label>Phone Number</label><input type="text" id="setBranchPhone"></div>
-                        <div class="form-group"><label>Working Hours</label><input type="text" id="setBranchHours"></div>
-                    </div>
-                </div>
-                <div style="margin-top: 25px; max-width: 300px;">
-                    <button type="submit" class="submit-btn" id="saveSettingsBtn">Save Contact Details</button>
-                    <div id="settingsStatusMsg" class="form-status"></div>
-                </div>
-            </form>
-        </div>
-
+            <div class="form-group"><input type="email" id="modalEmail" placeholder="Email Address" required></div>
+            <div class="form-group"><input type="password" id="modalPassword" placeholder="Password" required></div>
+            <button type="submit" class="submit-btn" id="modalAuthSubmit">Sign In</button>
+        </form>
+        <p class="auth-switch" id="modalAuthSwitch" style="text-align: center; margin-top: 15px;">
+            Don’t have an account? <a id="modalToggleLink" href="#">Create one</a>
+        </p>
+        <div id="modalAuthMsg" style="margin-top:1rem; color: red; text-align: center;"></div>
     </div>
 </div>
 
-<!-- EDIT PRODUCT MODAL WITH IMAGE MANAGEMENT -->
-<div id="editModal" class="modal">
-    <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
-        <span class="close-btn" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
-        <h2 style="margin-bottom: 15px;">Edit Product</h2>
-        <form id="editForm">
-            <input type="hidden" id="editProdId">
-            <div class="grid-2-col">
-                <div class="form-group"><label>Fabric Name</label><input type="text" id="editProdName" required></div>
-                <div class="form-group"><label>Manufacturing Mill</label><select id="editProdMill" required><option value="generic">Generic / Unbranded</option></select></div>
-            </div>
-            <div class="grid-2-col">
-                <div class="form-group"><label>Main Type</label><select id="editProdMainCategory" required><option value="shirting">Shirting</option><option value="suiting">Suiting</option></select></div>
-                <div class="form-group"><label>Sub Category / Fabric</label><select id="editProdCategory" required><option value="cotton">Cotton</option><option value="silk">Silk</option><option value="linen">Linen</option><option value="blend">Blends</option><option value="pv suiting">PV Suiting</option><option value="tr suiting">TR Suiting</option><option value="other">Other</option></select></div>
-            </div>
-            <div class="grid-2-col">
-                <div class="form-group"><label>Unit of Measure (UOM)</label><select id="editProdUom" required><option value="meter">Per Meter</option><option value="pcs">Per Piece (Pcs)</option><option value="roll">Per Roll</option><option value="kg">Per Kg</option><option value="set">Per Set</option></select></div>
-                <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdPrice" placeholder="Leave empty for 'Request Price'"></div>
-            </div>
-            
-            <div class="grid-2-col">
-                <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdMrp" placeholder="e.g., 1200"></div>
-                <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
-            </div>
-            
-            <div class="form-group"><label>Availability</label><select id="editProdAvailable"><option value="true">Available</option><option value="false">Hidden</option></select></div>
-            <div class="form-group"><label>Product Description</label><textarea id="editProdDesc" style="min-height: 80px;"></textarea></div>
-            <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                <label style="font-size: 1.1rem; color: var(--primary);">Manage Image Display Order</label>
-                <input type="file" id="editProdImages" accept="image/*" multiple style="margin-top: 10px;">
-                <div id="editCurrentImagesPreview" class="image-manager"></div>
-            </div>
-            <button type="submit" class="submit-btn" id="saveEditBtn">Save Changes</button>
-            <div id="editStatusMsg" class="form-status"></div>
+<!-- Update User Profile Modal -->
+<div id="updateProfileModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeUpdateProfileModal">&times;</span>
+        <h2>Update My Details</h2>
+        <form id="updateProfileForm">
+            <div class="form-group"><label>Full Name / Business Name</label><input type="text" id="profName" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="profPhone" required></div>
+            <div class="form-group"><label>City</label><input type="text" id="profCity" required></div>
+            <button type="submit" class="submit-btn" id="profSubmitBtn">Save Details</button>
+            <div id="profMsg" style="margin-top:1rem; text-align: center; font-weight: bold;"></div>
         </form>
     </div>
 </div>
 
-<!-- PREMIUM PROMO POSTER MODAL -->
-<div id="posterModal" class="modal">
-    <div class="modal-content" style="max-width: 500px; text-align: center; max-height: 90vh; overflow-y: auto;">
-        <span class="close-btn" onclick="document.getElementById('posterModal').style.display='none'">&times;</span>
-        <h2 style="margin-bottom: 5px;">Promo Poster Studio</h2>
+<!-- BIG PRODUCT DETAILS MODAL -->
+<div id="productDetailsModal" class="modal" style="z-index: 2500;">
+    <div class="pd-content">
+        <span class="pd-close" onclick="closeProductModal()">&times;</span>
         
-        <div id="posterImageSelector" style="display:none; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
-            <p style="color:#333; font-size:0.85rem; margin-bottom: 8px; font-weight: bold; text-align: left;">Select a Fabric Image:</p>
-            <div id="posterThumbnails" style="display: flex; gap: 8px; justify-content: flex-start; flex-wrap: wrap;"></div>
+        <div class="pd-gallery-section" id="pdGalleryContainer">
+            <img id="pdMainImage" src="" alt="Product view">
+            <button class="pd-arrow pd-arrow-left" id="pdPrevBtn" onclick="changePdImage(-1)">&#10094;</button>
+            <button class="pd-arrow pd-arrow-right" id="pdNextBtn" onclick="changePdImage(1)">&#10095;</button>
         </div>
+        
+        <div class="pd-info-section">
+            
+            <div style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <div id="pdMillContainer" style="display: none; margin-bottom: 8px;">
+                    <div style="font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Manufactured By</div>
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 10px;">
+                        <img id="pdMillLogo" src="" alt="Mill Brand" style="height: 35px; max-width: 120px; object-fit: contain; display: none;">
+                        <span id="pdMillText" style="font-weight: 900; font-size: 1.15rem; color: #1a1a1a; letter-spacing: 0.5px; display: none;"></span>
+                    </div>
+                </div>
 
-        <p style="color:gray; font-size:0.85rem; margin-bottom: 10px; text-align: left; font-weight: bold;">Preview & Download (Generates 1080x1080)</p>
-        
-        <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-lg); position: relative;">
-            <canvas id="posterCanvas" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
-            <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666; font-size: 1.2rem;">Painting Canvas...</div>
+                <span id="pdCategory" style="color: #666; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; font-weight: bold; display: block;"></span>
+            </div>
+
+            <h2 id="pdName" style="margin: 0 0 5px 0; font-size: 2rem; color: var(--gray-900);"></h2>
+            
+            <button class="wa-share-btn" onclick="shareProductWhatsapp()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                Share on WhatsApp
+            </button>
+            
+            <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; margin-bottom: 20px; margin-top: 20px; border-left: 4px solid var(--primary);">
+                <!-- MODIFIED W/S RATE TEXT FOR MODAL -->
+                <div id="pdPrice"></div>
+                <div id="pdWidthSpec" style="margin-top: 6px; font-weight: 600; color: #333; font-size: 0.95rem;"></div>
+            </div>
+            
+            <div style="flex-grow: 1;">
+                <h4 style="margin-bottom: 12px; font-size: 1.1rem; color: #333;">Product Description</h4>
+                <p id="pdDesc" style="line-height: 1.7; color: #555; font-size: 1rem; white-space: pre-wrap;"></p>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                <button id="pdAddBtn" class="btn-primary" style="width: 100%; padding: 16px; font-size: 1.1rem; border-radius: 8px; background-color: #1a1a1a;" onclick="toggleSelection(event)"></button>
+            </div>
         </div>
-        
-        <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px; margin-bottom: 10px;">Download Poster (PNG)</button>
     </div>
+</div>
+
+<!-- Send Inquiry Details Modal -->
+<div id="cartModal" class="modal">
+    <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column;">
+        <span class="close-btn" id="closeCartModal">&times;</span>
+        <h2 style="margin-bottom: 15px;">Send Inquiry</h2>
+        <form id="modalInquiryForm" style="overflow-y: auto; padding-right: 5px; flex-grow: 1;">
+            <input type="hidden" id="modalSelectedProducts" name="selectedProducts" value="">
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Full Name / Business Name *</label><input type="text" id="modalName" required></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Email Address *</label><input type="email" id="modalEmail2" required></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Phone Number</label><input type="tel" id="modalPhone"></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>City</label><input type="text" id="modalCity"></div>
+            <div class="form-group" style="margin-bottom: 1rem;"><label>Additional Message / Requirements</label><textarea id="modalMessage" style="min-height: 80px;"></textarea></div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-btn" id="modalSubmitBtn" style="flex: 1;">Send via Email</button>
+                <button type="button" class="submit-btn" id="modalWhatsappBtn" style="flex: 1; background-color: #25D366; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Send via WhatsApp
+                </button>
+            </div>
+
+            <div class="form-status" id="modalFormStatus"></div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast & Slide Cart -->
+<div id="toast" class="toast">Item added to inquiry!</div>
+<div id="cartOverlay" class="cart-overlay"></div>
+<div id="slideOutCart" class="slide-out-cart">
+    <div class="cart-header"><h2>Your Inquiry Cart</h2><button id="closeSlideCart" class="close-cart-btn">&times;</button></div>
+    <div class="cart-body"><ul id="selectedList" class="cart-items-list"></ul><div id="emptyCartMsg" class="empty-cart-msg">Your inquiry list is empty.</div></div>
+    <div class="cart-footer"><button id="proceedToInquiryBtn" class="btn-primary" style="width: 100%; display: none;">Proceed to Details</button></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 <script>
-if (!CanvasRenderingContext2D.prototype.roundRect) {
-  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-    if (w < 2 * r) r = w / 2;
-    if (h < 2 * r) r = h / 2;
-    this.beginPath();
-    this.moveTo(x+r, y);
-    this.arcTo(x+w, y, x+w, y+h, r);
-    this.arcTo(x+w, y+h, x, y+h, r);
-    this.arcTo(x, y+h, x, y, r);
-    this.arcTo(x, y, x+w, y, r);
-    this.closePath();
-    return this;
-  }
-}
+// REPLACE WITH YOUR ACTUAL KEYS!
+const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
 
-// REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
-const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
 const firebaseConfig = {
     apiKey: "AIzaSyDBddHlxJnVTAuUX_kymp6zIYPOvT5cLNA",
@@ -327,242 +280,77 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let adminProductsMap = {}; 
-let activeMillsMap = {};
+let allProducts = []; 
+let currentCategory = 'all'; 
+let currentSearchTerm = ''; 
+let isLoginMode = true; 
+const selectedItems = new Set(); 
 
-let uploadFilesArray = []; 
-let editMediaArray = [];   
+let currentPage = 1;
+const itemsPerPage = 12; 
 
-auth.onAuthStateChanged(async user => {
-    if (user) {
-        try {
-            const adminDoc = await db.collection('admins').doc(user.email).get();
-            if (adminDoc.exists) {
-                document.getElementById('adminContent').style.display = 'block';
-                fetchMills(); 
-                fetchAdminProducts();
-                fetchAdminInquiries();
-                fetchSettings();
-            } else {
-                alert("Unauthorized Access.");
-                window.location.href = "index.html";
-            }
-        } catch (error) { window.location.href = "index.html"; }
-    } else {
-        alert("Please log in to access the admin panel.");
-        window.location.href = "index.html";
+let pdImagesArray = [];
+let pdCurrentIndex = 0;
+let pdCurrentProductId = null;
+
+let currentUserProfile = null; 
+window.adminWhatsappNumber = null;
+let activeMillsMap = {}; // Will hold dynamic mill data
+
+const productsSection = document.getElementById('productsSection');
+const openCartModalBtn = document.getElementById('openCartModal');
+const slideOutCart = document.getElementById('slideOutCart');
+const cartOverlay = document.getElementById('cartOverlay');
+const closeSlideCart = document.getElementById('closeSlideCart');
+const selectedList = document.getElementById('selectedList');
+const emptyCartMsg = document.getElementById('emptyCartMsg');
+const proceedToInquiryBtn = document.getElementById('proceedToInquiryBtn');
+const toast = document.getElementById('toast');
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const loadMoreContainer = document.getElementById('loadMoreContainer');
+const signInModal = document.getElementById('signInModal');
+const cartModal = document.getElementById('cartModal');
+const closeSignInModal = document.getElementById('closeSignInModal');
+const closeCartModal = document.getElementById('closeCartModal');
+const modalAuthForm = document.getElementById('modalAuthForm');
+const modalAuthSubmit = document.getElementById('modalAuthSubmit');
+const modalToggleLink = document.getElementById('modalToggleLink');
+const modalAuthMsg = document.getElementById('modalAuthMsg');
+const modalInquiryForm = document.getElementById('modalInquiryForm');
+const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+const modalFormStatus = document.getElementById('modalFormStatus');
+const modalWhatsappBtn = document.getElementById('modalWhatsappBtn');
+const updateProfileModal = document.getElementById('updateProfileModal');
+const closeUpdateProfileModal = document.getElementById('closeUpdateProfileModal');
+const updateProfileForm = document.getElementById('updateProfileForm');
+const userDropdownContainer = document.getElementById('userDropdownContainer');
+
+
+window.addEventListener('scroll', () => {
+    const backBtn = document.getElementById('backToTop');
+    if (window.scrollY > 400) { backBtn.classList.add('show-btn'); } 
+    else { backBtn.classList.remove('show-btn'); }
+});
+
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+const pdGalleryContainer = document.getElementById('pdGalleryContainer');
+const pdMainImage = document.getElementById('pdMainImage');
+
+pdGalleryContainer.addEventListener('mousemove', (e) => {
+    if (window.innerWidth > 768) {
+        const rect = pdGalleryContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+        pdMainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
     }
 });
 
-function switchTab(sectionId, btnElement) {
-    document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    btnElement.classList.add('active');
-}
-
-/* --- DYNAMIC MILLS MANAGER --- */
-function fetchMills() {
-    db.collection('mills').orderBy('name').onSnapshot(snapshot => {
-        const tbody = document.getElementById('millsTableBody');
-        const addSelect = document.getElementById('prodMill');
-        const editSelect = document.getElementById('editProdMill');
-        
-        tbody.innerHTML = '';
-        let optionsHtml = '<option value="generic">Generic / Unbranded</option>';
-        activeMillsMap = {};
-
-        if (snapshot.empty) {
-            tbody.innerHTML = '<tr><td colspan="3">No mill brands added yet.</td></tr>';
-        } else {
-            snapshot.forEach(doc => {
-                const m = doc.data();
-                activeMillsMap[doc.id] = m;
-                optionsHtml += `<option value="${doc.id}">${m.name}</option>`;
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${m.logoUrl}" style="height:40px; max-width:80px; object-fit:contain; border-radius:4px; border:1px solid #eee; padding:2px; background:white;"></td>
-                        <td><strong>${m.name}</strong></td>
-                        <td><button class="delete-btn" onclick="deleteMill('${doc.id}')">Delete</button></td>
-                    </tr>
-                `;
-            });
-        }
-        
-        const currentAddVal = addSelect.value;
-        const currentEditVal = editSelect.value;
-        addSelect.innerHTML = optionsHtml;
-        editSelect.innerHTML = optionsHtml;
-        if(currentAddVal) addSelect.value = currentAddVal;
-        if(currentEditVal) editSelect.value = currentEditVal;
-    });
-}
-
-document.getElementById('millForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('saveMillBtn');
-    const msg = document.getElementById('millStatusMsg');
-    const fileInput = document.getElementById('millLogo');
-    const nameInput = document.getElementById('millName').value.trim();
-    
-    if (fileInput.files.length === 0) { alert('Please select a logo image.'); return; }
-    
-    btn.disabled = true; btn.textContent = "Uploading Logo...";
-
-    try {
-        const logoUrl = await uploadToCloudinary(fileInput.files[0]);
-        btn.textContent = "Saving to Database...";
-        await db.collection('mills').add({
-            name: nameInput,
-            logoUrl: logoUrl,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        msg.textContent = "Mill Brand added successfully!";
-        msg.className = "form-status success"; msg.style.display = "block";
-        document.getElementById('millForm').reset();
-        setTimeout(() => { msg.style.display = 'none'; }, 2000);
-    } catch (err) {
-        msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
-    } finally {
-        btn.disabled = false; btn.textContent = "Add New Mill Brand";
-    }
+pdGalleryContainer.addEventListener('mouseleave', () => {
+    pdMainImage.style.transformOrigin = 'center center';
 });
-
-async function deleteMill(id) {
-    if(confirm("Are you sure you want to delete this Mill Brand? (Products using this brand will safely default to Generic)")) {
-        try { await db.collection('mills').doc(id).delete(); } 
-        catch (err) { alert("Error: " + err.message); }
-    }
-}
-
-function fetchSettings() {
-    db.collection('settings').doc('contactInfo').get().then(doc => {
-        if (doc.exists) {
-            const data = doc.data();
-            document.getElementById('setWhatsapp').value = data.whatsapp || '';
-            document.getElementById('setDesc').value = data.desc || '';
-            document.getElementById('setHeadAddr').value = data.headAddress || '';
-            document.getElementById('setHeadPhone').value = data.headPhone || '';
-            document.getElementById('setHeadEmail').value = data.headEmail || '';
-            document.getElementById('setBranchAddr').value = data.branchAddress || '';
-            document.getElementById('setBranchPhone').value = data.branchPhone || '';
-            document.getElementById('setBranchHours').value = data.branchHours || '';
-        }
-    });
-}
-
-document.getElementById('settingsForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('saveSettingsBtn');
-    const msg = document.getElementById('settingsStatusMsg');
-    btn.disabled = true; btn.textContent = "Saving...";
-
-    const settingsData = {
-        whatsapp: document.getElementById('setWhatsapp').value.replace(/[^0-9]/g, ''),
-        desc: document.getElementById('setDesc').value.trim(),
-        headAddress: document.getElementById('setHeadAddr').value.trim(),
-        headPhone: document.getElementById('setHeadPhone').value.trim(),
-        headEmail: document.getElementById('setHeadEmail').value.trim(),
-        branchAddress: document.getElementById('setBranchAddr').value.trim(),
-        branchPhone: document.getElementById('setBranchPhone').value.trim(),
-        branchHours: document.getElementById('setBranchHours').value.trim()
-    };
-
-    try {
-        await db.collection('settings').doc('contactInfo').set(settingsData, { merge: true });
-        msg.textContent = "Settings saved! Your website has been updated.";
-        msg.className = "form-status success"; msg.style.display = "block";
-        setTimeout(() => { msg.style.display = 'none'; }, 3000);
-    } catch (err) {
-        msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
-    } finally {
-        btn.disabled = false; btn.textContent = "Save Contact Details";
-    }
-});
-
-document.getElementById('adminProductSearch').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const tableRows = document.getElementById('productsTableBody').getElementsByTagName('tr');
-    Array.from(tableRows).forEach(row => {
-        if (row.cells.length <= 1) return; 
-        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
-    });
-});
-
-document.getElementById('adminInquirySearch').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const tableRows = document.getElementById('inquiriesTableBody').getElementsByTagName('tr');
-    Array.from(tableRows).forEach(row => {
-        if (row.cells.length <= 1) return;
-        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
-    });
-});
-
-/* --- MANAGE PRODUCTS LIST --- */
-function fetchAdminProducts() {
-    db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        const tbody = document.getElementById('productsTableBody');
-        tbody.innerHTML = '';
-        adminProductsMap = {}; 
-        
-        if (snapshot.empty) {
-            tbody.innerHTML = '<tr><td colspan="4">No products in catalog.</td></tr>';
-            return;
-        }
-
-        snapshot.forEach(doc => {
-            const p = doc.data();
-            const id = doc.id;
-            adminProductsMap[id] = p; 
-            
-            const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
-            const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
-            
-            const mrpStr = p.mrp ? `MRP: ₹${p.mrp} | ` : '';
-            // ADDED W/S Rate TEXT HERE
-            const priceStr = p.price ? `W/S Rate: ₹${p.price}` : 'Request Price';
-            const uom = p.uom || 'meter'; 
-            
-            const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
-            const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
-            
-            let millNameDisplay = '';
-            if (p.mill && p.mill !== 'generic' && activeMillsMap[p.mill]) {
-                millNameDisplay = `<b style="color:var(--primary);">${activeMillsMap[p.mill].name.toUpperCase()}</b> • `;
-            }
-            
-            const categoryDisplay = `${millNameDisplay}${mainCat}${p.category}`;
-            
-            const isAvail = p.isAvailable !== false; 
-            const statusHtml = isAvail ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
-            const toggleBtnText = isAvail ? 'Hide' : 'Show';
-            const toggleBtnColor = isAvail ? '#ff9800' : '#28a745';
-
-            tbody.innerHTML += `
-                <tr>
-                    <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
-                    <td>
-                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(${mrpStr}${priceStr} / ${uom} | ${categoryDisplay})</span>
-                        ${widthStr}
-                        <br><small style="color:#888;">ID: ${id}</small>
-                        ${descHtml}
-                    </td>
-                    <td>${statusHtml}</td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="toggle-btn" style="background-color: ${toggleBtnColor};" onclick="toggleAvailability('${id}', ${isAvail})">${toggleBtnText}</button>
-                            <button class="edit-btn" onclick="openEditModal('${id}')">Edit</button>
-                            <button class="poster-btn" onclick="openPremiumPosterModal('${id}')">🖼️ Poster</button>
-                            <button class="delete-btn" onclick="deleteProduct('${id}')">Delete</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-        document.getElementById('adminProductSearch').dispatchEvent(new Event('input'));
-    });
-}
 
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
@@ -571,478 +359,641 @@ function optimizeImageUrl(url, width = 600) {
     return url;
 }
 
-/* --- PREMIUM POSTER GENERATOR ENGINE --- */
-let currentPosterProduct = null;
+function openAuthModal(mode) {
+    isLoginMode = (mode === 'login');
+    document.getElementById('authModalTitle').textContent = isLoginMode ? 'Sign In' : 'Create Account';
+    modalAuthSubmit.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+    modalToggleLink.innerHTML = isLoginMode ? 'Create one' : 'Sign in';
+    modalToggleLink.previousSibling.textContent = isLoginMode ? 'Don’t have an account? ' : 'Already have an account? ';
+    document.getElementById('signupFields').style.display = isLoginMode ? 'none' : 'block';
+    modalAuthMsg.textContent = '';
+    signInModal.style.display = 'block';
+}
 
-async function openPremiumPosterModal(id) {
-    const modal = document.getElementById('posterModal');
-    modal.style.display = 'block';
-    
-    const p = adminProductsMap[id];
-    currentPosterProduct = p;
-    
-    const imgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
-    
-    const selector = document.getElementById('posterImageSelector');
-    const thumbsContainer = document.getElementById('posterThumbnails');
-    thumbsContainer.innerHTML = '';
-    
-    if (imgs.length > 1) {
-        selector.style.display = 'block';
-        imgs.forEach((url, idx) => {
-            const imgEl = document.createElement('img');
-            imgEl.src = optimizeImageUrl(url, 150); 
-            imgEl.className = 'poster-thumb' + (idx === 0 ? ' active' : '');
-            
-            imgEl.onclick = () => {
-                document.querySelectorAll('.poster-thumb').forEach(el => el.classList.remove('active'));
-                imgEl.classList.add('active');
-                generatePosterCanvas(url, p);
-            };
-            thumbsContainer.appendChild(imgEl);
+window.toggleDropdown = function() { document.getElementById('myDropdown').classList.toggle('show'); }
+
+auth.onAuthStateChanged(async user => {
+    if (user) {
+        let adminButtonHtml = '';
+        try {
+            const adminDoc = await db.collection('admins').doc(user.email).get();
+            if (adminDoc.exists) { adminButtonHtml = `<a href="admin.html" class="dropdown-item" style="color: var(--primary); font-weight: bold;">Admin Panel</a>`; }
+        } catch (error) {}
+        
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                currentUserProfile = userDoc.data();
+                document.getElementById('modalName').value = currentUserProfile.name || '';
+                document.getElementById('modalPhone').value = currentUserProfile.phone || '';
+                document.getElementById('modalCity').value = currentUserProfile.city || '';
+            }
+        } catch (error) {}
+        
+        document.getElementById('modalEmail2').value = user.email || '';
+
+        userDropdownContainer.innerHTML = `
+            <button class="user-btn" onclick="toggleDropdown()">My Account ▼</button>
+            <div class="dropdown-content" id="myDropdown">
+                <div class="dropdown-header">Signed in as:<br><strong style="color:#1a1a1a; font-size: 0.9rem;">${user.email}</strong></div>
+                ${adminButtonHtml}
+                <button class="dropdown-item" id="updateProfileBtn">Update Profile</button>
+                <button class="dropdown-item" id="signOutBtn" style="color: #dc3545; font-weight:bold;">Sign Out</button>
+            </div>
+        `;
+        
+        document.getElementById('updateProfileBtn').addEventListener('click', () => {
+            document.getElementById('profName').value = currentUserProfile?.name || '';
+            document.getElementById('profPhone').value = currentUserProfile?.phone || '';
+            document.getElementById('profCity').value = currentUserProfile?.city || '';
+            document.getElementById('profMsg').textContent = '';
+            document.getElementById('myDropdown').classList.remove('show');
+            updateProfileModal.style.display = 'block';
         });
+
+        openCartModalBtn.style.display = 'inline-block';
+        signInModal.style.display = 'none';
+        document.getElementById('signOutBtn').addEventListener('click', () => auth.signOut());
     } else {
-        selector.style.display = 'none';
+        currentUserProfile = null;
+        document.getElementById('modalName').value = '';
+        document.getElementById('modalPhone').value = '';
+        document.getElementById('modalCity').value = '';
+        document.getElementById('modalEmail2').value = '';
+
+        userDropdownContainer.innerHTML = `<button id="mainSignInBtn" class="user-btn user-btn-solid">Sign In / Sign Up</button>`;
+        document.getElementById('mainSignInBtn').addEventListener('click', () => openAuthModal('login'));
+
+        openCartModalBtn.style.display = 'none';
+        selectedItems.clear();
+        updateSelectedUI();
     }
+});
+
+updateProfileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('profSubmitBtn');
+    const msg = document.getElementById('profMsg');
     
-    if(imgs.length > 0) {
-        generatePosterCanvas(imgs[0], p);
-    } else {
-        alert("No image available to generate poster.");
-        modal.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Saving...';
+    const newName = document.getElementById('profName').value.trim();
+    const newPhone = document.getElementById('profPhone').value.trim();
+    const newCity = document.getElementById('profCity').value.trim();
+    
+    try {
+        await db.collection('users').doc(auth.currentUser.uid).set({ name: newName, phone: newPhone, city: newCity }, { merge: true });
+        if (!currentUserProfile) currentUserProfile = {};
+        currentUserProfile.name = newName; currentUserProfile.phone = newPhone; currentUserProfile.city = newCity;
+        document.getElementById('modalName').value = newName; document.getElementById('modalPhone').value = newPhone; document.getElementById('modalCity').value = newCity;
+        
+        msg.style.color = 'green'; msg.textContent = 'Profile updated successfully!';
+        setTimeout(() => { updateProfileModal.style.display = 'none'; msg.textContent = ''; }, 1500);
+    } catch (err) {
+        msg.style.color = 'red'; msg.textContent = err.message;
+    } finally { btn.disabled = false; btn.textContent = 'Save Details'; }
+});
+
+function loadContactSettings() {
+    db.collection('settings').doc('contactInfo').onSnapshot(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            if(data.whatsapp) { window.adminWhatsappNumber = data.whatsapp; }
+            document.getElementById('connectSection').style.display = 'block';
+            document.getElementById('connectDesc').textContent = data.desc || 'We supply premium textiles across India.';
+            let gridHtml = '';
+            if (data.headAddress || data.headPhone || data.headEmail) { gridHtml += `<div class="contact-card"><h3>🏢 Head Office</h3>${data.headAddress ? `<p><strong>📍 Address:</strong> ${data.headAddress}</p>` : ''}${data.headPhone ? `<p><strong>📞 Phone:</strong> ${data.headPhone}</p>` : ''}${data.headEmail ? `<p><strong>✉️ Email:</strong> ${data.headEmail}</p>` : ''}</div>`; }
+            if (data.branchAddress || data.branchPhone || data.branchHours) { gridHtml += `<div class="contact-card"><h3>🏭 Branch Office</h3>${data.branchAddress ? `<p><strong>📍 Address:</strong> ${data.branchAddress}</p>` : ''}${data.branchPhone ? `<p><strong>📞 Phone:</strong> ${data.branchPhone}</p>` : ''}${data.branchHours ? `<p><strong>🕒 Hours:</strong> ${data.branchHours}</p>` : ''}</div>`; }
+            document.getElementById('contactGrid').innerHTML = gridHtml;
+        } else { document.getElementById('connectSection').style.display = 'none'; }
+    });
+}
+
+modalAuthForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('modalEmail').value.trim();
+    const password = document.getElementById('modalPassword').value.trim();
+    
+    modalAuthMsg.textContent = '';
+    modalAuthSubmit.disabled = true;
+
+    try {
+        if (isLoginMode) {
+            await auth.signInWithEmailAndPassword(email, password);
+        } else {
+            const name = document.getElementById('authName').value.trim();
+            const phone = document.getElementById('authPhone').value.trim();
+            const city = document.getElementById('authCity').value.trim();
+            if (!name || !phone || !city) { throw new Error("Please fill in your Name, Phone, and City for wholesale registration."); }
+
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            await db.collection('users').doc(userCredential.user.uid).set({ name: name, phone: phone, city: city, email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+            document.getElementById('modalName').value = name; document.getElementById('modalPhone').value = phone; document.getElementById('modalCity').value = city; document.getElementById('modalEmail2').value = email;
+            currentUserProfile = { name, phone, city, email };
+        }
+    } catch (err) { modalAuthMsg.textContent = err.message; } 
+    finally { modalAuthSubmit.disabled = false; }
+});
+
+modalToggleLink.addEventListener('click', e => { e.preventDefault(); openAuthModal(!isLoginMode ? 'login' : 'signup'); });
+
+openCartModalBtn.onclick = () => { slideOutCart.classList.add('open'); cartOverlay.classList.add('active'); };
+function closeCartDrawer() { slideOutCart.classList.remove('open'); cartOverlay.classList.remove('active'); }
+closeSlideCart.onclick = closeCartDrawer;
+cartOverlay.onclick = closeCartDrawer;
+
+proceedToInquiryBtn.onclick = () => {
+    closeCartDrawer();
+    document.getElementById('modalSelectedProducts').value = JSON.stringify(Array.from(selectedItems));
+    cartModal.style.display = 'block';
+};
+
+closeSignInModal.onclick = () => { signInModal.style.display = 'none'; };
+closeUpdateProfileModal.onclick = () => { updateProfileModal.style.display = 'none'; };
+closeCartModal.onclick = () => { cartModal.style.display = 'none'; };
+
+window.onclick = e => {
+    if (e.target === signInModal) signInModal.style.display = 'none';
+    if (e.target === cartModal) cartModal.style.display = 'none';
+    if (e.target === updateProfileModal) updateProfileModal.style.display = 'none';
+    if (e.target.id === 'productDetailsModal') closeProductModal();
+    
+    if (!e.target.matches('.user-btn')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            if (dropdowns[i].classList.contains('show')) { dropdowns[i].classList.remove('show'); }
+        }
+    }
+};
+
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+
+function scrollGallery(productId, direction) {
+    const gallery = document.getElementById(`gallery-${productId}`);
+    if (gallery) {
+        const scrollAmount = gallery.offsetWidth;
+        gallery.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
     }
 }
 
-async function generatePosterCanvas(imgUrl, p) {
-    const canvas = document.getElementById('posterCanvas');
-    const ctx = canvas.getContext('2d');
-    const btn = document.getElementById('downloadPosterBtn');
-    const loader = document.getElementById('posterLoadingText');
+function shareProductWhatsapp() {
+    if (!pdCurrentProductId) return;
+    const p = allProducts.find(prod => prod.id === pdCurrentProductId);
+    if (!p) return;
     
-    btn.disabled = true;
-    btn.textContent = "Painting Canvas...";
-    loader.style.display = 'block';
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const canvasSize = 1080;
-    canvas.width = canvasSize;
-    canvas.height = canvasSize;
+    const baseUrl = window.location.href.split('?')[0]; 
+    let msg = `Check out this fabric from Thakarshi Fab!\n\n`;
+    msg += `*${p.name}*\n`;
     
     const millObj = activeMillsMap[p.mill];
-    const millLogoUrl = millObj ? millObj.logoUrl : null;
+    if (p.mill && p.mill !== 'generic' && millObj) { msg += `Mill: ${millObj.name.toUpperCase()}\n`; }
     
-    let phone = document.getElementById('setWhatsapp').value || 'Contact Us';
-    if(phone.length >= 10 && !phone.startsWith('+')) phone = '+91 ' + phone;
-
-    try {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvasSize, canvasSize);
-
-        if(imgUrl) {
-            const mainImg = await loadImage(imgUrl);
-            
-            const coverScale = Math.max(canvasSize / mainImg.width, canvasSize / mainImg.height);
-            const cw = mainImg.width * coverScale;
-            const ch = mainImg.height * coverScale;
-            ctx.filter = 'blur(45px)';
-            ctx.drawImage(mainImg, (canvasSize - cw) / 2, (canvasSize - ch) / 2, cw, ch);
-            ctx.filter = 'none';
-            
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.fillRect(0,0, canvasSize, canvasSize);
-
-            const fitScale = Math.min(canvasSize / mainImg.width, canvasSize / mainImg.height);
-            const w = mainImg.width * fitScale;
-            const h = mainImg.height * fitScale;
-            const x = (canvasSize - w) / 2;
-            const y = (canvasSize - h) / 2; 
-            
-            ctx.save();
-            ctx.shadowColor = "rgba(0,0,0,0.4)";
-            ctx.shadowBlur = 40;
-            ctx.shadowOffsetY = 15;
-            ctx.drawImage(mainImg, x, y, w, h);
-            ctx.restore();
-        }
-
-        const topGrd = ctx.createLinearGradient(0, 0, 0, 300);
-        topGrd.addColorStop(0, "rgba(0,0,0,0.6)");
-        topGrd.addColorStop(1, "transparent");
-        ctx.fillStyle = topGrd;
-        ctx.fillRect(0, 0, canvasSize, 300);
-
-        const btmGrd = ctx.createLinearGradient(0, 500, 0, canvasSize);
-        btmGrd.addColorStop(0, "transparent");
-        btmGrd.addColorStop(1, "rgba(0,0,0,0.95)");
-        ctx.fillStyle = btmGrd;
-        ctx.fillRect(0, 0, canvasSize, canvasSize);
-
-        ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-        ctx.font = "bold 38px -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif";
-        ctx.textAlign = "left";
-        ctx.fillText("THAKARSHI FAB", 60, 80);
-        ctx.font = "24px -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif";
-        ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-        ctx.fillText("Premium Textile Wholesale", 60, 115);
-
-        if(millLogoUrl) {
-            try {
-                const logoImg = await loadImage(millLogoUrl);
-                ctx.save();
-                ctx.shadowColor = "rgba(0,0,0,0.4)";
-                ctx.shadowBlur = 25;
-                ctx.shadowOffsetY = 5;
-                ctx.fillStyle = "#ffffff";
-                
-                const boxWidth = 260;
-                const boxHeight = 110;
-                const boxX = canvasSize - boxWidth - 60;
-                const boxY = 40;
-                
-                ctx.beginPath();
-                ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 20);
-                ctx.fill();
-                ctx.restore();
-                
-                const lScale = Math.min((boxWidth - 40) / logoImg.width, (boxHeight - 40) / logoImg.height);
-                const lW = logoImg.width * lScale;
-                const lH = logoImg.height * lScale;
-                const lx = boxX + (boxWidth - lW) / 2;
-                const ly = boxY + (boxHeight - lH) / 2;
-                
-                ctx.drawImage(logoImg, lx, ly, lW, lH);
-            } catch(e) { console.warn("Could not load mill logo for poster", e); }
-        }
-
-        ctx.textAlign = "left";
-        let specsText = `${(p.mainCategory || 'FABRIC').toUpperCase()}  •  ${(p.fabricWidth || 'PREMIUM QUALITY').toUpperCase()}`;
-        
-        ctx.fillStyle = "#d4af37"; 
-        ctx.font = "bold 30px -apple-system, 'Segoe UI', Roboto, sans-serif";
-        ctx.fillText(specsText, 60, 880);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 75px -apple-system, 'Segoe UI', Roboto, sans-serif";
-        let safeName = p.name;
-        if(safeName.length > 20) safeName = safeName.substring(0, 20) + '...';
-        ctx.fillText(safeName, 60, 960);
-
-        const btnWidth = 380;
-        const btnHeight = 85;
-        const btnX = canvasSize - btnWidth - 60;
-        const btnY = 890;
-
-        ctx.fillStyle = "#25D366";
-        ctx.beginPath();
-        ctx.roundRect(btnX, btnY, btnWidth, btnHeight, 45); 
-        ctx.fill();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.font = "bold 32px -apple-system, 'Segoe UI', Roboto, sans-serif";
-        ctx.fillText(`📞  ${phone}`, btnX + (btnWidth/2), btnY + 55);
-        
-        loader.style.display = 'none';
-        btn.disabled = false;
-        btn.textContent = "Download Poster (PNG)";
-        
-        btn.onclick = () => {
-            const link = document.createElement('a');
-            link.download = `${p.name.replace(/[^a-z0-9]/gi, '_')}_Promo.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        };
-    } catch (err) {
-        alert("Error generating poster. Check console for details.");
-        console.error(err);
-        loader.textContent = "Error Generation Failed";
-        btn.textContent = "Error";
-    }
+    if (p.mainCategory || p.category) { msg += `Category: ${p.mainCategory ? p.mainCategory.toUpperCase() : ''} | ${p.category || ''}\n`; }
+    if (p.fabricWidth) { msg += `Width: ${p.fabricWidth}\n`; }
+    
+    if (p.mrp) { msg += `MRP: ₹${p.mrp}\n`; }
+    
+    // ADDED W/S RATE TEXT
+    const priceStr = p.price ? parseFloat(p.price).toLocaleString() : 'Request Price';
+    msg += `W/S Rate: ₹${priceStr} / ${p.uom || 'meter'}\n\n`;
+    msg += `View catalog here: ${baseUrl}`;
+    
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-function loadImage(url) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = url + (url.includes('?') ? '&' : '?') + 'notaint=' + new Date().getTime(); 
+function openProductModal(id) {
+    const product = allProducts.find(p => p.id === id);
+    if (!product) return;
+    
+    pdCurrentProductId = id;
+    
+    if (product.imageUrls && product.imageUrls.length > 0) {
+        pdImagesArray = product.imageUrls.map(url => optimizeImageUrl(url, 1200));
+    } else if (product.imageUrl) {
+        pdImagesArray = [optimizeImageUrl(product.imageUrl, 1200)];
+    } else { pdImagesArray = ['default.jpg']; }
+    pdCurrentIndex = 0;
+    
+    document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
+    document.getElementById('pdPrevBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
+    document.getElementById('pdNextBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
+    
+    const mainCat = product.mainCategory ? `<span style="color:var(--primary); font-weight:bold;">${product.mainCategory.toUpperCase()}</span> | ` : '';
+    document.getElementById('pdCategory').innerHTML = `${mainCat}${product.category || 'Other'}`;
+    document.getElementById('pdName').textContent = product.name || 'Unnamed Product';
+    
+    const millContainer = document.getElementById('pdMillContainer');
+    const logoImg = document.getElementById('pdMillLogo');
+    const millText = document.getElementById('pdMillText');
+    const millObj = activeMillsMap[product.mill];
+
+    if (product.mill && product.mill !== 'generic' && millObj) {
+        millContainer.style.display = 'block';
+        millText.textContent = millObj.name.toUpperCase();
+        
+        if (millObj.logoUrl) {
+            logoImg.src = millObj.logoUrl;
+            logoImg.style.display = 'block';
+            millText.style.display = 'none';
+        } else {
+            logoImg.style.display = 'none';
+            millText.style.display = 'block';
+        }
+    } else {
+        millContainer.style.display = 'none';
+    }
+    
+    const uom = product.uom || 'meter';
+    
+    // FORMATTING MRP AND W/S RATE FOR MODAL
+    const mrpHtmlModal = product.mrp ? `<div style="font-size: 1.1rem; color: #1a1a1a; margin-bottom: 4px; font-weight: 700;">MRP: ₹${parseFloat(product.mrp).toLocaleString()}</div>` : '';
+    const priceStrModal = product.price ? `<span style="font-size:1.1rem; color:#666; font-weight:600;">W/S Rate:</span> ₹${parseFloat(product.price).toLocaleString()} / ${uom}` : `Request Price / ${uom}`;
+    document.getElementById('pdPrice').innerHTML = `${mrpHtmlModal}<div style="color: var(--primary); font-size: 1.6rem; margin-top:4px;">${priceStrModal}</div>`;
+    
+    const widthContainer = document.getElementById('pdWidthSpec');
+    if (product.fabricWidth) {
+        widthContainer.style.display = 'block';
+        widthContainer.innerHTML = `📐 Fabric Width / Panna: <span>${product.fabricWidth}</span>`;
+    } else { widthContainer.style.display = 'none'; }
+
+    document.getElementById('pdDesc').textContent = product.description || 'No additional details available for this fabric.';
+    
+    const addBtn = document.getElementById('pdAddBtn');
+    addBtn.dataset.id = id; 
+    if (selectedItems.has(id)) {
+        addBtn.textContent = 'Added to Inquiry ✓'; addBtn.style.backgroundColor = '#28a745';
+    } else {
+        addBtn.textContent = 'Add to Inquiry'; addBtn.style.backgroundColor = '#1a1a1a';
+    }
+    
+    document.getElementById('productDetailsModal').classList.add('show-modal');
+}
+
+function closeProductModal() {
+    document.getElementById('productDetailsModal').classList.remove('show-modal');
+    pdCurrentProductId = null;
+    pdMainImage.style.transformOrigin = 'center center'; 
+}
+
+function changePdImage(direction) {
+    pdCurrentIndex += direction;
+    if (pdCurrentIndex < 0) pdCurrentIndex = pdImagesArray.length - 1;
+    if (pdCurrentIndex >= pdImagesArray.length) pdCurrentIndex = 0;
+    document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
+}
+
+function loadProductsFromFirestore() {
+    productsSection.innerHTML = `
+        <div class="category-filters" id="dynamicFiltersContainer" style="margin-top: 10px;">
+            <button class="filter-pill active" data-filter="all">All Fabrics</button>
+            <button class="filter-pill" data-filter="shirting">Shirting</button>
+            <button class="filter-pill" data-filter="suiting">Suiting</button>
+            <button class="filter-pill" data-filter="cotton">Cotton</button>
+            <button class="filter-pill" data-filter="linen">Linen</button>
+            <button class="filter-pill" data-filter="pv suiting">PV Suiting</button>
+            <button class="filter-pill" data-filter="tr suiting">TR Suiting</button>
+        </div>
+        <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
+        </div>
+        <div id="productsGrid" class="product-grid">
+            ${generateSkeletons()}
+        </div>
+    `;
+
+    db.collection('mills').orderBy('name').onSnapshot(millSnap => {
+        activeMillsMap = {};
+        document.querySelectorAll('.dynamic-mill').forEach(e => e.remove());
+        const filterContainer = document.getElementById('dynamicFiltersContainer');
+        
+        millSnap.forEach(doc => {
+            const m = doc.data();
+            activeMillsMap[doc.id] = m;
+            
+            const btn = document.createElement('button');
+            btn.className = 'filter-pill dynamic-mill';
+            btn.dataset.filter = doc.id;
+            btn.textContent = m.name;
+            btn.style.borderColor = '#1a1a1a';
+            filterContainer.insertBefore(btn, filterContainer.children[1]);
+        });
+        
+        setupFilterListeners();
+        if(allProducts.length > 0) renderProducts(true); 
+    });
+
+    db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        allProducts = [];
+        snapshot.forEach(doc => { allProducts.push({ id: doc.id, ...doc.data() }); });
+        setupFilterListeners();
+        renderProducts(true); 
     });
 }
 
-document.getElementById('prodImages').addEventListener('change', function(e) {
-    for (let file of this.files) { uploadFilesArray.push(file); }
-    this.value = ''; 
-    renderUploadPreviews();
+loadMoreBtn.addEventListener('click', () => {
+    currentPage++;
+    renderProducts(false); 
 });
 
-function renderUploadPreviews() {
-    const container = document.getElementById('uploadImagesPreview');
-    container.innerHTML = '';
-    if (uploadFilesArray.length === 0) {
-        container.innerHTML = '<small style="color:#888; display:flex; align-items:center; width:100%; justify-content:center;">Selected images will appear here for sorting.</small>';
+function renderProducts(resetPage = true) {
+    if (resetPage) currentPage = 1;
+    
+    const productsGrid = document.getElementById('productsGrid');
+    
+    let filteredProducts = allProducts.filter(product => {
+        if (product.isAvailable === false) return false;
+        
+        const c1 = product.category ? product.category.toLowerCase() : '';
+        const m1 = product.mainCategory ? product.mainCategory.toLowerCase() : '';
+        const searchCat = currentCategory.toLowerCase();
+        
+        let matchesCategory = false;
+        if (searchCat === 'all') { matchesCategory = true; } 
+        else if (searchCat === 'suiting') { matchesCategory = (c1.includes('suiting') || m1.includes('suiting')); } 
+        else { matchesCategory = (c1 === searchCat || m1 === searchCat || product.mill === searchCat); }
+
+        const w1 = product.fabricWidth ? product.fabricWidth.toLowerCase() : '';
+        const millObj = activeMillsMap[product.mill];
+        const millSearchName = millObj ? millObj.name.toLowerCase() : '';
+        
+        const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || 
+                              (c1.includes(currentSearchTerm)) || (m1.includes(currentSearchTerm)) || (w1.includes(currentSearchTerm)) || (millSearchName.includes(currentSearchTerm));
+                              
+        return matchesCategory && matchesSearch;
+    });
+
+    if (resetPage) productsGrid.innerHTML = ''; 
+
+    if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center; color: #666; margin-top: 20px;">No products match your search or filter.</p>';
+        loadMoreContainer.style.display = 'none';
         return;
     }
-    
-    uploadFilesArray.forEach((file, index) => {
-        const url = URL.createObjectURL(file);
-        const badge = index === 0 ? `<div class="badge">⭐ Main Image</div>` : '';
+
+    const startIndex = resetPage ? 0 : (currentPage - 1) * itemsPerPage;
+    const endIndex = currentPage * itemsPerPage;
+    const productsToRender = filteredProducts.slice(startIndex, endIndex);
+
+    productsToRender.forEach(product => {
+        const card = document.createElement('article');
+        card.className = 'product-card';
         
-        container.innerHTML += `
-            <div class="img-wrap">
-                ${badge}
-                <img src="${url}">
-                <div class="img-controls">
-                    <button type="button" onclick="moveImage(${index}, -1, 'upload')" ${index === 0 ? 'disabled' : ''}>◀</button>
-                    <button type="button" class="remove-btn" onclick="removeImage(${index}, 'upload')">✖</button>
-                    <button type="button" onclick="moveImage(${index}, 1, 'upload')" ${index === uploadFilesArray.length - 1 ? 'disabled' : ''}>▶</button>
+        let imagesHtml = '';
+        let hasMultipleImages = false;
+
+        if (product.imageUrls && product.imageUrls.length > 1) {
+            hasMultipleImages = true;
+            imagesHtml = product.imageUrls.map(url => `<img src="${optimizeImageUrl(url, 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`).join('');
+        } else if (product.imageUrls && product.imageUrls.length === 1) {
+            imagesHtml = `<img src="${optimizeImageUrl(product.imageUrls[0], 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
+        } else if (product.imageUrl) {
+            imagesHtml = `<img src="${optimizeImageUrl(product.imageUrl, 600)}" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
+        } else {
+            imagesHtml = `<img src="default.jpg" alt="${product.name}" loading="lazy" onclick="openProductModal('${product.id}')">`;
+        }
+        
+        const mainCat = product.mainCategory ? `<span style="color:var(--primary); font-weight:bold;">${product.mainCategory.toUpperCase()}</span> | ` : '';
+        
+        const millObj = activeMillsMap[product.mill];
+        const millName = (product.mill && product.mill !== 'generic' && millObj) ? `<b style="color:var(--primary);">${millObj.name.toUpperCase()}</b> • ` : '';
+        
+        const uom = product.uom || 'meter';
+        const widthBadgeHtml = product.fabricWidth ? `<div class="width-badge">📐 Width: ${product.fabricWidth}</div>` : '';
+
+        // FORMATTING MRP AND W/S RATE FOR GRID CARD
+        const mrpHtml = product.mrp ? `<div style="font-size: 0.9rem; color: #1a1a1a; font-weight: 700; margin-bottom: 2px;">MRP: ₹${product.mrp}</div>` : '';
+        const priceStr = product.price ? `<span style="font-size:0.85rem; color:#666;">W/S Rate:</span> ₹${product.price} / ${uom}` : `Request Price / ${uom}`;
+
+        card.innerHTML = `
+            <div class="product-media">
+                <div class="product-gallery" id="gallery-${product.id}">
+                    ${imagesHtml}
+                </div>
+                ${hasMultipleImages ? `
+                    <button class="gallery-btn prev-btn" onclick="scrollGallery('${product.id}', -1)">&#10094;</button>
+                    <button class="gallery-btn next-btn" onclick="scrollGallery('${product.id}', 1)">&#10095;</button>
+                    <div class="gallery-indicator">Swipe for more</div>
+                ` : ''}
+            </div>
+            <div class="product-info">
+                <span class="product-category" style="text-transform: capitalize;">${millName}${mainCat}${product.category || 'Other'}</span>
+                <h3 class="product-title hover-link" onclick="openProductModal('${product.id}')" title="Click to view details">${product.name || 'Unnamed Product'}</h3>
+                ${widthBadgeHtml}
+                <p class="product-price" style="margin-top: 8px; line-height: 1.4;">
+                    ${mrpHtml}
+                    <span style="${product.mrp ? 'color: var(--primary); font-size: 1.1rem;' : ''}">${priceStr}</span>
+                </p>
+                <div class="product-actions">
+                    <button type="button" class="btn-add-inquiry ${selectedItems.has(product.id) ? 'added' : ''}" data-id="${product.id}">
+                        ${selectedItems.has(product.id) ? 'Added ✓' : 'Add to Inquiry'}
+                    </button>
                 </div>
             </div>
         `;
+        productsGrid.appendChild(card);
     });
+
+    document.querySelectorAll('.btn-add-inquiry').forEach(btn => {
+        btn.removeEventListener('click', toggleSelection);
+        btn.addEventListener('click', toggleSelection);
+    });
+
+    if (filteredProducts.length > endIndex) { loadMoreContainer.style.display = 'block'; } 
+    else { loadMoreContainer.style.display = 'none'; }
 }
 
-function openEditModal(id) {
-    const p = adminProductsMap[id];
-    document.getElementById('editProdId').value = id;
-    document.getElementById('editProdName').value = p.name;
-    document.getElementById('editProdMill').value = p.mill || 'generic';
-    document.getElementById('editProdMainCategory').value = p.mainCategory || 'shirting';
-    
-    let subCat = p.category;
-    if (subCat === 'suitings') subCat = 'other';
-    document.getElementById('editProdCategory').value = subCat || 'cotton';
-    
-    document.getElementById('editProdPrice').value = p.price || '';
-    
-    // LOAD MRP VALUE
-    document.getElementById('editProdMrp').value = p.mrp || '';
-    
-    document.getElementById('editProdUom').value = p.uom || 'meter';
-    document.getElementById('editProdWidth').value = p.fabricWidth || '';
-    document.getElementById('editProdDesc').value = p.description || '';
-    document.getElementById('editProdAvailable').value = p.isAvailable !== false ? 'true' : 'false';
-    
-    document.getElementById('editProdImages').value = '';
-    
-    editMediaArray = [];
-    const existingImgs = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls : (p.imageUrl ? [p.imageUrl] : []);
-    existingImgs.forEach(url => { editMediaArray.push({ type: 'url', val: url, previewUrl: url }); });
-    
-    renderEditPreviews();
-    document.getElementById('editStatusMsg').style.display = 'none';
-    document.getElementById('editModal').style.display = 'block';
+function setupFilterListeners() {
+    const pills = document.querySelectorAll('.filter-pill');
+    pills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+            pills.forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCategory = e.target.dataset.filter;
+            renderProducts(true); 
+        });
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.replaceWith(searchInput.cloneNode(true));
+        const newSearchInput = document.getElementById('searchInput');
+        newSearchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value.toLowerCase().trim();
+            renderProducts(true); 
+        });
+    }
 }
 
-document.getElementById('editProdImages').addEventListener('change', function(e) {
-    for (let file of this.files) { editMediaArray.push({ type: 'file', val: file, previewUrl: URL.createObjectURL(file) }); }
-    this.value = '';
-    renderEditPreviews();
-});
+function generateSkeletons() {
+    let skeletons = '';
+    for(let i=0; i<8; i++) {
+        skeletons += `<div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-info"><div class="skeleton-text short"></div><div class="skeleton-text medium"></div><div class="skeleton-button"></div></div></div>`;
+    }
+    return skeletons;
+}
 
-function renderEditPreviews() {
-    const container = document.getElementById('editCurrentImagesPreview');
-    container.innerHTML = '';
-    if (editMediaArray.length === 0) {
-        container.innerHTML = '<small style="color:#888; display:flex; align-items:center; width:100%; justify-content:center;">No saved images remaining. Please select new ones above.</small>';
+function toggleSelection(e) {
+    if(!auth.currentUser) {
+        openAuthModal('login');
         return;
     }
     
-    editMediaArray.forEach((item, index) => {
-        const badge = index === 0 ? `<div class="badge">⭐ Main Image</div>` : '';
-        container.innerHTML += `
-            <div class="img-wrap">
-                ${badge}
-                <img src="${item.previewUrl}">
-                <div class="img-controls">
-                    <button type="button" onclick="moveImage(${index}, -1, 'edit')" ${index === 0 ? 'disabled' : ''}>◀</button>
-                    <button type="button" class="remove-btn" onclick="removeImage(${index}, 'edit')">✖</button>
-                    <button type="button" onclick="moveImage(${index}, 1, 'edit')" ${index === editMediaArray.length - 1 ? 'disabled' : ''}>▶</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-function moveImage(index, direction, context) {
-    const arr = (context === 'upload') ? uploadFilesArray : editMediaArray;
-    if (index + direction < 0 || index + direction >= arr.length) return;
-    const temp = arr[index]; arr[index] = arr[index + direction]; arr[index + direction] = temp;
-    context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
-}
-
-function removeImage(index, context) {
-    const arr = (context === 'upload') ? uploadFilesArray : editMediaArray;
-    arr.splice(index, 1);
-    context === 'upload' ? renderUploadPreviews() : renderEditPreviews();
-}
-
-async function uploadToCloudinary(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    const response = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-    if (!response.ok) throw new Error('Failed to upload media to Cloudinary');
-    const data = await response.json();
-    return data.secure_url; 
-}
-
-const uploadForm = document.getElementById('uploadForm');
-const uploadBtn = document.getElementById('uploadBtn');
-const progressText = document.getElementById('progressText');
-const statusMsg = document.getElementById('statusMsg');
-
-uploadForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (uploadFilesArray.length === 0) { alert("Please add at least one product image."); return; }
-
-    uploadBtn.disabled = true; progressText.style.display = 'block'; statusMsg.style.display = 'none';
-
-    try {
-        const imageUrls = [];
-        for (let i = 0; i < uploadFilesArray.length; i++) {
-            progressText.textContent = `Uploading Image ${i + 1} of ${uploadFilesArray.length}...`;
-            const url = await uploadToCloudinary(uploadFilesArray[i]);
-            imageUrls.push(url);
-        }
-
-        progressText.textContent = 'Saving data to Thakarshi Fab catalog...';
-        
-        const priceInput = document.getElementById('prodPrice').value;
-        const priceToSave = priceInput ? Number(priceInput) : null;
-        
-        // SAVE MRP VALUE
-        const mrpInput = document.getElementById('prodMrp').value;
-        const mrpToSave = mrpInput ? Number(mrpInput) : null;
-
-        await db.collection('products').add({
-            name: document.getElementById('prodName').value.trim(), 
-            mill: document.getElementById('prodMill').value, 
-            mainCategory: document.getElementById('prodMainCategory').value, 
-            category: document.getElementById('prodCategory').value, 
-            uom: document.getElementById('prodUom').value, 
-            price: priceToSave, 
-            mrp: mrpToSave,
-            fabricWidth: document.getElementById('prodWidth').value.trim(), 
-            description: document.getElementById('prodDesc').value.trim(), 
-            imageUrls: imageUrls, 
-            isAvailable: true, 
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        statusMsg.textContent = 'Success! Product added and is now live on the website.';
-        statusMsg.className = 'form-status success'; statusMsg.style.display = 'block';
-        uploadForm.reset(); uploadFilesArray = []; renderUploadPreviews();
-        setTimeout(() => { switchTab('section-products', document.querySelectorAll('.tab-btn')[1]); }, 1500);
-
-    } catch (error) {
-        statusMsg.textContent = 'Error: ' + error.message; statusMsg.className = 'form-status error'; statusMsg.style.display = 'block';
-    } finally { uploadBtn.disabled = false; progressText.style.display = 'none'; }
-});
-
-document.getElementById('editForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (editMediaArray.length === 0) { alert("A product must have at least one image."); return; }
+    const id = e.target.dataset.id; 
     
-    const btn = document.getElementById('saveEditBtn');
-    const msg = document.getElementById('editStatusMsg');
-    btn.disabled = true; btn.textContent = "Saving...";
-
-    try {
-        let finalImageUrls = [];
-        for (let i = 0; i < editMediaArray.length; i++) {
-            let item = editMediaArray[i];
-            if (item.type === 'url') { finalImageUrls.push(item.val);  } 
-            else {
-                btn.textContent = `Uploading New Image ${i + 1}...`;
-                const url = await uploadToCloudinary(item.val); 
-                finalImageUrls.push(url);
-            }
-        }
-
-        btn.textContent = "Updating database...";
+    if (selectedItems.has(id)) {
+        selectedItems.delete(id);
+        e.target.textContent = 'Add to Inquiry';
+        e.target.classList.remove('added');
+        e.target.style.backgroundColor = ''; 
+        showToast('Removed from inquiry');
+    } else {
+        selectedItems.add(id);
+        e.target.textContent = 'Added ✓';
+        e.target.classList.add('added');
+        if(e.target.id === 'pdAddBtn') e.target.style.backgroundColor = '#28a745'; 
+        showToast('Added to inquiry list!');
         
-        const editPriceInput = document.getElementById('editProdPrice').value;
-        const editPriceToSave = editPriceInput ? Number(editPriceInput) : null;
-        
-        // UPDATE MRP VALUE
-        const editMrpInput = document.getElementById('editProdMrp').value;
-        const editMrpToSave = editMrpInput ? Number(editMrpInput) : null;
+        const cartCountBadge = document.getElementById('cartCountBadge');
+        cartCountBadge.classList.remove('cart-bump');
+        void cartCountBadge.offsetWidth; 
+        cartCountBadge.classList.add('cart-bump');
+    }
+    
+    updateSelectedUI();
+    document.getElementById('cartCountBadge').textContent = `(${selectedItems.size})`;
+    renderProducts(false); 
+}
 
-        await db.collection('products').doc(document.getElementById('editProdId').value).update({
-            name: document.getElementById('editProdName').value.trim(),
-            mill: document.getElementById('editProdMill').value, 
-            mainCategory: document.getElementById('editProdMainCategory').value,
-            category: document.getElementById('editProdCategory').value,
-            price: editPriceToSave,
-            mrp: editMrpToSave,
-            uom: document.getElementById('editProdUom').value,
-            fabricWidth: document.getElementById('editProdWidth').value.trim(),
-            description: document.getElementById('editProdDesc').value.trim(),
-            isAvailable: document.getElementById('editProdAvailable').value === 'true',
-            imageUrls: finalImageUrls
-        });
-
-        msg.textContent = "Product updated successfully!";
-        msg.className = "form-status success"; msg.style.display = "block";
-        setTimeout(() => { document.getElementById('editModal').style.display = 'none'; }, 1000);
-    } catch (err) {
-        msg.textContent = "Error: " + err.message; msg.className = "form-status error"; msg.style.display = "block";
-    } finally { btn.disabled = false; btn.textContent = "Save Changes"; }
-});
-
-async function fetchAdminInquiries() {
-    const prodSnapshot = await db.collection('products').get();
-    const productMap = {};
-    prodSnapshot.forEach(doc => { productMap[doc.id] = doc.data().name; });
-
-    db.collection('inquiries').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-        const tbody = document.getElementById('inquiriesTableBody');
-        tbody.innerHTML = '';
-        if (snapshot.empty) { tbody.innerHTML = '<tr><td colspan="5">No customer inquiries yet.</td></tr>'; return; }
-
-        snapshot.forEach(doc => {
-            const inq = doc.data();
-            const id = doc.id;
-            const date = inq.timestamp ? inq.timestamp.toDate().toLocaleString() : 'Just now';
-            const status = inq.status || 'New'; 
-            
-            let productsHtml = 'None';
-            if (inq.selectedProducts && inq.selectedProducts.length > 0) {
-                productsHtml = `<ul style="margin:0; padding-left:15px; font-size:0.85rem;">` + 
-                               inq.selectedProducts.map(pid => `<li>${productMap[pid] || 'Unknown Fabric'}</li>`).join('') + 
-                               `</ul>`;
-            }
-
-            let selectClass = status === 'New' ? 'status-new' : (status === 'Contacted' ? 'status-contacted' : 'status-closed');
-
-            tbody.innerHTML += `
-                <tr>
-                    <td>
-                        <select class="status-select ${selectClass}" onchange="updateInquiryStatus('${id}', this)">
-                            <option value="New" ${status === 'New' ? 'selected' : ''}>New</option>
-                            <option value="Contacted" ${status === 'Contacted' ? 'selected' : ''}>Contacted</option>
-                            <option value="Closed" ${status === 'Closed' ? 'selected' : ''}>Closed</option>
-                        </select>
-                    </td>
-                    <td><small>${date}</small></td>
-                    <td><strong>${inq.name}</strong><br>Email: <a href="mailto:${inq.email}">${inq.email}</a><br>Phone: ${inq.phone || 'N/A'}<br>City: ${inq.city || 'N/A'}</td>
-                    <td>${inq.message || '<em style="color:gray;">No message</em>'}</td>
-                    <td>${productsHtml}</td>
-                </tr>
+function updateSelectedUI() {
+    selectedList.innerHTML = '';
+    if (selectedItems.size === 0) {
+        emptyCartMsg.style.display = 'block';
+        proceedToInquiryBtn.style.display = 'none';
+        return;
+    }
+    emptyCartMsg.style.display = 'none';
+    proceedToInquiryBtn.style.display = 'block';
+    
+    Array.from(selectedItems).forEach(id => {
+        const product = allProducts.find(p => p.id === id);
+        if (product) {
+            const uom = product.uom || 'meter';
+            const widthText = product.fabricWidth ? ` | ${product.fabricWidth}` : '';
+            // ADDED W/S Rate to Cart List
+            const priceText = product.price ? `W/S Rate: ₹${product.price}` : 'Request Price';
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div style="flex-grow: 1;">
+                    <span style="font-weight: 600; display: block; margin-bottom: 4px;">${product.name || 'Unnamed Product'}</span>
+                    <span style="font-size: 0.8rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px;">${priceText} / ${uom}${widthText}</span>
+                </div>
             `;
-        });
-        document.getElementById('adminInquirySearch').dispatchEvent(new Event('input'));
+            selectedList.appendChild(li);
+        }
     });
 }
 
-async function updateInquiryStatus(id, selectElement) {
-    const newStatus = selectElement.value;
+modalWhatsappBtn.addEventListener('click', async () => {
+    if (!window.adminWhatsappNumber) { alert("The admin has not configured a WhatsApp number yet. Please use the 'Send via Email' option."); return; }
+
+    const customerName = document.getElementById('modalName').value.trim();
+    if (!customerName) { alert("Please enter your Full Name before sending the inquiry."); return; }
+
+    const customerEmail = document.getElementById('modalEmail2').value.trim() || 'N/A';
+    const customerPhone = document.getElementById('modalPhone').value.trim();
+    const customerCity = document.getElementById('modalCity').value.trim();
+    const customerMessage = document.getElementById('modalMessage').value.trim();
+    const selectedArray = Array.from(selectedItems);
+
     try {
-        await db.collection('inquiries').doc(id).update({ status: newStatus });
-        selectElement.className = `status-select status-${newStatus.toLowerCase()}`;
-    } catch (err) { alert("Failed to update status: " + err.message); }
-}
+        await db.collection('inquiries').add({
+            uid: auth.currentUser.uid, name: customerName, email: customerEmail, phone: customerPhone, city: customerCity,
+            message: customerMessage, selectedProducts: selectedArray, status: 'New (WhatsApp)', timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (error) { console.warn("Could not save to Firebase, routing to WhatsApp anyway.", error); }
+
+    let msg = `Hello Thakarshi Fab, I am *${customerName}*`;
+    if (customerCity) msg += ` from ${customerCity}`;
+    msg += `.\n\nI want to inquire about the following fabrics:\n\n`;
+
+    let counter = 1;
+    selectedArray.forEach(id => {
+        const p = allProducts.find(prod => prod.id === id);
+        if(p) {
+            const widthInfo = p.fabricWidth ? ` (Width: ${p.fabricWidth})` : '';
+            // ADDED W/S Rate to WhatsApp Message
+            const priceText = p.price ? `W/S Rate: ₹${p.price}` : 'Request Price';
+            msg += `${counter}. *${p.name}* - ${priceText}/${p.uom || 'meter'}${widthInfo}\n`;
+            counter++;
+        }
+    });
+
+    if (customerPhone) { msg += `\n*My Contact No:* ${customerPhone}`; }
+    if (customerMessage) { msg += `\n*Requirements/Notes:* ${customerMessage}`; }
+
+    selectedItems.clear();
+    updateSelectedUI();
+    document.getElementById('cartCountBadge').textContent = `(0)`;
+    cartModal.style.display = 'none';
+    renderProducts(false); 
+    
+    window.open(`https://wa.me/${window.adminWhatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+});
+
+modalInquiryForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    modalSubmitBtn.disabled = true; modalSubmitBtn.textContent = 'Sending…'; modalFormStatus.style.display = 'none';
+
+    const customerName = document.getElementById('modalName').value.trim();
+    const customerEmail = document.getElementById('modalEmail2').value.trim();
+    const customerPhone = document.getElementById('modalPhone').value.trim();
+    const customerCity = document.getElementById('modalCity').value.trim();
+    const customerMessage = document.getElementById('modalMessage').value.trim();
+    const selectedArray = Array.from(selectedItems);
+
+    const formData = {
+        uid: auth.currentUser.uid, name: customerName, email: customerEmail, phone: customerPhone, city: customerCity,
+        message: customerMessage, selectedProducts: selectedArray, status: 'New', timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        await db.collection('inquiries').add(formData);
+
+        const productNames = selectedArray.map(id => {
+            const p = allProducts.find(prod => prod.id === id);
+            return p ? `${p.name}${p.fabricWidth ? ` (${p.fabricWidth})` : ''}` : id;
+        }).join(", ");
+
+        const emailParams = {
+            from_name: customerName, from_email: customerEmail, phone: customerPhone, city: customerCity, message: customerMessage, products: productNames
+        };
+        
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams)
+            .then(() => console.log('Email sent successfully'))
+            .catch((err) => console.error('Email failed to send', err));
+
+        modalFormStatus.textContent = 'Inquiry sent successfully via Email! We will contact you soon.';
+        modalFormStatus.className = 'form-status success'; modalFormStatus.style.display = 'block';
+        modalInquiryForm.reset(); selectedItems.clear(); updateSelectedUI();
+        document.getElementById('cartCountBadge').textContent = `(0)`;
+        
+        renderProducts(false); 
+        setTimeout(() => { cartModal.style.display = 'none'; modalFormStatus.style.display = 'none'; }, 2000);
+    } catch (err) {
+        modalFormStatus.textContent = 'Error: ' + err.message;
+        modalFormStatus.className = 'form-status error'; modalFormStatus.style.display = 'block';
+    } finally {
+        modalSubmitBtn.disabled = false; modalSubmitBtn.textContent = 'Send via Email';
+    }
+});
+
+// Init
+loadProductsFromFirestore();
+loadContactSettings();
 </script>
 </body>
 </html>
