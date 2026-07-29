@@ -58,16 +58,21 @@
         
         .pd-content { display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
         
-        .pd-gallery-section { flex: 1.2; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); cursor: zoom-in; }
-        .pd-gallery-section img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.2s ease-out; transform-origin: center center; }
-        .pd-gallery-section:hover img { transform: scale(2.2); }
+        /* UPDATED: Gallery section now supports the Blurred BG Trick */
+        .pd-gallery-section { flex: 1.2; background: #f0f0f0; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); }
+        /* Notice how hover zoom is removed from CSS, handled manually now! */
+        .pd-gallery-section > img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease-out; transform-origin: center center; z-index: 1; filter: drop-shadow(0px 20px 30px rgba(0,0,0,0.15)); position: relative; }
         
+        /* NEW: Zoom Button styling */
+        #pdZoomBtn { position: absolute; bottom: 20px; right: 20px; z-index: 10; background: rgba(255,255,255,0.95); border: 1px solid #ddd; padding: 10px 18px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 0.95rem; color: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        #pdZoomBtn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); color: var(--primary); }
+
         .pd-info-section { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; background: var(--white); }
         
-        .pd-close { position: absolute; top: 15px; right: 20px; font-size: 2.2rem; cursor: pointer; color: #333; z-index: 10; background: rgba(255,255,255,0.9); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; line-height: 1; box-shadow: var(--shadow-sm); }
+        .pd-close { position: absolute; top: 15px; right: 20px; font-size: 2.2rem; cursor: pointer; color: #333; z-index: 10; background: rgba(255,255,255,0.9); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; line-height: 1; box-shadow: var(--shadow-sm); transition: background 0.2s;}
         .pd-close:hover { background: #eee; }
         
-        .pd-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 5; transition: background 0.2s; }
+        .pd-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
         .pd-arrow:hover { background: rgba(0,0,0,0.8); }
         .pd-arrow-left { left: 15px; }
         .pd-arrow-right { right: 15px; }
@@ -85,7 +90,6 @@
             .pd-gallery-section { flex: 0.8; border-right: none; border-bottom: 1px solid var(--gray-200); }
             .pd-info-section { flex: 1; padding: 25px; }
             .pd-close { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.8rem; }
-            .pd-gallery-section:hover img { transform: scale(1); } 
         }
 
         #backToTop { position: fixed; bottom: 30px; right: 30px; background: #1a1a1a; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 1500; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: background 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
@@ -175,9 +179,18 @@
         <span class="pd-close" onclick="closeProductModal()">&times;</span>
         
         <div class="pd-gallery-section" id="pdGalleryContainer">
+            
+            <!-- NEW: Apple/Nike Dynamic Blurred Background Layer -->
+            <div id="pdBlurredBg" style="position: absolute; top: -20%; left: -20%; right: -20%; bottom: -20%; background-size: cover; background-position: center; filter: blur(50px); opacity: 0.45; z-index: 0; pointer-events: none; transition: background-image 0.3s ease;"></div>
+            
+            <!-- Main Floating Image -->
             <img id="pdMainImage" src="" alt="Product view">
+            
             <button class="pd-arrow pd-arrow-left" id="pdPrevBtn" onclick="changePdImage(-1)">&#10094;</button>
             <button class="pd-arrow pd-arrow-right" id="pdNextBtn" onclick="changePdImage(1)">&#10095;</button>
+
+            <!-- NEW: Dedicated Zoom Button -->
+            <button id="pdZoomBtn" onclick="toggleZoom()">🔍 Zoom In</button>
         </div>
         
         <div class="pd-info-section">
@@ -202,7 +215,6 @@
             </button>
             
             <div style="background: var(--gray-100); padding: 15px; border-radius: 8px; margin-bottom: 20px; margin-top: 20px; border-left: 4px solid var(--primary);">
-                <!-- MODIFIED W/S RATE TEXT FOR MODAL -->
                 <div id="pdPrice"></div>
                 <div id="pdWidthSpec" style="margin-top: 6px; font-weight: 600; color: #333; font-size: 0.95rem;"></div>
             </div>
@@ -295,7 +307,7 @@ let pdCurrentProductId = null;
 
 let currentUserProfile = null; 
 window.adminWhatsappNumber = null;
-let activeMillsMap = {}; // Will hold dynamic mill data
+let activeMillsMap = {}; 
 
 const productsSection = document.getElementById('productsSection');
 const openCartModalBtn = document.getElementById('openCartModal');
@@ -334,11 +346,30 @@ window.addEventListener('scroll', () => {
 
 function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
+/* --- NEW ZOOM LOGIC --- */
 const pdGalleryContainer = document.getElementById('pdGalleryContainer');
 const pdMainImage = document.getElementById('pdMainImage');
+let isModalZoomed = false;
+
+function toggleZoom() {
+    isModalZoomed = !isModalZoomed;
+    const btn = document.getElementById('pdZoomBtn');
+    
+    if (isModalZoomed) {
+        pdMainImage.style.transform = 'scale(2.2)';
+        pdMainImage.style.cursor = 'zoom-out';
+        btn.innerHTML = '➖ Zoom Out';
+    } else {
+        pdMainImage.style.transform = 'scale(1)';
+        pdMainImage.style.transformOrigin = 'center center';
+        pdMainImage.style.cursor = 'default';
+        btn.innerHTML = '🔍 Zoom In';
+    }
+}
 
 pdGalleryContainer.addEventListener('mousemove', (e) => {
-    if (window.innerWidth > 768) {
+    // Only pan around IF the user has explicitly clicked the zoom button
+    if (window.innerWidth > 768 && isModalZoomed) {
         const rect = pdGalleryContainer.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -349,8 +380,11 @@ pdGalleryContainer.addEventListener('mousemove', (e) => {
 });
 
 pdGalleryContainer.addEventListener('mouseleave', () => {
-    pdMainImage.style.transformOrigin = 'center center';
+    // Auto reset if mouse leaves gallery area to prevent getting stuck
+    if(isModalZoomed) toggleZoom(); 
 });
+/* ----------------------- */
+
 
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
@@ -556,8 +590,6 @@ function shareProductWhatsapp() {
     if (p.fabricWidth) { msg += `Width: ${p.fabricWidth}\n`; }
     
     if (p.mrp) { msg += `MRP: ₹${p.mrp}\n`; }
-    
-    // ADDED W/S RATE TEXT
     const priceStr = p.price ? parseFloat(p.price).toLocaleString() : 'Request Price';
     msg += `W/S Rate: ₹${priceStr} / ${p.uom || 'meter'}\n\n`;
     msg += `View catalog here: ${baseUrl}`;
@@ -571,6 +603,13 @@ function openProductModal(id) {
     
     pdCurrentProductId = id;
     
+    // RESET ZOOM STATE ON OPEN
+    isModalZoomed = false;
+    pdMainImage.style.transform = 'scale(1)';
+    pdMainImage.style.transformOrigin = 'center center';
+    pdMainImage.style.cursor = 'default';
+    document.getElementById('pdZoomBtn').innerHTML = '🔍 Zoom In';
+    
     if (product.imageUrls && product.imageUrls.length > 0) {
         pdImagesArray = product.imageUrls.map(url => optimizeImageUrl(url, 1200));
     } else if (product.imageUrl) {
@@ -578,7 +617,10 @@ function openProductModal(id) {
     } else { pdImagesArray = ['default.jpg']; }
     pdCurrentIndex = 0;
     
+    // SET MAIN IMAGE & BLURRED BACKGROUND
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
+    document.getElementById('pdBlurredBg').style.backgroundImage = `url('${pdImagesArray[pdCurrentIndex]}')`;
+    
     document.getElementById('pdPrevBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
     document.getElementById('pdNextBtn').style.display = pdImagesArray.length > 1 ? 'flex' : 'none';
     
@@ -609,7 +651,6 @@ function openProductModal(id) {
     
     const uom = product.uom || 'meter';
     
-    // FORMATTING MRP AND W/S RATE FOR MODAL
     const mrpHtmlModal = product.mrp ? `<div style="font-size: 1.1rem; color: #1a1a1a; margin-bottom: 4px; font-weight: 700;">MRP: ₹${parseFloat(product.mrp).toLocaleString()}</div>` : '';
     const priceStrModal = product.price ? `<span style="font-size:1.1rem; color:#666; font-weight:600;">W/S Rate:</span> ₹${parseFloat(product.price).toLocaleString()} / ${uom}` : `Request Price / ${uom}`;
     document.getElementById('pdPrice').innerHTML = `${mrpHtmlModal}<div style="color: var(--primary); font-size: 1.6rem; margin-top:4px;">${priceStrModal}</div>`;
@@ -636,14 +677,25 @@ function openProductModal(id) {
 function closeProductModal() {
     document.getElementById('productDetailsModal').classList.remove('show-modal');
     pdCurrentProductId = null;
+    
+    // Ensure zoom is reset when closing
+    isModalZoomed = false;
+    pdMainImage.style.transform = 'scale(1)';
     pdMainImage.style.transformOrigin = 'center center'; 
+    pdMainImage.style.cursor = 'default';
+    document.getElementById('pdZoomBtn').innerHTML = '🔍 Zoom In';
 }
 
 function changePdImage(direction) {
     pdCurrentIndex += direction;
     if (pdCurrentIndex < 0) pdCurrentIndex = pdImagesArray.length - 1;
     if (pdCurrentIndex >= pdImagesArray.length) pdCurrentIndex = 0;
+    
+    // Reset zoom when navigating arrows
+    if(isModalZoomed) toggleZoom(); 
+    
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
+    document.getElementById('pdBlurredBg').style.backgroundImage = `url('${pdImagesArray[pdCurrentIndex]}')`;
 }
 
 function loadProductsFromFirestore() {
@@ -764,7 +816,6 @@ function renderProducts(resetPage = true) {
         const uom = product.uom || 'meter';
         const widthBadgeHtml = product.fabricWidth ? `<div class="width-badge">📐 Width: ${product.fabricWidth}</div>` : '';
 
-        // FORMATTING MRP AND W/S RATE FOR GRID CARD
         const mrpHtml = product.mrp ? `<div style="font-size: 0.9rem; color: #1a1a1a; font-weight: 700; margin-bottom: 2px;">MRP: ₹${product.mrp}</div>` : '';
         const priceStr = product.price ? `<span style="font-size:0.85rem; color:#666;">W/S Rate:</span> ₹${product.price} / ${uom}` : `Request Price / ${uom}`;
 
@@ -883,7 +934,6 @@ function updateSelectedUI() {
         if (product) {
             const uom = product.uom || 'meter';
             const widthText = product.fabricWidth ? ` | ${product.fabricWidth}` : '';
-            // ADDED W/S Rate to Cart List
             const priceText = product.price ? `W/S Rate: ₹${product.price}` : 'Request Price';
             const li = document.createElement('li');
             li.innerHTML = `
@@ -925,7 +975,6 @@ modalWhatsappBtn.addEventListener('click', async () => {
         const p = allProducts.find(prod => prod.id === id);
         if(p) {
             const widthInfo = p.fabricWidth ? ` (Width: ${p.fabricWidth})` : '';
-            // ADDED W/S Rate to WhatsApp Message
             const priceText = p.price ? `W/S Rate: ₹${p.price}` : 'Request Price';
             msg += `${counter}. *${p.name}* - ${priceText}/${p.uom || 'meter'}${widthInfo}\n`;
             counter++;
