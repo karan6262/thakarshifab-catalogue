@@ -42,6 +42,11 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* NEW DROPDOWN DASHBOARD STYLES */
+        .filter-dashboard { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 25px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; align-items: center; }
+        .filter-dropdown { padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; background-color: white; font-size: 0.95rem; color: #333; outline: none; cursor: pointer; flex: 1; min-width: 140px; transition: border-color 0.2s; }
+        .filter-dropdown:focus { border-color: var(--primary); }
+
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
         .contact-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-top: 35px; max-width: 1000px; margin-left: auto; margin-right: auto; }
@@ -58,12 +63,9 @@
         
         .pd-content { display: flex; flex-direction: row; background: #fff; width: 90%; max-width: 1000px; height: 80vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-lg); }
         
-        /* UPDATED: Gallery section now supports the Blurred BG Trick */
         .pd-gallery-section { flex: 1.2; background: #f0f0f0; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-right: 1px solid var(--gray-200); }
-        /* Notice how hover zoom is removed from CSS, handled manually now! */
         .pd-gallery-section > img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s ease-out; transform-origin: center center; z-index: 1; filter: drop-shadow(0px 20px 30px rgba(0,0,0,0.15)); position: relative; }
         
-        /* NEW: Zoom Button styling */
         #pdZoomBtn { position: absolute; bottom: 20px; right: 20px; z-index: 10; background: rgba(255,255,255,0.95); border: 1px solid #ddd; padding: 10px 18px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 0.95rem; color: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
         #pdZoomBtn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); color: var(--primary); }
 
@@ -180,16 +182,13 @@
         
         <div class="pd-gallery-section" id="pdGalleryContainer">
             
-            <!-- NEW: Apple/Nike Dynamic Blurred Background Layer -->
             <div id="pdBlurredBg" style="position: absolute; top: -20%; left: -20%; right: -20%; bottom: -20%; background-size: cover; background-position: center; filter: blur(50px); opacity: 0.45; z-index: 0; pointer-events: none; transition: background-image 0.3s ease;"></div>
             
-            <!-- Main Floating Image -->
             <img id="pdMainImage" src="" alt="Product view">
             
             <button class="pd-arrow pd-arrow-left" id="pdPrevBtn" onclick="changePdImage(-1)">&#10094;</button>
             <button class="pd-arrow pd-arrow-right" id="pdNextBtn" onclick="changePdImage(1)">&#10095;</button>
 
-            <!-- NEW: Dedicated Zoom Button -->
             <button id="pdZoomBtn" onclick="toggleZoom()">🔍 Zoom In</button>
         </div>
         
@@ -293,8 +292,12 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let allProducts = []; 
-let currentCategory = 'all'; 
+// NEW: Multiple filter states
+let currentMillFilter = 'all';
+let currentMainCatFilter = 'all';
+let currentSubCatFilter = 'all';
 let currentSearchTerm = ''; 
+
 let isLoginMode = true; 
 const selectedItems = new Set(); 
 
@@ -346,7 +349,7 @@ window.addEventListener('scroll', () => {
 
 function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-/* --- NEW ZOOM LOGIC --- */
+/* --- ZOOM LOGIC --- */
 const pdGalleryContainer = document.getElementById('pdGalleryContainer');
 const pdMainImage = document.getElementById('pdMainImage');
 let isModalZoomed = false;
@@ -368,7 +371,6 @@ function toggleZoom() {
 }
 
 pdGalleryContainer.addEventListener('mousemove', (e) => {
-    // Only pan around IF the user has explicitly clicked the zoom button
     if (window.innerWidth > 768 && isModalZoomed) {
         const rect = pdGalleryContainer.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -380,7 +382,6 @@ pdGalleryContainer.addEventListener('mousemove', (e) => {
 });
 
 pdGalleryContainer.addEventListener('mouseleave', () => {
-    // Auto reset if mouse leaves gallery area to prevent getting stuck
     if(isModalZoomed) toggleZoom(); 
 });
 /* ----------------------- */
@@ -603,7 +604,6 @@ function openProductModal(id) {
     
     pdCurrentProductId = id;
     
-    // RESET ZOOM STATE ON OPEN
     isModalZoomed = false;
     pdMainImage.style.transform = 'scale(1)';
     pdMainImage.style.transformOrigin = 'center center';
@@ -617,7 +617,6 @@ function openProductModal(id) {
     } else { pdImagesArray = ['default.jpg']; }
     pdCurrentIndex = 0;
     
-    // SET MAIN IMAGE & BLURRED BACKGROUND
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
     document.getElementById('pdBlurredBg').style.backgroundImage = `url('${pdImagesArray[pdCurrentIndex]}')`;
     
@@ -678,7 +677,6 @@ function closeProductModal() {
     document.getElementById('productDetailsModal').classList.remove('show-modal');
     pdCurrentProductId = null;
     
-    // Ensure zoom is reset when closing
     isModalZoomed = false;
     pdMainImage.style.transform = 'scale(1)';
     pdMainImage.style.transformOrigin = 'center center'; 
@@ -691,7 +689,6 @@ function changePdImage(direction) {
     if (pdCurrentIndex < 0) pdCurrentIndex = pdImagesArray.length - 1;
     if (pdCurrentIndex >= pdImagesArray.length) pdCurrentIndex = 0;
     
-    // Reset zoom when navigating arrows
     if(isModalZoomed) toggleZoom(); 
     
     document.getElementById('pdMainImage').src = pdImagesArray[pdCurrentIndex];
@@ -699,40 +696,58 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
+    // NEW FILTER DASHBOARD
     productsSection.innerHTML = `
-        <div class="category-filters" id="dynamicFiltersContainer" style="margin-top: 10px;">
-            <button class="filter-pill active" data-filter="all">All Fabrics</button>
-            <button class="filter-pill" data-filter="shirting">Shirting</button>
-            <button class="filter-pill" data-filter="suiting">Suiting</button>
-            <button class="filter-pill" data-filter="cotton">Cotton</button>
-            <button class="filter-pill" data-filter="linen">Linen</button>
-            <button class="filter-pill" data-filter="pv suiting">PV Suiting</button>
-            <button class="filter-pill" data-filter="tr suiting">TR Suiting</button>
+        <div class="filter-dashboard">
+            <select id="filterMill" class="filter-dropdown">
+                <option value="all">All Brands</option>
+            </select>
+            <select id="filterMainCat" class="filter-dropdown">
+                <option value="all">All Types</option>
+                <option value="shirting">Shirting</option>
+                <option value="suiting">Suiting</option>
+            </select>
+            <select id="filterSubCat" class="filter-dropdown">
+                <option value="all">All Fabrics</option>
+                <option value="cotton">Cotton</option>
+                <option value="silk">Silk</option>
+                <option value="linen">Linen</option>
+                <option value="blend">Blends</option>
+                <option value="pv suiting">PV Suiting</option>
+                <option value="tr suiting">TR Suiting</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="text" id="searchInput" class="filter-dropdown" placeholder="Search products..." style="flex-grow: 2; min-width: 200px;">
         </div>
-        <div class="search-sort-container" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
-            <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 20px; border: 1px solid #ddd; flex-grow: 1; max-width: 300px;">
-        </div>
+        
         <div id="productsGrid" class="product-grid">
             ${generateSkeletons()}
         </div>
     `;
 
+    // Dynamic Mill Fetch logic
     db.collection('mills').orderBy('name').onSnapshot(millSnap => {
         activeMillsMap = {};
-        document.querySelectorAll('.dynamic-mill').forEach(e => e.remove());
-        const filterContainer = document.getElementById('dynamicFiltersContainer');
+        const filterMill = document.getElementById('filterMill');
         
-        millSnap.forEach(doc => {
-            const m = doc.data();
-            activeMillsMap[doc.id] = m;
+        if (filterMill) {
+            const currentVal = filterMill.value;
+            filterMill.innerHTML = '<option value="all">All Brands</option>';
             
-            const btn = document.createElement('button');
-            btn.className = 'filter-pill dynamic-mill';
-            btn.dataset.filter = doc.id;
-            btn.textContent = m.name;
-            btn.style.borderColor = '#1a1a1a';
-            filterContainer.insertBefore(btn, filterContainer.children[1]);
-        });
+            millSnap.forEach(doc => {
+                const m = doc.data();
+                activeMillsMap[doc.id] = m;
+                
+                const opt = document.createElement('option');
+                opt.value = doc.id;
+                opt.textContent = m.name;
+                filterMill.appendChild(opt);
+            });
+            
+            if(currentVal && Array.from(filterMill.options).some(o => o.value === currentVal)) {
+                filterMill.value = currentVal;
+            }
+        }
         
         setupFilterListeners();
         if(allProducts.length > 0) renderProducts(true); 
@@ -759,29 +774,30 @@ function renderProducts(resetPage = true) {
     let filteredProducts = allProducts.filter(product => {
         if (product.isAvailable === false) return false;
         
+        // Multi-Faceted Filtering
+        const matchMill = currentMillFilter === 'all' || product.mill === currentMillFilter;
+        const matchMainCat = currentMainCatFilter === 'all' || product.mainCategory === currentMainCatFilter;
+        const matchSubCat = currentSubCatFilter === 'all' || product.category === currentSubCatFilter;
+
+        const searchStr = currentSearchTerm;
         const c1 = product.category ? product.category.toLowerCase() : '';
         const m1 = product.mainCategory ? product.mainCategory.toLowerCase() : '';
-        const searchCat = currentCategory.toLowerCase();
-        
-        let matchesCategory = false;
-        if (searchCat === 'all') { matchesCategory = true; } 
-        else if (searchCat === 'suiting') { matchesCategory = (c1.includes('suiting') || m1.includes('suiting')); } 
-        else { matchesCategory = (c1 === searchCat || m1 === searchCat || product.mill === searchCat); }
-
-        const w1 = product.fabricWidth ? product.fabricWidth.toLowerCase() : '';
         const millObj = activeMillsMap[product.mill];
         const millSearchName = millObj ? millObj.name.toLowerCase() : '';
+        const w1 = product.fabricWidth ? product.fabricWidth.toLowerCase() : '';
         
-        const matchesSearch = (product.name?.toLowerCase().includes(currentSearchTerm)) || 
-                              (c1.includes(currentSearchTerm)) || (m1.includes(currentSearchTerm)) || (w1.includes(currentSearchTerm)) || (millSearchName.includes(currentSearchTerm));
+        const matchesSearch = !searchStr || 
+                              (product.name?.toLowerCase().includes(searchStr)) || 
+                              (c1.includes(searchStr)) || (m1.includes(searchStr)) || 
+                              (w1.includes(searchStr)) || (millSearchName.includes(searchStr));
                               
-        return matchesCategory && matchesSearch;
+        return matchMill && matchMainCat && matchSubCat && matchesSearch;
     });
 
     if (resetPage) productsGrid.innerHTML = ''; 
 
     if (filteredProducts.length === 0) {
-        productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center; color: #666; margin-top: 20px;">No products match your search or filter.</p>';
+        productsGrid.innerHTML = '<p class="no-results" style="grid-column: 1 / -1; text-align: center; color: #666; margin-top: 20px;">No products match your search or filter combination.</p>';
         loadMoreContainer.style.display = 'none';
         return;
     }
@@ -858,18 +874,18 @@ function renderProducts(resetPage = true) {
 }
 
 function setupFilterListeners() {
-    const pills = document.querySelectorAll('.filter-pill');
-    pills.forEach(pill => {
-        pill.addEventListener('click', (e) => {
-            pills.forEach(p => p.classList.remove('active'));
-            e.target.classList.add('active');
-            currentCategory = e.target.dataset.filter;
-            renderProducts(true); 
-        });
-    });
-
+    const fMill = document.getElementById('filterMill');
+    const fMainCat = document.getElementById('filterMainCat');
+    const fSubCat = document.getElementById('filterSubCat');
     const searchInput = document.getElementById('searchInput');
+
+    // Attach listeners if elements exist
+    if (fMill) fMill.onchange = (e) => { currentMillFilter = e.target.value; renderProducts(true); };
+    if (fMainCat) fMainCat.onchange = (e) => { currentMainCatFilter = e.target.value; renderProducts(true); };
+    if (fSubCat) fSubCat.onchange = (e) => { currentSubCatFilter = e.target.value; renderProducts(true); };
+
     if (searchInput) {
+        // Remove old event listeners by cloning to avoid duplicates
         searchInput.replaceWith(searchInput.cloneNode(true));
         const newSearchInput = document.getElementById('searchInput');
         newSearchInput.addEventListener('input', (e) => {
