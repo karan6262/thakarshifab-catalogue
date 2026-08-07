@@ -43,7 +43,6 @@
         .admin-search-bar { padding: 10px 15px; border-radius: 8px; border: 1px solid var(--gray-300); width: 100%; max-width: 300px; font-size: 0.95rem; }
         
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 768px) { .settings-grid { grid-template-columns: 1fr; } }
         .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .image-manager { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; min-height: 80px; padding: 15px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px; }
@@ -57,10 +56,46 @@
         .img-controls button.remove-btn { background: #dc3545; color: white; }
         .img-controls button.remove-btn:hover { background: #c82333; }
 
-        /* POSTER THUMBNAILS STYLE */
         .poster-thumb { width: 65px; height: 65px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .poster-thumb:hover { opacity: 1; transform: translateY(-2px); }
         .poster-thumb.active { border-color: var(--primary); opacity: 1; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        /* ==================================================
+           📱 MOBILE UI ENGINE (Optimized App-Like Experience)
+           ================================================== */
+        @media (max-width: 768px) {
+            .admin-container { padding: 20px; margin: 15px; border-radius: 12px; }
+            
+            /* Stack columns full width */
+            .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
+            .settings-grid { grid-template-columns: 1fr; gap: 20px; }
+            
+            /* Swipeable horizontal tabs */
+            .admin-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .admin-tabs::-webkit-scrollbar { display: none; } /* hide scrollbar */
+            .tab-btn { flex: 0 0 auto; font-size: 0.9rem; padding: 10px 16px; border-radius: 20px; border: 1px solid var(--gray-300); background: #f9f9f9; }
+            .tab-btn.active { background: #1a1a1a; color: white; border-color: #1a1a1a; }
+            
+            /* Stack Header */
+            header .header-container { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
+            
+            /* Make action buttons large and tap-friendly */
+            .action-btns { flex-direction: column; gap: 6px; }
+            .action-btns button { width: 100%; padding: 10px; font-size: 0.95rem; }
+            
+            /* Make inputs stretch */
+            .admin-search-bar { max-width: 100%; }
+            #saveMillBtn, #uploadBtn { width: 100%; max-width: 100%; padding: 14px; font-size: 1.05rem; }
+            
+            /* Adjust tables */
+            .data-table th, .data-table td { padding: 10px 8px; font-size: 0.85rem; }
+            .data-table img { width: 50px !important; height: 50px !important; }
+            
+            /* Modals spacing */
+            .modal-content { padding: 20px; width: 92%; margin-top: 10%; }
+            
+            #millForm { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -72,7 +107,7 @@
             <p>Dashboard & Upload Portal</p>
         </div>
         <nav class="header-nav">
-            <a href="index.html" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem; background-color: #1a1a1a;">Back to Store</a>
+            <a href="index.html" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem; background-color: #1a1a1a; width: 100%; text-align: center; display: block;">Back to Store</a>
         </nav>
     </div>
 </header>
@@ -90,7 +125,7 @@
 
         <!-- 1. ADD PRODUCT SECTION -->
         <div id="section-add" class="admin-section active">
-            <h2 style="margin-bottom: 25px; color: var(--primary);">Upload New Product</h2>
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Upload New Product</h2>
             <form id="uploadForm">
                 <div class="grid-2-col">
                     <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required placeholder="e.g., Premium Navy Suiting"></div>
@@ -127,15 +162,14 @@
                 
                 <div class="grid-2-col">
                     <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodMrp" placeholder="e.g., 1200"></div>
-                    <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna), 44 Inches, 36 Inches"></div>
+                    <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
                 </div>
                 
                 <div class="form-group"><label>Product Description</label><textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea></div>
                 
-                <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                    <label style="font-size: 1.1rem; color: var(--primary);">Product Images & Display Order</label>
+                <div class="form-group" style="background: var(--white); padding: 15px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
+                    <label style="font-size: 1.1rem; color: var(--primary);">Product Images</label>
                     <input type="file" id="prodImages" accept="image/*" multiple style="margin-top: 10px;">
-                    <span class="help-text">Use the Left/Right arrows below to set which image appears first!</span>
                     <div id="uploadImagesPreview" class="image-manager"><small style="color:#888; display:flex; width:100%; justify-content:center;">Images will appear here.</small></div>
                 </div>
                 <button type="submit" class="submit-btn" id="uploadBtn">Upload Product to Catalog</button>
@@ -146,7 +180,7 @@
 
         <!-- 2. MANAGE PRODUCTS SECTION -->
         <div id="section-products" class="admin-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Live Catalog Inventory</h2>
                 <input type="text" id="adminProductSearch" class="admin-search-bar" placeholder="Search products, ID, category...">
             </div>
@@ -160,15 +194,13 @@
         
         <!-- 3. MANAGE MILLS SECTION -->
         <div id="section-mills" class="admin-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-                <h2 style="margin: 0;">Manage Manufacturing Mills</h2>
-            </div>
+            <h2 style="margin-bottom: 20px;">Manage Mills</h2>
             <form id="millForm" style="background: var(--gray-100); padding: 25px; border-radius: var(--radius); border: 1px solid var(--gray-300); margin-bottom: 30px;">
                 <div class="grid-2-col">
                     <div class="form-group"><label>Mill / Brand Name</label><input type="text" id="millName" required placeholder="e.g., Raymond, Arvind..."></div>
-                    <div class="form-group"><label>Mill Official Logo</label><input type="file" id="millLogo" accept="image/*" required><span class="help-text">Transparent PNG or clean JPG.</span></div>
+                    <div class="form-group"><label>Mill Official Logo</label><input type="file" id="millLogo" accept="image/*" required></div>
                 </div>
-                <button type="submit" class="submit-btn" id="saveMillBtn" style="max-width: 250px;">Add New Mill Brand</button>
+                <button type="submit" class="submit-btn" id="saveMillBtn">Add New Mill Brand</button>
                 <div id="millStatusMsg" class="form-status"></div>
             </form>
             <div style="overflow-x: auto;">
@@ -181,13 +213,13 @@
 
         <!-- 4. VIEW INQUIRIES SECTION -->
         <div id="section-inquiries" class="admin-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
                 <h2 style="margin: 0;">Customer Inquiries</h2>
-                <input type="text" id="adminInquirySearch" class="admin-search-bar" placeholder="Search by name, city, status...">
+                <input type="text" id="adminInquirySearch" class="admin-search-bar" placeholder="Search by name...">
             </div>
             <div style="overflow-x: auto;">
                 <table class="data-table">
-                    <thead><tr><th>Status</th><th>Date</th><th>Customer Details</th><th>Message & Requirements</th><th>Selected Fabrics</th></tr></thead>
+                    <thead><tr><th>Status</th><th>Date</th><th>Customer Details</th><th>Message</th><th>Selected Fabrics</th></tr></thead>
                     <tbody id="inquiriesTableBody"><tr><td colspan="5">Loading inquiries...</td></tr></tbody>
                 </table>
             </div>
@@ -195,12 +227,12 @@
 
         <!-- 5. SETTINGS SECTION -->
         <div id="section-settings" class="admin-section">
-            <h2 style="margin-bottom: 20px;">Contact Information & Offices</h2>
+            <h2 style="margin-bottom: 20px;">Contact Information</h2>
             <form id="settingsForm">
                 <div style="background: #e8f5e9; padding: 20px; border-radius: var(--radius); border: 1px solid #c8e6c9; margin-bottom: 20px; max-width: 600px;">
                     <h3 style="margin-bottom: 15px; color: #2e7d32; display: flex; align-items: center; gap: 8px;">WhatsApp Configuration</h3>
                     <div class="form-group" style="margin-bottom: 0;">
-                        <label>WhatsApp Sales Number (No '+' or spaces)</label>
+                        <label>WhatsApp Sales Number</label>
                         <input type="text" id="setWhatsapp" placeholder="e.g., 919876543210">
                     </div>
                 </div>
@@ -219,8 +251,8 @@
                         <div class="form-group"><label>Working Hours</label><input type="text" id="setBranchHours"></div>
                     </div>
                 </div>
-                <div style="margin-top: 25px; max-width: 300px;">
-                    <button type="submit" class="submit-btn" id="saveSettingsBtn">Save Contact Details</button>
+                <div style="margin-top: 25px;">
+                    <button type="submit" class="submit-btn" id="saveSettingsBtn" style="width:100%; max-width:300px;">Save Contact Details</button>
                     <div id="settingsStatusMsg" class="form-status"></div>
                 </div>
             </form>
@@ -229,7 +261,7 @@
     </div>
 </div>
 
-<!-- EDIT PRODUCT MODAL WITH IMAGE MANAGEMENT -->
+<!-- EDIT PRODUCT MODAL -->
 <div id="editModal" class="modal">
     <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
         <span class="close-btn" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
@@ -245,19 +277,17 @@
                 <div class="form-group"><label>Sub Category / Fabric</label><select id="editProdCategory" required><option value="cotton">Cotton</option><option value="silk">Silk</option><option value="linen">Linen</option><option value="blend">Blends</option><option value="pv suiting">PV Suiting</option><option value="tr suiting">TR Suiting</option><option value="other">Other</option></select></div>
             </div>
             <div class="grid-2-col">
-                <div class="form-group"><label>Unit of Measure (UOM)</label><select id="editProdUom" required><option value="meter">Per Meter</option><option value="pcs">Per Piece (Pcs)</option><option value="roll">Per Roll</option><option value="kg">Per Kg</option><option value="set">Per Set</option></select></div>
-                <div class="form-group"><label>Wholesale Price (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdPrice" placeholder="Leave empty for 'Request Price'"></div>
+                <div class="form-group"><label>Unit of Measure</label><select id="editProdUom" required><option value="meter">Per Meter</option><option value="pcs">Per Piece</option><option value="roll">Per Roll</option><option value="kg">Per Kg</option></select></div>
+                <div class="form-group"><label>Wholesale Price (₹)</label><input type="number" id="editProdPrice" placeholder="Optional"></div>
             </div>
-            
             <div class="grid-2-col">
-                <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="editProdMrp" placeholder="e.g., 1200"></div>
-                <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
+                <div class="form-group"><label>MRP (₹)</label><input type="number" id="editProdMrp" placeholder="Optional"></div>
+                <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth"></div>
             </div>
-            
             <div class="form-group"><label>Availability</label><select id="editProdAvailable"><option value="true">Available</option><option value="false">Hidden</option></select></div>
             <div class="form-group"><label>Product Description</label><textarea id="editProdDesc" style="min-height: 80px;"></textarea></div>
-            <div class="form-group" style="background: var(--white); padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
-                <label style="font-size: 1.1rem; color: var(--primary);">Manage Image Display Order</label>
+            <div class="form-group" style="background: var(--white); padding: 15px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
+                <label style="font-size: 1.1rem; color: var(--primary);">Manage Images</label>
                 <input type="file" id="editProdImages" accept="image/*" multiple style="margin-top: 10px;">
                 <div id="editCurrentImagesPreview" class="image-manager"></div>
             </div>
@@ -277,15 +307,13 @@
             <p style="color:#333; font-size:0.85rem; margin-bottom: 8px; font-weight: bold; text-align: left;">Select a Fabric Image:</p>
             <div id="posterThumbnails" style="display: flex; gap: 8px; justify-content: flex-start; flex-wrap: wrap;"></div>
         </div>
-
-        <p style="color:gray; font-size:0.85rem; margin-bottom: 10px; text-align: left; font-weight: bold;">Preview & Download (Generates 1080x1080)</p>
         
         <div style="width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-lg); position: relative;">
             <canvas id="posterCanvas" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
-            <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666; font-size: 1.2rem;">Painting Canvas...</div>
+            <div id="posterLoadingText" style="position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-weight: bold; color: #666; font-size: 1rem;">Painting Canvas...</div>
         </div>
         
-        <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px; margin-bottom: 10px;">Download Poster (PNG)</button>
+        <button id="downloadPosterBtn" class="submit-btn" style="background-color: #25D366; font-size: 1.1rem; border-radius: 8px; margin-bottom: 10px; width: 100%;">Download Poster (PNG)</button>
     </div>
 </div>
 
@@ -310,7 +338,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 }
 
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";
+const CLOUD_NAME = "ubqtf5go";       
 const UPLOAD_PRESET = "thakarshi_product_upload"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
@@ -407,11 +435,10 @@ document.getElementById('millForm').addEventListener('submit', async (e) => {
     
     if (fileInput.files.length === 0) { alert('Please select a logo image.'); return; }
     
-    btn.disabled = true; btn.textContent = "Uploading Logo...";
+    btn.disabled = true; btn.textContent = "Uploading...";
 
     try {
         const logoUrl = await uploadToCloudinary(fileInput.files[0]);
-        btn.textContent = "Saving to Database...";
         await db.collection('mills').add({
             name: nameInput,
             logoUrl: logoUrl,
@@ -517,14 +544,13 @@ function fetchAdminProducts() {
             adminProductsMap[id] = p; 
             
             const imgUrl = (p.imageUrls && p.imageUrls.length > 0) ? p.imageUrls[0] : (p.imageUrl || '');
-            const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 50)}...</small>` : '';
+            const descHtml = p.description ? `<br><small style="color:gray;">${p.description.substring(0, 40)}...</small>` : '';
             
             const mrpStr = p.mrp ? `MRP: ₹${p.mrp} | ` : '';
-            // ADDED W/S Rate TEXT HERE
             const priceStr = p.price ? `W/S Rate: ₹${p.price}` : 'Request Price';
             const uom = p.uom || 'meter'; 
             
-            const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 Width: ${p.fabricWidth}</small>` : '';
+            const widthStr = p.fabricWidth ? `<br><small style="color:#2e7d32; font-weight:600;">📐 ${p.fabricWidth}</small>` : '';
             const mainCat = p.mainCategory ? `[${p.mainCategory.toUpperCase()}] ` : '';
             
             let millNameDisplay = '';
@@ -535,7 +561,7 @@ function fetchAdminProducts() {
             const categoryDisplay = `${millNameDisplay}${mainCat}${p.category}`;
             
             const isAvail = p.isAvailable !== false; 
-            const statusHtml = isAvail ? '<span style="color:#28a745; font-weight:bold;">● Available</span>' : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
+            const statusHtml = isAvail ? '<span style="color:#28a745; font-weight:bold;">● Live</span>' : '<span style="color:#dc3545; font-weight:bold;">● Hidden</span>';
             const toggleBtnText = isAvail ? 'Hide' : 'Show';
             const toggleBtnColor = isAvail ? '#ff9800' : '#28a745';
 
@@ -543,9 +569,8 @@ function fetchAdminProducts() {
                 <tr>
                     <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
                     <td>
-                        <strong>${p.name}</strong> <span style="color:gray; font-size: 0.85rem;">(${mrpStr}${priceStr} / ${uom} | ${categoryDisplay})</span>
+                        <strong>${p.name}</strong> <br><span style="color:gray; font-size: 0.8rem;">(${mrpStr}${priceStr} / ${uom})<br>${categoryDisplay}</span>
                         ${widthStr}
-                        <br><small style="color:#888;">ID: ${id}</small>
                         ${descHtml}
                     </td>
                     <td>${statusHtml}</td>
