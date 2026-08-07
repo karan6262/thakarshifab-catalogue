@@ -42,9 +42,7 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- PREMIUM UI: EXPERT FILTER DASHBOARD --- */
         .filter-dashboard { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; margin-bottom: 35px; align-items: center; }
-        
         .filter-dropdown-wrapper { position: relative; flex: 1; min-width: 160px; }
         .filter-dropdown-wrapper::after { content: ""; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'); background-repeat: no-repeat; background-position: center; background-size: contain; pointer-events: none; transition: transform 0.2s; }
         .filter-dropdown-wrapper:focus-within::after { transform: translateY(-50%) rotate(180deg); }
@@ -60,7 +58,12 @@
         .search-input::placeholder { color: #aaa; font-weight: 400; }
         .search-input:hover { border-color: #d0d0d0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transform: translateY(-1px); }
         .search-input:focus { border-color: #1a1a1a; box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.1); outline: none; transform: translateY(0); }
-        /* ------------------------------------------- */
+
+        /* NEW PROMO BADGE STYLES */
+        .product-badge { position: absolute; top: 12px; left: 12px; z-index: 10; padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); pointer-events: none; }
+        .badge-new { background: #e53935; color: white; border: 1px solid #c62828; }
+        .badge-bestseller { background: #ff9800; color: white; border: 1px solid #f57c00; }
+        .badge-premium { background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%); color: #1a1a1a; border: 1px solid #c5a017; }
 
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
@@ -102,17 +105,44 @@
         .form-actions { display: flex; gap: 10px; flex-direction: column; }
         @media (min-width: 600px) { .form-actions { flex-direction: row; } }
 
+        /* --- MOBILE APP UI UPGRADES --- */
+        .bottom-nav { display: none; }
+
         @media (max-width: 768px) {
             .pd-content { flex-direction: column; height: 90vh; }
             .pd-gallery-section { flex: 0.8; border-right: none; border-bottom: 1px solid var(--gray-200); }
             .pd-info-section { flex: 1; padding: 25px; }
             .pd-close { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.8rem; }
             
-            /* UI Engine: Perfect Mobile Filter Grid */
             .filter-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
             .filter-dropdown-wrapper { width: 100%; min-width: 0; }
-            .filter-dropdown-wrapper:nth-child(3) { grid-column: 1 / -1; } /* 3rd item full width */
-            .search-input-wrapper { grid-column: 1 / -1; width: 100%; } /* Search full width */
+            .filter-dropdown-wrapper:nth-child(3) { grid-column: 1 / -1; }
+            .search-input-wrapper { grid-column: 1 / -1; width: 100%; }
+
+            /* NEW: Bottom Nav Logic */
+            .header-actions { display: none !important; } /* Hide top buttons to save space */
+            
+            body { padding-bottom: 75px; } /* Prevent nav from covering content */
+            
+            .bottom-nav { 
+                display: flex; justify-content: space-around; align-items: center;
+                position: fixed; bottom: 0; left: 0; right: 0; 
+                background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+                border-top: 1px solid rgba(0,0,0,0.08); z-index: 2000; 
+                padding: 12px 0; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+            }
+            .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #888; text-decoration: none; font-size: 0.75rem; font-weight: 600; cursor: pointer; position: relative; transition: color 0.2s;}
+            .nav-item.active { color: #1a1a1a; }
+            .nav-icon { width: 26px; height: 26px; fill: currentColor; }
+            .nav-icon-stroke { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;}
+            
+            .nav-badge { position: absolute; top: -6px; right: 12px; background: #dc3545; color: white; font-size: 0.65rem; font-weight: bold; padding: 2px 6px; border-radius: 12px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+            
+            /* Raise "back to top" button above the nav bar */
+            #backToTop { bottom: 95px; } 
+
+            #mobileSignOutBtn { display: block !important; }
         }
 
         #backToTop { position: fixed; bottom: 30px; right: 30px; background: #1a1a1a; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 1500; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: background 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
@@ -159,6 +189,26 @@
     </section>
 </div>
 
+<!-- NEW: NATIVE MOBILE BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active" onclick="document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); this.classList.add('active'); window.scrollTo(0,0); return false;">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 3l-10 9h3v9h14v-9h3z"/></svg>
+        Home
+    </a>
+    <a href="#" class="nav-item" onclick="document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); this.classList.add('active'); document.getElementById('searchInput').focus(); window.scrollTo({top: document.querySelector('.filter-dashboard').offsetTop - 20, behavior: 'smooth'}); return false;">
+        <svg class="nav-icon-stroke" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Search
+    </a>
+    <a href="#" class="nav-item" onclick="document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); this.classList.add('active'); openCartModalBtn.click(); return false;">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        Cart <span class="nav-badge" id="mobileCartCount" style="display:none;">0</span>
+    </a>
+    <a href="#" class="nav-item" onclick="document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); this.classList.add('active'); handleMobileProfile(); return false;">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        Profile
+    </a>
+</nav>
+
 <!-- Sign In / Sign Up Modal -->
 <div id="signInModal" class="modal">
     <div class="modal-content">
@@ -185,13 +235,16 @@
 <div id="updateProfileModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeUpdateProfileModal">&times;</span>
-        <h2>Update My Details</h2>
+        <h2>My Profile</h2>
         <form id="updateProfileForm">
             <div class="form-group"><label>Full Name / Business Name</label><input type="text" id="profName" required></div>
             <div class="form-group"><label>Phone Number</label><input type="tel" id="profPhone" required></div>
             <div class="form-group"><label>City</label><input type="text" id="profCity" required></div>
             <button type="submit" class="submit-btn" id="profSubmitBtn">Save Details</button>
             <div id="profMsg" style="margin-top:1rem; text-align: center; font-weight: bold;"></div>
+            
+            <!-- Mobile Sign Out Button -->
+            <button type="button" id="mobileSignOutBtn" style="display:none; width: 100%; background: #dc3545; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; margin-top: 20px; font-weight: bold; cursor: pointer;">Sign Out</button>
         </form>
     </div>
 </div>
@@ -403,6 +456,24 @@ pdGalleryContainer.addEventListener('mousemove', (e) => {
 
 pdGalleryContainer.addEventListener('mouseleave', () => {
     if(isModalZoomed) toggleZoom(); 
+});
+
+/* --- MOBILE BOTTOM NAV LOGIC --- */
+function handleMobileProfile() {
+    if (auth.currentUser) {
+        document.getElementById('profName').value = currentUserProfile?.name || '';
+        document.getElementById('profPhone').value = currentUserProfile?.phone || '';
+        document.getElementById('profCity').value = currentUserProfile?.city || '';
+        document.getElementById('profMsg').textContent = '';
+        updateProfileModal.style.display = 'block';
+    } else {
+        openAuthModal('login');
+    }
+}
+
+document.getElementById('mobileSignOutBtn').addEventListener('click', () => {
+    auth.signOut();
+    updateProfileModal.style.display = 'none';
 });
 
 function optimizeImageUrl(url, width = 600) {
@@ -714,7 +785,6 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
-    // PREMIUM UI DASHBOARD IMPLEMENTED HERE
     productsSection.innerHTML = `
         <div class="filter-dashboard">
             <div class="filter-dropdown-wrapper">
@@ -853,6 +923,14 @@ function renderProducts(resetPage = true) {
         const millObj = activeMillsMap[product.mill];
         const millName = (product.mill && product.mill !== 'generic' && millObj) ? `<b style="color:var(--primary);">${millObj.name.toUpperCase()}</b> • ` : '';
         
+        // NEW: BADGE GENERATOR
+        let badgeHtml = '';
+        if (product.badge && product.badge !== 'none') {
+            const badgeClass = `badge-${product.badge}`;
+            const badgeText = product.badge === 'new' ? 'New Arrival' : (product.badge === 'bestseller' ? 'Bestseller' : 'Premium');
+            badgeHtml = `<div class="product-badge ${badgeClass}">${badgeText}</div>`;
+        }
+
         const uom = product.uom || 'meter';
         const widthBadgeHtml = product.fabricWidth ? `<div class="width-badge">📐 Width: ${product.fabricWidth}</div>` : '';
 
@@ -861,6 +939,7 @@ function renderProducts(resetPage = true) {
 
         card.innerHTML = `
             <div class="product-media">
+                ${badgeHtml}
                 <div class="product-gallery" id="gallery-${product.id}">
                     ${imagesHtml}
                 </div>
@@ -959,13 +1038,22 @@ function toggleSelection(e) {
 
 function updateSelectedUI() {
     selectedList.innerHTML = '';
+    
+    // NEW: Sync Mobile Badge logic
+    const mobileBadge = document.getElementById('mobileCartCount');
+    
     if (selectedItems.size === 0) {
         emptyCartMsg.style.display = 'block';
         proceedToInquiryBtn.style.display = 'none';
+        mobileBadge.style.display = 'none';
         return;
     }
+    
     emptyCartMsg.style.display = 'none';
     proceedToInquiryBtn.style.display = 'block';
+    
+    mobileBadge.style.display = 'block';
+    mobileBadge.textContent = selectedItems.size;
     
     Array.from(selectedItems).forEach(id => {
         const product = allProducts.find(p => p.id === id);
