@@ -42,10 +42,25 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* NEW DROPDOWN DASHBOARD STYLES */
-        .filter-dashboard { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 25px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eaeaea; align-items: center; }
-        .filter-dropdown { padding: 10px 15px; border-radius: 6px; border: 1px solid #ccc; background-color: white; font-size: 0.95rem; color: #333; outline: none; cursor: pointer; flex: 1; min-width: 140px; transition: border-color 0.2s; }
-        .filter-dropdown:focus { border-color: var(--primary); }
+        /* --- PREMIUM UI: EXPERT FILTER DASHBOARD --- */
+        .filter-dashboard { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; margin-bottom: 35px; align-items: center; }
+        
+        .filter-dropdown-wrapper { position: relative; flex: 1; min-width: 160px; }
+        .filter-dropdown-wrapper::after { content: ""; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%231a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'); background-repeat: no-repeat; background-position: center; background-size: contain; pointer-events: none; transition: transform 0.2s; }
+        .filter-dropdown-wrapper:focus-within::after { transform: translateY(-50%) rotate(180deg); }
+
+        .filter-dropdown { appearance: none; -webkit-appearance: none; width: 100%; padding: 14px 40px 14px 18px; border-radius: 10px; border: 2px solid #eaeaea; background-color: #fff; font-size: 0.95rem; font-weight: 600; color: #1a1a1a; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02); font-family: inherit; }
+        .filter-dropdown:hover { border-color: #d0d0d0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transform: translateY(-1px); }
+        .filter-dropdown:focus { border-color: #1a1a1a; box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.1); outline: none; transform: translateY(0); }
+
+        .search-input-wrapper { flex: 2; min-width: 250px; position: relative; }
+        .search-input-wrapper::before { content: ""; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23888888" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'); background-repeat: no-repeat; background-position: center; background-size: contain; pointer-events: none; z-index: 1; }
+        
+        .search-input { width: 100%; padding: 14px 20px 14px 45px; border-radius: 10px; border: 2px solid #eaeaea; background-color: #fff; font-size: 0.95rem; color: #1a1a1a; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02); font-family: inherit; font-weight: 500; }
+        .search-input::placeholder { color: #aaa; font-weight: 400; }
+        .search-input:hover { border-color: #d0d0d0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transform: translateY(-1px); }
+        .search-input:focus { border-color: #1a1a1a; box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.1); outline: none; transform: translateY(0); }
+        /* ------------------------------------------- */
 
         .connect-section { background: linear-gradient(135deg, #8B6B4E 0%, #594331 100%); color: var(--white); text-align: center; padding: 4rem 1.5rem; margin-top: 4rem; margin-bottom: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
         .connect-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
@@ -92,6 +107,12 @@
             .pd-gallery-section { flex: 0.8; border-right: none; border-bottom: 1px solid var(--gray-200); }
             .pd-info-section { flex: 1; padding: 25px; }
             .pd-close { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.8rem; }
+            
+            /* UI Engine: Perfect Mobile Filter Grid */
+            .filter-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+            .filter-dropdown-wrapper { width: 100%; min-width: 0; }
+            .filter-dropdown-wrapper:nth-child(3) { grid-column: 1 / -1; } /* 3rd item full width */
+            .search-input-wrapper { grid-column: 1 / -1; width: 100%; } /* Search full width */
         }
 
         #backToTop { position: fixed; bottom: 30px; right: 30px; background: #1a1a1a; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 1500; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: background 0.3s, transform 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
@@ -292,7 +313,6 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let allProducts = []; 
-// NEW: Multiple filter states
 let currentMillFilter = 'all';
 let currentMainCatFilter = 'all';
 let currentSubCatFilter = 'all';
@@ -384,8 +404,6 @@ pdGalleryContainer.addEventListener('mousemove', (e) => {
 pdGalleryContainer.addEventListener('mouseleave', () => {
     if(isModalZoomed) toggleZoom(); 
 });
-/* ----------------------- */
-
 
 function optimizeImageUrl(url, width = 600) {
     if (url && url.includes('cloudinary.com') && !url.includes('f_auto')) {
@@ -696,28 +714,36 @@ function changePdImage(direction) {
 }
 
 function loadProductsFromFirestore() {
-    // NEW FILTER DASHBOARD
+    // PREMIUM UI DASHBOARD IMPLEMENTED HERE
     productsSection.innerHTML = `
         <div class="filter-dashboard">
-            <select id="filterMill" class="filter-dropdown">
-                <option value="all">All Brands</option>
-            </select>
-            <select id="filterMainCat" class="filter-dropdown">
-                <option value="all">All Types</option>
-                <option value="shirting">Shirting</option>
-                <option value="suiting">Suiting</option>
-            </select>
-            <select id="filterSubCat" class="filter-dropdown">
-                <option value="all">All Fabrics</option>
-                <option value="cotton">Cotton</option>
-                <option value="silk">Silk</option>
-                <option value="linen">Linen</option>
-                <option value="blend">Blends</option>
-                <option value="pv suiting">PV Suiting</option>
-                <option value="tr suiting">TR Suiting</option>
-                <option value="other">Other</option>
-            </select>
-            <input type="text" id="searchInput" class="filter-dropdown" placeholder="Search products..." style="flex-grow: 2; min-width: 200px;">
+            <div class="filter-dropdown-wrapper">
+                <select id="filterMill" class="filter-dropdown">
+                    <option value="all">All Brands</option>
+                </select>
+            </div>
+            <div class="filter-dropdown-wrapper">
+                <select id="filterMainCat" class="filter-dropdown">
+                    <option value="all">All Types</option>
+                    <option value="shirting">Shirting</option>
+                    <option value="suiting">Suiting</option>
+                </select>
+            </div>
+            <div class="filter-dropdown-wrapper">
+                <select id="filterSubCat" class="filter-dropdown">
+                    <option value="all">All Fabrics</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="silk">Silk</option>
+                    <option value="linen">Linen</option>
+                    <option value="blend">Blends</option>
+                    <option value="pv suiting">PV Suiting</option>
+                    <option value="tr suiting">TR Suiting</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="search-input-wrapper">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+            </div>
         </div>
         
         <div id="productsGrid" class="product-grid">
@@ -725,7 +751,6 @@ function loadProductsFromFirestore() {
         </div>
     `;
 
-    // Dynamic Mill Fetch logic
     db.collection('mills').orderBy('name').onSnapshot(millSnap => {
         activeMillsMap = {};
         const filterMill = document.getElementById('filterMill');
@@ -774,7 +799,6 @@ function renderProducts(resetPage = true) {
     let filteredProducts = allProducts.filter(product => {
         if (product.isAvailable === false) return false;
         
-        // Multi-Faceted Filtering
         const matchMill = currentMillFilter === 'all' || product.mill === currentMillFilter;
         const matchMainCat = currentMainCatFilter === 'all' || product.mainCategory === currentMainCatFilter;
         const matchSubCat = currentSubCatFilter === 'all' || product.category === currentSubCatFilter;
@@ -879,13 +903,11 @@ function setupFilterListeners() {
     const fSubCat = document.getElementById('filterSubCat');
     const searchInput = document.getElementById('searchInput');
 
-    // Attach listeners if elements exist
     if (fMill) fMill.onchange = (e) => { currentMillFilter = e.target.value; renderProducts(true); };
     if (fMainCat) fMainCat.onchange = (e) => { currentMainCatFilter = e.target.value; renderProducts(true); };
     if (fSubCat) fSubCat.onchange = (e) => { currentSubCatFilter = e.target.value; renderProducts(true); };
 
     if (searchInput) {
-        // Remove old event listeners by cloning to avoid duplicates
         searchInput.replaceWith(searchInput.cloneNode(true));
         const newSearchInput = document.getElementById('searchInput');
         newSearchInput.addEventListener('input', (e) => {
