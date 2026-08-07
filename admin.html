@@ -60,40 +60,22 @@
         .poster-thumb:hover { opacity: 1; transform: translateY(-2px); }
         .poster-thumb.active { border-color: var(--primary); opacity: 1; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-        /* ==================================================
-           📱 MOBILE UI ENGINE (Optimized App-Like Experience)
-           ================================================== */
         @media (max-width: 768px) {
             .admin-container { padding: 20px; margin: 15px; border-radius: 12px; }
-            
-            /* Stack columns full width */
             .grid-2-col { grid-template-columns: 1fr; gap: 10px; }
             .settings-grid { grid-template-columns: 1fr; gap: 20px; }
-            
-            /* Swipeable horizontal tabs */
             .admin-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-            .admin-tabs::-webkit-scrollbar { display: none; } /* hide scrollbar */
+            .admin-tabs::-webkit-scrollbar { display: none; } 
             .tab-btn { flex: 0 0 auto; font-size: 0.9rem; padding: 10px 16px; border-radius: 20px; border: 1px solid var(--gray-300); background: #f9f9f9; }
             .tab-btn.active { background: #1a1a1a; color: white; border-color: #1a1a1a; }
-            
-            /* Stack Header */
             header .header-container { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
-            
-            /* Make action buttons large and tap-friendly */
             .action-btns { flex-direction: column; gap: 6px; }
             .action-btns button { width: 100%; padding: 10px; font-size: 0.95rem; }
-            
-            /* Make inputs stretch */
             .admin-search-bar { max-width: 100%; }
             #saveMillBtn, #uploadBtn { width: 100%; max-width: 100%; padding: 14px; font-size: 1.05rem; }
-            
-            /* Adjust tables */
             .data-table th, .data-table td { padding: 10px 8px; font-size: 0.85rem; }
             .data-table img { width: 50px !important; height: 50px !important; }
-            
-            /* Modals spacing */
             .modal-content { padding: 20px; width: 92%; margin-top: 10%; }
-            
             #millForm { padding: 15px; }
         }
     </style>
@@ -163,6 +145,17 @@
                 <div class="grid-2-col">
                     <div class="form-group"><label>MRP (₹) <span style="font-weight: normal; color: #888;">(Optional)</span></label><input type="number" id="prodMrp" placeholder="e.g., 1200"></div>
                     <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="prodWidth" placeholder="e.g., 58 Inches (Double Panna)"></div>
+                </div>
+
+                <!-- NEW: BADGE SELECTOR -->
+                <div class="form-group">
+                    <label>Promotional Badge Display</label>
+                    <select id="prodBadge">
+                        <option value="none">None (Default)</option>
+                        <option value="new">🔴 New Arrival</option>
+                        <option value="bestseller">🟠 Bestseller</option>
+                        <option value="premium">🟡 Premium</option>
+                    </select>
                 </div>
                 
                 <div class="form-group"><label>Product Description</label><textarea id="prodDesc" placeholder="Enter GSM, weave, wash care, shade card details, etc." style="min-height: 80px;"></textarea></div>
@@ -284,7 +277,21 @@
                 <div class="form-group"><label>MRP (₹)</label><input type="number" id="editProdMrp" placeholder="Optional"></div>
                 <div class="form-group"><label>Fabric Width / Panna</label><input type="text" id="editProdWidth"></div>
             </div>
-            <div class="form-group"><label>Availability</label><select id="editProdAvailable"><option value="true">Available</option><option value="false">Hidden</option></select></div>
+
+            <!-- NEW: BADGE SELECTOR -->
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label>Promotional Badge</label>
+                    <select id="editProdBadge">
+                        <option value="none">None (Default)</option>
+                        <option value="new">🔴 New Arrival</option>
+                        <option value="bestseller">🟠 Bestseller</option>
+                        <option value="premium">🟡 Premium</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Availability</label><select id="editProdAvailable"><option value="true">Available</option><option value="false">Hidden</option></select></div>
+            </div>
+
             <div class="form-group"><label>Product Description</label><textarea id="editProdDesc" style="min-height: 80px;"></textarea></div>
             <div class="form-group" style="background: var(--white); padding: 15px; border-radius: var(--radius); border: 1px solid var(--gray-300);">
                 <label style="font-size: 1.1rem; color: var(--primary);">Manage Images</label>
@@ -338,8 +345,8 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 }
 
 // REPLACE THESE WITH YOUR CLOUDINARY DETAILS
-const CLOUD_NAME = "ubqtf5go";       
-const UPLOAD_PRESET = "thakarshi_product_upload"; 
+const CLOUD_NAME = "YOUR_CLOUD_NAME";       
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
 const firebaseConfig = {
@@ -389,7 +396,6 @@ function switchTab(sectionId, btnElement) {
     btnElement.classList.add('active');
 }
 
-/* --- DYNAMIC MILLS MANAGER --- */
 function fetchMills() {
     db.collection('mills').orderBy('name').onSnapshot(snapshot => {
         const tbody = document.getElementById('millsTableBody');
@@ -457,7 +463,7 @@ document.getElementById('millForm').addEventListener('submit', async (e) => {
 });
 
 async function deleteMill(id) {
-    if(confirm("Are you sure you want to delete this Mill Brand? (Products using this brand will safely default to Generic)")) {
+    if(confirm("Are you sure you want to delete this Mill Brand?")) {
         try { await db.collection('mills').doc(id).delete(); } 
         catch (err) { alert("Error: " + err.message); }
     }
@@ -517,16 +523,6 @@ document.getElementById('adminProductSearch').addEventListener('input', function
     });
 });
 
-document.getElementById('adminInquirySearch').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const tableRows = document.getElementById('inquiriesTableBody').getElementsByTagName('tr');
-    Array.from(tableRows).forEach(row => {
-        if (row.cells.length <= 1) return;
-        row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
-    });
-});
-
-/* --- MANAGE PRODUCTS LIST --- */
 function fetchAdminProducts() {
     db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         const tbody = document.getElementById('productsTableBody');
@@ -558,6 +554,7 @@ function fetchAdminProducts() {
                 millNameDisplay = `<b style="color:var(--primary);">${activeMillsMap[p.mill].name.toUpperCase()}</b> • `;
             }
             
+            const badgeStr = (p.badge && p.badge !== 'none') ? `<br><span style="color:#e53935; font-weight:bold; font-size:0.8rem;">★ ${p.badge.toUpperCase()}</span>` : '';
             const categoryDisplay = `${millNameDisplay}${mainCat}${p.category}`;
             
             const isAvail = p.isAvailable !== false; 
@@ -570,6 +567,7 @@ function fetchAdminProducts() {
                     <td><img src="${imgUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;"></td>
                     <td>
                         <strong>${p.name}</strong> <br><span style="color:gray; font-size: 0.8rem;">(${mrpStr}${priceStr} / ${uom})<br>${categoryDisplay}</span>
+                        ${badgeStr}
                         ${widthStr}
                         ${descHtml}
                     </td>
@@ -839,12 +837,13 @@ function openEditModal(id) {
     document.getElementById('editProdCategory').value = subCat || 'cotton';
     
     document.getElementById('editProdPrice').value = p.price || '';
-    
-    // LOAD MRP VALUE
     document.getElementById('editProdMrp').value = p.mrp || '';
-    
     document.getElementById('editProdUom').value = p.uom || 'meter';
     document.getElementById('editProdWidth').value = p.fabricWidth || '';
+    
+    // LOAD BADGE VALUE
+    document.getElementById('editProdBadge').value = p.badge || 'none';
+
     document.getElementById('editProdDesc').value = p.description || '';
     document.getElementById('editProdAvailable').value = p.isAvailable !== false ? 'true' : 'false';
     
@@ -936,7 +935,6 @@ uploadForm.addEventListener('submit', async (e) => {
         const priceInput = document.getElementById('prodPrice').value;
         const priceToSave = priceInput ? Number(priceInput) : null;
         
-        // SAVE MRP VALUE
         const mrpInput = document.getElementById('prodMrp').value;
         const mrpToSave = mrpInput ? Number(mrpInput) : null;
 
@@ -949,6 +947,7 @@ uploadForm.addEventListener('submit', async (e) => {
             price: priceToSave, 
             mrp: mrpToSave,
             fabricWidth: document.getElementById('prodWidth').value.trim(), 
+            badge: document.getElementById('prodBadge').value, // SAVE BADGE
             description: document.getElementById('prodDesc').value.trim(), 
             imageUrls: imageUrls, 
             isAvailable: true, 
@@ -990,7 +989,6 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         const editPriceInput = document.getElementById('editProdPrice').value;
         const editPriceToSave = editPriceInput ? Number(editPriceInput) : null;
         
-        // UPDATE MRP VALUE
         const editMrpInput = document.getElementById('editProdMrp').value;
         const editMrpToSave = editMrpInput ? Number(editMrpInput) : null;
 
@@ -1003,6 +1001,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
             mrp: editMrpToSave,
             uom: document.getElementById('editProdUom').value,
             fabricWidth: document.getElementById('editProdWidth').value.trim(),
+            badge: document.getElementById('editProdBadge').value, // UPDATE BADGE
             description: document.getElementById('editProdDesc').value.trim(),
             isAvailable: document.getElementById('editProdAvailable').value === 'true',
             imageUrls: finalImageUrls
